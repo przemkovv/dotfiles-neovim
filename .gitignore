@@ -1,0 +1,10 @@
+.VimballRecord
+.netrwhist
+*.pyc
+# vim/bundle
+bundle/*
+autoload/plug.vim.old
+shada/*
+plugged/*
+tags
+swap/*

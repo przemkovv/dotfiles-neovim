@@ -1,0 +1,20 @@
+{
+  "initializationOptions": {
+    "cache": {
+      "directory": "$HOME/.cache/ccls",
+      "format": "binary",
+      "hierarchicalPath": true
+    },
+    "index": {
+      "comments": 2
+    },
+    "completion": {
+      "filterAndSort": true
+    },
+    "clang": {
+      "extraArgs": ["-std=c++2b","--gcc-toolchain=/usr"],
+      "excludeArgs": ["-fconcepts", "-fno-fat-lto-objects", "-fmax-errors"]
+    }
+  },
+  "pyls.plugins.pydocstyle.enabled": true
+}

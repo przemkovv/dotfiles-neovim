@@ -1,0 +1,114 @@
+# Code listings
+snippet lst "Listing"
+	\begin{lstlisting}[language=${1:java}]
+		${0}
+	\end{lstlisting}
+endsnippet
+
+# Include Graphics
+snippet graph "Include Graphics"
+\includegraphics[width=${1:0.8\linewidth}]{graphics/${2}}
+endsnippet
+
+snippet bgr "Include Graphics"
+\begin{block}{${1}}
+  \includegraphics[width=0.8\linewidth]{graphics/antipatterns/development/${2}}
+\end{block}
+endsnippet
+
+snippet gr "Include Graphics"
+\includegraphics[width=0.8\linewidth]{graphics/antipatterns/development/${1}}
+endsnippet
+
+snippet mk
+\begin{frame}[t,fragile]{${1:title}}
+  \begin{block}{Kiedy stosować}
+     ${2:kiedy}
+  \end{block}
+  \begin{block}{Co trzeba zrobić}
+    ${3:jak}
+    \end{block}
+    \begin{block}{Przykład (przed)}
+    \begin{lstlisting}[language=java]
+${4:przyklad_przed}
+   \end{lstlisting}
+    \end{block}
+    \begin{block}{Przykład (po)}
+    \begin{lstlisting}[language=java]
+${5:przyklad_po}
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+endsnippet
+
+snippet mk2
+\begin{frame}[t,fragile]{${1:title}}
+  \begin{block}{Kiedy stosować}
+     ${2:kiedy}
+  \end{block}
+  \begin{block}{Co trzeba zrobić}
+    ${3:jak}
+    \end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{$1}
+    \begin{block}{Przykład (przed)}
+    \begin{lstlisting}[language=java]
+${4:przyklad_przed}
+   \end{lstlisting}
+    \end{block}
+    \begin{block}{Przykład (po)}
+    \begin{lstlisting}[language=java]
+${5:przyklad_po}
+	\end{lstlisting}
+    \end{block}
+\end{frame}
+endsnippet
+
+
+snippet mk3
+\begin{frame}[t,fragile]{${1:title}}
+  \begin{block}{Kiedy stosować}
+     ${2:kiedy}
+  \end{block}
+  \begin{block}{Co trzeba zrobić}
+    ${3:jak}
+    \end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{$1}
+    \begin{block}{Przykład (przed)}
+    \begin{lstlisting}[language=java]
+${4:przyklad_przed}
+   \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{$1}
+    \begin{block}{Przykład (po)}
+    \begin{lstlisting}[language=java]
+${5:przyklad_po}
+	\end{lstlisting}
+    \end{block}
+\end{frame}
+endsnippet
+
+
+snippet ms
+\begin{frame}[t,fragile]{${1:title}}
+  \begin{block}{Kiedy stosować}
+     ${2:kiedy}
+  \end{block}
+  \begin{block}{Co trzeba zrobić}
+    ${3:jak}
+    \end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{$1}
+    \begin{block}{Schemat}
+		\includegraphics[width=${4:0.8\linewidth}]{graphics/antipatterns/development/${5}}
+    \end{block}
+\end{frame}
+endsnippet
+
+
