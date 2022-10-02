@@ -49,7 +49,8 @@ require('packer').startup(function(use)
   }
 
   use({
-    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    "Maan2003/lsp_lines.nvim",
+    -- "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
     config = function()
       require("lsp_lines").setup()
     end,
