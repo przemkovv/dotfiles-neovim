@@ -362,6 +362,7 @@ vim.api.nvim_command("command! -nargs=+ -complete=file_in_path -bar Grep silent!
 
 vim.opt.grepprg = "rg --vimgrep"
 
+vim.keymap.set('n', '<space>cw', ':setlocal invwrap<CR>')
 vim.keymap.set('n', '<space>cd', ':cd %:p:h<CR>:pwd<CR>')
 vim.keymap.set('n', '<space>sv', ':source $MYVIMRC<CR>')
 vim.keymap.set('n', '<Space>ev', ':e  $MYVIMRC<CR>')
@@ -492,7 +493,7 @@ vim.keymap.set('i', '<C-u>', function() return vim.fn.pumvisible() == 1 and "<Pa
   { expr = true })
 
 -- " Folding ----------------------------------------------------------------- {{{
--- vim.opt.foldlevelstart = 99
+vim.opt.foldlevelstart = 99
 -- " Make zO recursively open whatever top level fold we're in, no matter where the
 -- " cursor happens to be.
 vim.keymap.set('n', 'zO', 'zCzO', { silent = false })
@@ -1022,6 +1023,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('n', '<C-k>', '<cmd>lua force_signature_help()<CR>', opts)
     vim.keymap.set('i', '<C-k>', '<cmd>lua force_signature_help()<CR>', opts)
     vim.keymap.set('n', '<Space>=', "<cmd>lua vim.lsp.buf.format()<cr>", opts)
+    vim.keymap.set('v', '<Space>=', "<cmd>lua vim.lsp.buf.format()<cr>", opts)
     vim.keymap.set('v', '<Space>gf', "<cmd>lua vim.lsp.formatexpr()<cr>", opts)
     vim.keymap.set('n', '<Space>k', "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
     vim.keymap.set('n', '<Space>gt', "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
@@ -1029,6 +1031,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('n', '<Space>ga', "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>", opts)
     vim.keymap.set('n', '<Space>gA', "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>", opts)
     vim.keymap.set('n', '<Space>ca', "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+    vim.keymap.set('v', '<Space>ca', "<cmd>lua vim.lsp.buf.range_code_action()<cr>", opts)
+    vim.keymap.set('n', '<Space>cr', "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
     vim.keymap.set("n", "[g", "<cmd>lua vim.diagnostic.goto_prev({float=false})<cr>", opts)
     vim.keymap.set("n", "]g", "<cmd>lua vim.diagnostic.goto_next({float=false})<cr>", opts)
 
