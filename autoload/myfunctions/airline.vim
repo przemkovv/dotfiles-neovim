@@ -1,7 +1,7 @@
 
 function! LspError() abort
   let errorCount = 0
-  if luaeval('vim.lsp.buf.server_ready()')
+  if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
     let errorCount = luaeval("vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })")
   endif
   return 'E: '.errorCount
@@ -9,7 +9,7 @@ endfunction
 
 function! LspWarning() abort
   let warningCount = 0
-  if luaeval('vim.lsp.buf.server_ready()')
+  if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
     let warningCount = luaeval("vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })")
   endif
   return 'W: '.warningCount
@@ -17,7 +17,8 @@ endfunction
 
 function! LspStatus() abort
   let sl = ''
-  if luaeval('vim.lsp.buf.server_ready()')
+  if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+  " if luaeval('vim.lsp.get_active_clients({bufno=vim.api.nvim_win_get_buf(0)})')
     let sl.='LSP: on'
   else
     let sl.='LSP: off'
@@ -29,8 +30,8 @@ function! myfunctions#airline#AirlineInit()
   call airline#parts#define_function('nvim-lsp-status', 'LspStatus')
   " call airline#parts#define_function('nvim-lsp-error', 'LspError')
   " call airline#parts#define_function('nvim-lsp-warning', 'LspWarning')
-  call airline#parts#define_condition('nvim-lsp-warning',  "luaeval('vim.lsp.buf.server_ready()')")
-  call airline#parts#define_condition('nvim-lsp-error',  "luaeval('vim.lsp.buf.server_ready()')")
+  call airline#parts#define_condition('nvim-lsp-warning',  "luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')")
+  call airline#parts#define_condition('nvim-lsp-error',  "luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')")
 
   call airline#parts#define_raw('file2', "%#User1#%t %m")
   call airline#parts#define_raw('path2', "%{expand('%:h')}/")

@@ -29,8 +29,15 @@ local function viewsettings_AutoRestoreWinView()
 
 end
 
+local function lsp_status()
+  local buf = tostring(vim.fn.bufnr("%"))
+  return vim.lsp.get_active_clients({bufno=buf})
+end
+
+
 return {
   auto_save_win_view = viewsettings_AutoSaveWinView,
   auto_restore_win_view = viewsettings_AutoRestoreWinView,
-  win_get_var = win_get_var
+  win_get_var = win_get_var,
+  lsp_status = lsp_status
 }

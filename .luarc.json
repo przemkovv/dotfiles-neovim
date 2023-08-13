@@ -3,5 +3,6 @@
     "Lua.diagnostics.globals": [
         "vim",
         "signature_help_window_opened"
-    ]
+    ],
+    "workspace.checkThirdParty": false
 }
