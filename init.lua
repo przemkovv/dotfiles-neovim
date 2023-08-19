@@ -49,10 +49,6 @@ require('packer').startup(function(use)
     requires = { { 'nvim-lua/plenary.nvim' } }
   }
   use { 'nvim-telescope/telescope-ui-select.nvim' }
-  use {
-    'weilbith/nvim-code-action-menu',
-    cmd = 'CodeActionMenu', opt = false
-  }
   use "ahmedkhalf/project.nvim"
 
   use({
@@ -69,6 +65,7 @@ require('packer').startup(function(use)
   use { 'nvim-telescope/telescope-fzf-native.nvim',
     run =
     'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+
   use 'onsails/lspkind.nvim'
   use 'kyazdani42/nvim-web-devicons'
   use { 'nvim-tree/nvim-tree.lua',
@@ -110,11 +107,9 @@ require('packer').startup(function(use)
   use 'mhinz/vim-signify'
   use 'MunifTanjim/exrc.nvim'
 
-  -- use 'bronson/vim-trailing-whitespace'
   use 'ryanoasis/vim-devicons'
   use 'scrooloose/nerdcommenter'
   use 'chrisbra/unicode.vim'
-  -- use { 'sbdchd/neoformat', opt = true }
 
   -- " }}}
   -- " Status bar {{{
@@ -193,7 +188,6 @@ require('packer').startup(function(use)
   use { 'bitc/vim-hdevtools', ft = { 'haskell' } }
   -- " }}}
   -- " Rust {{{
-  -- -use 'neovim/nvim-lspconfig'
   use 'simrat39/rust-tools.nvim'
   use 'rust-lang/rust.vim'
   -- " }}}
