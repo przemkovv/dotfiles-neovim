@@ -86,10 +86,17 @@ require('packer').startup(function(use)
     requires = "kyazdani42/nvim-web-devicons",
   }
   use 'tpope/vim-dispatch'
-  use 'Shatur/neovim-tasks'
+  -- use 'Shatur/neovim-tasks'
+  use 'stevearc/overseer.nvim'
+  use 'rcarriga/nvim-notify'
+  use { 'mrded/nvim-lsp-notify' }
+  use { "akinsho/toggleterm.nvim" }
+  use { 'stevearc/dressing.nvim' }
   -- use 'radenling/vim-dispatch-neovim'
   use { 'nvim-treesitter/nvim-treesitter', run = ":TSUpdate" }
   use { 'nvim-treesitter/nvim-treesitter-textobjects' }
+  use { 'nvim-treesitter/nvim-treesitter-context' }
+  use "lukas-reineke/indent-blankline.nvim"
   use { 'm-demare/hlargs.nvim',
     requires = { 'nvim-treesitter/nvim-treesitter' }
   }
@@ -107,11 +114,15 @@ require('packer').startup(function(use)
   use 'ryanoasis/vim-devicons'
   use 'scrooloose/nerdcommenter'
   use 'chrisbra/unicode.vim'
-  use { 'sbdchd/neoformat', opt = true }
+  -- use { 'sbdchd/neoformat', opt = true }
 
   -- " }}}
   -- " Status bar {{{
-  use 'vim-airline/vim-airline'
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+  }
+  use 'nvim-lua/lsp-status.nvim'
   -- " }}}
 
   -- " Search {{{
@@ -224,14 +235,12 @@ vim.api.nvim_create_augroup("SaveWindowGroup", { clear = true })
 vim.api.nvim_create_autocmd("BufLeave", {
   group = "SaveWindowGroup",
   pattern = "*",
-  -- callback = function() vim.fn["myfunctions#viewsettings#AutoSaveWinView"]() end
   callback = require('utils').auto_save_win_view
 })
 vim.api.nvim_create_autocmd("BufEnter", {
   group = "SaveWindowGroup",
   pattern = "*",
   callback = require('utils').auto_restore_win_view
-  -- callback = function() vim.fn["myfunctions#viewsettings#AutoRestoreWinView"]() end
 })
 -- vim.api.nvim_create_augroup("SaveWindowGroup", { clear = true })
 -- }}}
@@ -384,11 +393,12 @@ vim.keymap.set('n', '<space>sv', ':source $MYVIMRC<CR>')
 vim.keymap.set('n', '<Space>ev', ':e  $MYVIMRC<CR>')
 vim.keymap.set('n', '<Space>eev', ':vsplit  $MYVIMRC<CR>')
 vim.keymap.set('n', '<Space>l', ':s/\\.\\ /\\.\\r/g<CR>:nohl<CR>')
-vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr><c-l>',
+vim.keymap.set('n', '<C-L>',
+  ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr>:ClangdSetInlayHints<cr><c-l>',
   { silent = true })
-vim.keymap.set('n', 'mm', ':Task start auto build<CR>', { silent = true })
-vim.keymap.set('n', 'mc', ':Task start auto clean<CR>', { silent = true })
-vim.keymap.set('n', 'mC', ':Task start auto configure<CR>', { silent = true })
+-- vim.keymap.set('n', 'mm', ':Task start auto build<CR>', { silent = true })
+-- vim.keymap.set('n', 'mc', ':Task start auto clean<CR>', { silent = true })
+-- vim.keymap.set('n', 'mC', ':Task start auto configure<CR>', { silent = true })
 -- vim.keymap.set('n', 'mc', ':Make "%:p^"<CR>', { silent = true })
 vim.keymap.set('n', 'mt', ':Make check<CR>', { silent = true })
 
@@ -446,9 +456,10 @@ vim.keymap.set('', '<space><space><bs>', ':bdelete!<CR>', { silent = true })
 vim.keymap.set('n', '<space>1', ':NvimTreeToggle<CR>', { silent = true })
 vim.keymap.set('n', '<space>3', ':Vista!!<CR>', { silent = true })
 vim.keymap.set('n', '<space>4', ':TroubleToggle workspace_diagnostics<CR>', { silent = true })
--- vim.keymap.set('n', ']w', '<cmd>lua require("trouble").next({skip_groups = true, jump = true})<CR>', { silent = true })
--- vim.keymap.set('n', '[w', '<cmd>lua require("trouble").previous({skip_groups = true, jump = true})<CR>',
--- { silent = true })
+vim.keymap.set('n', '<space>5', ':TroubleToggle document_diagnostics<CR>', { silent = true })
+vim.keymap.set('n', ']w', '<cmd>lua require("trouble").next({skip_groups = true, jump = true})<CR>', { silent = true })
+vim.keymap.set('n', '[w', '<cmd>lua require("trouble").previous({skip_groups = true, jump = true})<CR>',
+  { silent = true })
 vim.keymap.set('n', '<space>2', ':UndotreeToggle<CR>', { silent = true })
 vim.keymap.set('n', '<F12>', ':set invpaste paste?<CR>', { silent = false })
 vim.keymap.set('i', '<F12>', '<C-O>:set invpaste paste?<CR>', { silent = false })
@@ -525,6 +536,14 @@ vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 
 -- " Filetype-specific ------------------------------------------------------- {{{
 
+-- " Shaders {{{
+vim.filetype.add({
+  extension = {
+    glsl = 'glsl',
+    hlsl = 'hlsl',
+  }
+})
+-- }}}
 -- " QuickFix {{{
 
 vim.api.nvim_create_augroup("ft_quickfix", { clear = true })
@@ -533,8 +552,8 @@ vim.api.nvim_create_autocmd("FileType",
     group = "ft_quickfix",
     pattern = "qf",
     callback = function()
-      vim.cmd [[wincmd J]]
-      vim.cmd [[resize 10]]
+      vim.cmd [[wincmd L]]
+      -- vim.cmd [[resize 10]]
       vim.cmd [[setlocal colorcolumn=0 nolist nocursorline nowrap tw=0]]
     end
   })
@@ -584,60 +603,83 @@ vim.g.NERDCreateDefaultMappings = 0
 vim.keymap.set({ 'n', 'v' }, '<Space>cc', '<Plug>NERDCommenterComment', { silent = false })
 vim.keymap.set({ 'n', 'v' }, '<Space>cu', '<Plug>NERDCommenterUncomment', { silent = false })
 -- " }}}
--- " airline {{{
-vim.g.airline_powerline_fonts = 1
-vim.g['airline#extensions#tabline#enabled'] = 0
-vim.g['airline#extensions#tabline#show_buffers'] = 0
+-- {{{ lualine
 
-vim.g['airline#extensions#vimtex#enabled'] = 1
+local LspStatus = function()
+  if not vim.tbl_isempty(vim.lsp.buf_get_clients(0)) then
+    return 'LSP'
+  else
+    return 'LSP'
+  end
+end
+local IsLspOn = function()
+  return not vim.tbl_isempty(vim.lsp.buf_get_clients(0))
+end
 
-vim.g['airline#extensions#branch#empty_message'] = "No SCM"
-vim.g['airline#extensions#tabline#tab_nr_type'] = 1
-vim.g['airline#extensions#hunks#enabled'] = 0
-vim.g['airline#extensions#branch#enabled'] = 0
-vim.g.airline_inactive_collapse = 1
-vim.g.airline_detect_modified = 0
+local custom_powerline_dark = require 'lualine.themes.powerline_dark'
+custom_powerline_dark.inactive.a.fg = custom_powerline_dark.normal.c.fg
+custom_powerline_dark.inactive.b.fg = custom_powerline_dark.normal.c.fg
+custom_powerline_dark.inactive.c.fg = custom_powerline_dark.normal.c.fg
 
-vim.g.airline_left_sep = ''
-vim.g.airline_left_alt_sep = ''
-vim.g.airline_right_sep = ''
-vim.g.airline_right_alt_sep = ''
+require('lualine').setup({
+  options = {
+    icons_enabled = true,
+    theme = custom_powerline_dark,
+    -- component_separators = { left = '', right = '' },
+    -- section_separators = { left = '', right = '' },
+    component_separators = { left = '', right = '' },
+    section_separators = { left = '', right = '' },
+    disabled_filetypes = {
+      statusline = {},
+      winbar = {},
+    },
+    ignore_focus = {},
+    always_divide_middle = true,
+    globalstatus = false,
+    refresh = {
+      statusline = 1000,
+      tabline = 1000,
+      winbar = 1000,
+    }
+  },
+  sections = {
+    lualine_a = { { 'mode', fmt = function(str) return str:sub(1, 1) end } },
 
-vim.g['airline#extensions#tabline#left_sep'] = ''
-vim.g['airline#extensions#tabline#left_alt_sep'] = ''
-vim.g['airline#extensions#tabline#right_sep'] = ''
-vim.g['airline#extensions#tabline#right_alt_sep'] = ''
+    lualine_b = { 'branch', 'diff' },
+    lualine_c = { { 'filename', path = 1 } },
+    lualine_x = { 'filetype' },
+    lualine_y = { 'encoding', 'fileformat' },
+    lualine_z = { {
+      LspStatus,
+      color = function(section)
+        return { gui = IsLspOn() and 'bold' or 'strikethrough' }
+      end,
+    },
+      'progress',
+      'location',
+      {
+        'diagnostics',
+        colored = false,
+        sources = {
+          'nvim_diagnostic',
+        }
+      } }
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = { 'filename' },
+    lualine_x = { 'filetype' },
+    lualine_y = { 'encoding', 'fileformat' },
+    lualine_z = { LspStatus, 'progress', 'location' }
+  },
+  tabline = {},
+  winbar = {},
+  inactive_winbar = {},
+  extensions = { 'quickfix', 'nvim-tree', 'overseer', 'trouble', 'toggleterm', 'man', 'fugitive', }
 
-vim.g['airline#extensions#whitespace#trailing_format'] = 'tr[%s]'
-vim.g['airline#extensions#whitespace#mixed_indent_format'] = 'mi[%s]'
-vim.g['airline#extensions#whitespace#long_format'] = 'long[%s]'
-vim.g['airline#extensions#whitespace#mixed_indent_file_format'] = 'mi[%s]'
-
-vim.g.airline_mode_map = {
-  ['__'] = '-',
-  ['n']  = 'N',
-  ['i']  = 'I',
-  ['R']  = 'R',
-  ['c']  = 'C',
-  ['v']  = 'V',
-  ['V']  = 'V',
-  ['']  = 'V',
-  ['s']  = 'S',
-  ['S']  = 'S',
-  ['']  = 'S',
-}
-local airline_group = vim.api.nvim_create_augroup("Airline", { clear = true })
-vim.api.nvim_create_autocmd("User",
-  {
-    group = airline_group,
-    pattern = "AirlineAfterInit",
-    callback = function()
-      vim.fn["myfunctions#airline#AirlineInit"]()
-    end
-  })
-
-
--- "}}}
+})
+-- }}}
 -- Hop {{{
 -- require 'hop'.setup({
 -- keys = 'etovxqpdygfblzhckisuran',
@@ -869,6 +911,9 @@ require 'lspconfig'.marksman.setup {
 require('lspconfig').rust_analyzer.setup {
   capabilities = capabilities
 }
+require 'lspconfig'.glslls.setup {
+  capabilities = capabilities
+}
 local clangd_attach_hints = function(client)
   require("clangd_extensions.inlay_hints").setup_autocmd()
   require("clangd_extensions.inlay_hints").set_inlay_hints()
@@ -947,6 +992,24 @@ rt.setup({
 -- "
 -- " }}}
 -- Treesitter {{{{
+require("indent_blankline").setup {
+  show_current_context = true,
+  show_current_context_start = true,
+}
+require 'treesitter-context'.setup {
+  enable = true,            -- Enable this plugin (Can be enabled/disabled later via commands)
+  max_lines = 0,            -- How many lines the window should span. Values <= 0 mean no limit.
+  min_window_height = 0,    -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+  line_numbers = true,
+  multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
+  trim_scope = 'outer',     -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+  mode = 'topline',         -- Line used to calculate context. Choices: 'cursor', 'topline'
+  -- Separator between context and content. Should be a single character string, like '-'.
+  -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+  separator = nil,
+  zindex = 20,     -- The Z-index of the context window
+  on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+}
 require('nvim-treesitter.configs').setup({
   modules = {},
   highlight = {
@@ -968,7 +1031,9 @@ require('nvim-treesitter.configs').setup({
     'toml',
     'markdown',
     'markdown_inline',
-    'vim'
+    'vim',
+    'glsl',
+    'hlsl',
   },
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = true,
@@ -1084,31 +1149,22 @@ require('hlargs').setup()
 -- ]]
 -- })
 
-local Path = require('plenary.path')
-require('tasks').setup({
-  default_params = {
-    -- Default module parameters with which `neovim.json` will be created.
-    cmake = {
-      cmd = 'cmake',                                    -- CMake executable to use, can be changed using `:Task set_module_param cmake cmd`.
-      build_dir = tostring(Path:new('{cwd}', 'build')), -- Build directory. The expressions `{cwd}`, `{os}` and `{build_type}` will be expanded with the corresponding text values. Could be a function that return the path to the build directory.
-      -- build_dir = tostring(Path:new('{cwd}', 'build', '{os}-{build_type}')), -- Build directory. The expressions `{cwd}`, `{os}` and `{build_type}` will be expanded with the corresponding text values. Could be a function that return the path to the build directory.
-      build_type = 'Debug',                             -- Build type, can be changed using `:Task set_module_param cmake build_type`.
-      dap_name = 'lldb',                                -- DAP configuration name from `require('dap').configurations`. If there is no such configuration, a new one with this name as `type` will be created.
-      args = {
-        -- Task default arguments.
-        configure = { '-D', 'CMAKE_TOOLCHAIN_FILE=' .. vim.env.VCPKG_ROOT .. '/scripts/buildsystems/vcpkg.cmake', '-D',
-          'CMAKE_EXPORT_COMPILE_COMMANDS=1', '-G', 'Ninja' },
-      },
-    },
-  },
-  save_before_run = true,      -- If true, all files will be saved before executing a task.
-  params_file = 'neovim.json', -- JSON file to store module and task parameters.
-  quickfix = {
-    pos = 'botright',          -- Default quickfix position.
-    height = 12,               -- Default height.
-  },
-  -- dap_open_command = function() return require('dap').repl.open() end, -- Command to run after starting DAP session. You can set it to `false` if you don't want to open anything or `require('dapui').open` if you are using https://github.com/rcarriga/nvim-dap-ui
+require('overseer').setup()
+require('notify').setup({
+  top_down = false
 })
+vim.notify = require('notify')
+require('lsp-notify').setup({})
+require('dressing').setup()
+require("toggleterm").setup {
+  size = function(term)
+    if term.direction == "horizontal" then
+      return 15
+    elseif term.direction == "vertical" then
+      return vim.o.columns * 0.4
+    end
+  end
+}
 
 require("clangd_extensions").setup {
   -- These apply to the default ClangdSetInlayHints command
@@ -1217,6 +1273,8 @@ function Force_signature_help()
   vim.lsp.buf.signature_help()
 end
 
+vim.keymap.set('n', '<space>=', ':keepjumps normal mzgg=Gg`zzz<CR>')
+
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     local bufnr = args.buf
@@ -1282,11 +1340,21 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set("n", "[g", "<cmd>lua vim.diagnostic.goto_prev({float=false})<cr>", opts)
     vim.keymap.set("n", "]g", "<cmd>lua vim.diagnostic.goto_next({float=false})<cr>", opts)
     vim.keymap.set("n", "<space>dd", "<cmd>lua vim.diagnostic.setqflist()<cr>", opts)
+    vim.keymap.set('n', '\\wa', vim.lsp.buf.add_workspace_folder, opts)
+    vim.keymap.set('n', '\\wr', vim.lsp.buf.remove_workspace_folder, opts)
+    vim.keymap.set('n', '\\wl', function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, opts)
   end,
 })
 
 vim.api.nvim_create_autocmd("LspDetach", {
+  ---@diagnostic disable-next-line: unused-local
   callback = function(args)
+    local bufnr = args.buf
+    local opts = { silent = true, buffer = bufnr }
+    vim.keymap.del('n', '<Space>=', opts)
+    vim.keymap.del('v', '<Space>=', opts)
     -- local client = vim.lsp.get_client_by_id(args.data.client_id)
     -- Do something with the client
     vim.cmd("setlocal tagfunc<")
@@ -1316,6 +1384,8 @@ vim.diagnostic.config({
 vim.keymap.set("n", "<space>L", require("lsp_lines").toggle, { desc = "Toggle lsp_lines" })
 
 -- telescope {{{
+
+
 local themes = require('telescope.themes')
 require('telescope').setup {
 
@@ -1339,11 +1409,7 @@ require('telescope').setup {
     mappings = {
       i = {
         ["<esc>"] = require('telescope.actions').close,
-        -- map actions.which_key to <C-h> (default: <C-/>)
-        -- actions.which_key shows the mappings for your picker,
-        -- e.g. git_{create, delete, ...}_branch for the git_branches picker
-        -- ["<C-h>"] = "which_key"
-      }
+      },
     }
   },
   pickers = {
@@ -1396,7 +1462,8 @@ require('telescope').setup {
 }
 require('telescope').load_extension('fzf')
 require('telescope').load_extension('projects')
-require("telescope").load_extension("ui-select")
+-- require("telescope").load_extension("ui-select")
+require("telescope").load_extension("notify")
 
 local opts = { remap = false }
 vim.keymap.set('n', '<Space>r', '<cmd>Telescope live_grep<CR>', opts)
@@ -1421,6 +1488,8 @@ vim.keymap.set('n', '<Space>b', '<cmd>Telescope buffers<CR>', opts)
 vim.keymap.set('n', '<Space>t', '<cmd>Telescope tags<CR>', opts)
 vim.keymap.set('n', '<Space>T', '<cmd>Telescope current_buffer_tags<CR>', opts)
 vim.keymap.set('n', '<Space>O', '<cmd>Telescope projects<CR>', opts)
+vim.keymap.set('n', '<Space>o', '<cmd>OverseerToggle<CR>', opts)
+vim.keymap.set('n', '<Space>a', '<cmd>ToggleTerm<CR>', opts)
 vim.keymap.set('n', '\\c', '<cmd>Telescope colorscheme<CR>', opts)
 
 local trouble = require("trouble.providers.telescope")
