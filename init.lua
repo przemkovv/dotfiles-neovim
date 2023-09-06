@@ -4,6 +4,7 @@ vim.g.loaded = 1
 vim.g.loaded_netrwPlugin = 1
 
 vim.api.nvim_command('filetype on')
+vim.opt.runtimepath:append("h:/dev/tools/Neovim/parsers")
 
 vim.api.nvim_create_augroup("GoToLastPosition", { clear = true })
 vim.api.nvim_create_autocmd({ 'BufRead', 'BufReadPost' }, {
@@ -122,6 +123,7 @@ require('packer').startup(function(use)
 
   -- " Search {{{
   -- use 'phaazon/hop.nvim'
+  use 'ggandor/lightspeed.nvim'
   -- " }}}
 
   -- " Text Objects {{{
@@ -167,6 +169,7 @@ require('packer').startup(function(use)
   use 'diepm/vim-rest-console'
   use 'vim-scripts/DoxygenToolkit.vim'
   use 'norcalli/nvim-colorizer.lua'
+  use { "johmsalas/text-case.nvim" }
   -- " }}}
 
   -- " Filetype specific {{{
@@ -339,7 +342,17 @@ vim.opt.cursorline = false
 -- " Number line settings {{{
 local number_lines_id = vim.api.nvim_create_augroup("NumberLines", { clear = true })
 local set_norelativenumbers = function() vim.opt.relativenumber = false end
-local set_relativenumbers = function() vim.opt.relativenumber = true end
+local set_relativenumbers = function()
+  if vim.bo.filetype == 'NvimTree'
+      or vim.bo.filetype == 'help'
+      or vim.bo.filetype == 'undotree'
+      or vim.bo.filetype == 'vista_kind'
+  then
+    vim.opt.relativenumber = false
+  else
+    vim.opt.relativenumber = true
+  end
+end
 vim.api.nvim_create_autocmd("FocusLost",
   {
     group = number_lines_id, pattern = "*", callback = set_norelativenumbers
@@ -395,6 +408,9 @@ vim.keymap.set('n', '<C-L>',
 -- vim.keymap.set('n', 'mC', ':Task start auto configure<CR>', { silent = true })
 -- vim.keymap.set('n', 'mc', ':Make "%:p^"<CR>', { silent = true })
 vim.keymap.set('n', 'mt', ':Make check<CR>', { silent = true })
+
+vim.keymap.set({ 'n', 'i' }, '<C-PageDown>', '<Plug>(unimpaired-cnext)', { silent = true })
+vim.keymap.set({ 'n', 'i' }, '<C-PageUp>', '<Plug>(unimpaired-cprevious)', { silent = true })
 
 -- " reindent
 -- vim.keymap.set('n', '<space>=', ':keepjumps normal mzgg=Gg`zzz<CR>')
@@ -455,8 +471,8 @@ vim.keymap.set('n', ']w', '<cmd>lua require("trouble").next({skip_groups = true,
 vim.keymap.set('n', '[w', '<cmd>lua require("trouble").previous({skip_groups = true, jump = true})<CR>',
   { silent = true })
 vim.keymap.set('n', '<space>2', ':UndotreeToggle<CR>', { silent = true })
-vim.keymap.set('n', '<F12>', ':set invpaste paste?<CR>', { silent = false })
-vim.keymap.set('i', '<F12>', '<C-O>:set invpaste paste?<CR>', { silent = false })
+-- vim.keymap.set('n', '<F12>', ':set invpaste paste?<CR>', { silent = false })
+-- vim.keymap.set('i', '<F12>', '<C-O>:set invpaste paste?<CR>', { silent = false })
 -- vim.keymap.set("n", "<leader>xx", ":TroubleToggle<cr>",
 -- {silent = true, noremap = true}
 -- )
@@ -681,14 +697,38 @@ require('lualine').setup({
 -- uppercase_labels = true,
 
 -- })
+-- lightspeed {{{
+require'lightspeed'.setup {
+  ignore_case = false,
+  exit_after_idle_msecs = { unlabeled = nil, labeled = nil },
+  --- s/x ---
+  jump_to_unique_chars = { safety_timeout = 400 },
+  match_only_the_start_of_same_char_seqs = true,
+  force_beacons_into_match_width = false,
+  -- Display characters in a custom way in the highlighted matches.
+  substitute_chars = { ['\r'] = '¬', },
+  -- Leaving the appropriate list empty effectively disables "smart" mode,
+  -- and forces auto-jump to be on or off.
+  -- safe_labels = { . . . },
+  -- labels = { . . . },
+  -- These keys are captured directly by the plugin at runtime.
+  special_keys = {
+    next_match_group = '<space>',
+    prev_match_group = '<tab>',
+  },
+  --- f/t ---
+  limit_ft_matches = 4,
+  repeat_ft_with_target_char = false,
+}
+-- }}}
 
 -- normal mode (sneak-like)
-vim.api.nvim_set_keymap("n", "s", "<cmd>HopChar1AC<CR>", { noremap = false })
-vim.api.nvim_set_keymap("n", "S", "<cmd>HopChar1BC<CR>", { noremap = false })
+-- vim.api.nvim_set_keymap("n", "s", "<cmd>HopChar1AC<CR>", { noremap = false })
+-- vim.api.nvim_set_keymap("n", "S", "<cmd>HopChar1BC<CR>", { noremap = false })
 
--- visual mode (sneak-like)
-vim.api.nvim_set_keymap("v", "s", "<cmd>HopChar1AC<CR>", { noremap = false })
-vim.api.nvim_set_keymap("v", "S", "<cmd>HopChar1BC<CR>", { noremap = false })
+-- -- visual mode (sneak-like)
+-- vim.api.nvim_set_keymap("v", "s", "<cmd>HopChar1AC<CR>", { noremap = false })
+-- vim.api.nvim_set_keymap("v", "S", "<cmd>HopChar1BC<CR>", { noremap = false })
 
 -- " Secure Modelines {{{
 vim.g.secure_modelines_allowed_items = {
@@ -722,9 +762,9 @@ require("exrc").setup({
 })
 -- }}}
 -- " Fugitive {{{
-vim.keymap.set('n', '<Space>gs', ':Git<CR>', { remap = false })
-vim.keymap.set('n', '<Space>gc', ':Git commit<CR>', { remap = false })
-vim.keymap.set('n', '<Space>gl', ':Gclog!<CR>', { remap = false })
+-- vim.keymap.set('n', '<Space>gs', ':Git<CR>', { remap = false })
+-- vim.keymap.set('n', '<Space>gc', ':Git commit<CR>', { remap = false })
+-- vim.keymap.set('n', '<Space>gl', ':Gclog!<CR>', { remap = false })
 -- " }}}
 -- " fzf {{{
 -- "
@@ -909,20 +949,39 @@ require 'lspconfig'.glslls.setup {
   capabilities = capabilities
 }
 local clangd_attach_hints = function(client)
-  require("clangd_extensions.inlay_hints").setup_autocmd()
-  require("clangd_extensions.inlay_hints").set_inlay_hints()
+  -- require("clangd_extensions.inlay_hints").setup_autocmd()
+  -- require("clangd_extensions.inlay_hints").set_inlay_hints()
+end
+
+local get_clangd_path = function()
+  if vim.fn.has('windows') then
+    return 'clangd'
+  else
+    return "/opt/clang/latest/bin/clangd"
+  end
+end
+local get_clangd_query_driver = function()
+  if vim.fn.has('windows') then
+    return '--query-driver=clang-cl.exe'
+  else
+    return "--query-driver=clang"
+  end
 end
 
 require("lspconfig").clangd.setup {
   cmd = {
     -- see clangd --help-hidden
-    "/opt/clang/latest/bin/clangd",
+    get_clangd_path(),
     -- by default, clang-tidy use -checks=clang-diagnostic-*,clang-analyzer-*
     -- to add more checks, create .clang-tidy file in the root directory
     -- and add Checks key, see https://clang.llvm.org/extra/clang-tidy/
+    "--background-index",
+    "--background-index-priority=low",
     "--clang-tidy",
+    "--pch-storage=memory",
     "--completion-style=bundled",
     "--header-insertion=iwyu",
+    get_clangd_query_driver()
   },
   on_attach = clangd_attach_hints,
   init_options = {
@@ -947,7 +1006,8 @@ require('lspconfig').vimls.setup {
 require('lspconfig').cmake.setup {
   capabilities = capabilities,
   init_options = {
-    buildDirecotry = "build/"
+    buildDirectory = "build/",
+    root_pattern = { 'CMakePresets.json', 'CTestConfig.cmake', '.git', 'build', 'cmake', 'out' }
   }
 }
 require 'lspconfig'.lua_ls.setup {
@@ -975,7 +1035,18 @@ require 'lspconfig'.lua_ls.setup {
 }
 
 -- " lua require('lsp_settings').rust()
--- " lua require('lsp_settings').python()
+require 'lspconfig'.pylsp.setup {
+  settings = {
+    pylsp = {
+      plugins = {
+        pycodestyle = {
+          ignore = { 'W391' },
+          maxLineLength = 100
+        }
+      }
+    }
+  }
+}
 -- " lua require('lsp_settings').viml()
 vim.keymap.set('i', '<c-x><c-o>', require('cmp').complete, { remap = false })
 local rt = require("rust-tools")
@@ -987,11 +1058,14 @@ rt.setup({
 -- " }}}
 -- Treesitter {{{{
 require("indent_blankline").setup {
-  show_current_context = true,
-  show_current_context_start = true,
+  show_current_context = false,
+  show_current_context_start = false,
 }
+vim.g.indent_blankline_use_treesitter = true
+vim.g.indent_blankline_enabled = false
+
 require 'treesitter-context'.setup {
-  enable = true,            -- Enable this plugin (Can be enabled/disabled later via commands)
+  enable = false,            -- Enable this plugin (Can be enabled/disabled later via commands)
   max_lines = 0,            -- How many lines the window should span. Values <= 0 mean no limit.
   min_window_height = 0,    -- Minimum editor window height to enable context. Values <= 0 mean no limit.
   line_numbers = true,
@@ -1004,8 +1078,11 @@ require 'treesitter-context'.setup {
   zindex = 20,     -- The Z-index of the context window
   on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
 }
+require('nvim-treesitter.install').compilers = { "clang" }
 require('nvim-treesitter.configs').setup({
+  parser_install_dir = "h:/dev/tools/Neovim/parsers",
   modules = {},
+
   highlight = {
     enable = true,
   },
@@ -1105,7 +1182,7 @@ require("nvim-tree").setup({
   hijack_cursor = true,
 
   view = {
-    adaptive_size = true,
+    width = 35,
     mappings = {
       list = {
         { key = "u", action = "dir_up" },
@@ -1163,15 +1240,15 @@ require("toggleterm").setup {
 require("clangd_extensions").setup {
   -- These apply to the default ClangdSetInlayHints command
   inlay_hints = {
-    inline = vim.fn.has("nvim-0.10") == 1,
+    inline = 0, --vim.fn.has("nvim-0.10") == 1,
     -- Only show inlay hints for the current line
-    only_current_line = false,
+    only_current_line = true,
     -- Event which triggers a refersh of the inlay hints.
     -- You can make this "CursorMoved" or "CursorMoved,CursorMovedI" but
     -- not that this may cause  higher CPU usage.
     -- This option is only respected when only_current_line and
     -- autoSetHints both are true.
-    only_current_line_autocmd = "CursorHold",
+    only_current_line_autocmd = { "CursorMoved", "CursorMovedI", "CursorHold" },
     -- whether to show parameter hints with the inlay hints or not
     show_parameter_hints = true,
     -- prefix for parameter hints
@@ -1325,10 +1402,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('v', '<Space>=', "<cmd>lua vim.lsp.buf.format()<cr>", opts)
     vim.keymap.set('v', '<Space>gf', "<cmd>lua vim.lsp.formatexpr()<cr>", opts)
     vim.keymap.set('n', '<Space>k', "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-    vim.keymap.set('n', '<Space>gt', "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-    vim.keymap.set('n', '<Space>gr', "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-    vim.keymap.set('n', '<Space>ga', "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>", opts)
-    vim.keymap.set('n', '<Space>gA', "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>", opts)
+    -- vim.keymap.set('n', '<Space>gt', "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
+    vim.keymap.set('n', '<Space>gt', "<cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>", opts)
+    -- vim.keymap.set('n', '<Space>gr', "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+    vim.keymap.set('n', '<Space>gr', "<cmd>lua require('telescope.builtin').lsp_references()<cr>", opts)
+    vim.keymap.set('n', '<Space>gA', "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>", opts)
+    vim.keymap.set('n', '<Space>ga', "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>", opts)
+    vim.keymap.set('n', '<F12>', "<cmd>lua require('telescope.builtin').lsp_incoming_calls()<cr>", opts)
     vim.keymap.set('n', '<Space>ca', "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
     vim.keymap.set('v', '<Space>ca', "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
     vim.keymap.set('n', '<Space>cr', "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
@@ -1371,8 +1451,9 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
 require("lsp_lines").setup()
 
 vim.diagnostic.config({
-  virtual_text = false,
-  virtual_lines = true,
+  signs = false,
+  virtual_text = true,
+  virtual_lines = false,
   float = { border = "single" }
 }
 )
@@ -1480,7 +1561,7 @@ vim.keymap.set('n', '<Space>mx', "<cmd>lua require('telescope.builtin').keymaps{
 vim.keymap.set('n', '<Space>mi', "<cmd>lua require('telescope.builtin').keymaps{modes={'i'}}<cr>", opts)
 vim.keymap.set('n', '<Space>mo', "<cmd>lua require('telescope.builtin').keymaps{modes={'o'}}<cr>", opts)
 vim.keymap.set('n', '<Space>b', '<cmd>Telescope buffers<CR>', opts)
-vim.keymap.set('n', '<Space>t', '<cmd>Telescope tags<CR>', opts)
+vim.keymap.set('n', '<Space>t', '<cmd>Telescope<CR>', opts)
 vim.keymap.set('n', '<Space>T', '<cmd>Telescope current_buffer_tags<CR>', opts)
 vim.keymap.set('n', '<Space>O', '<cmd>Telescope projects<CR>', opts)
 vim.keymap.set('n', '<Space>o', '<cmd>OverseerToggle<CR>', opts)
@@ -1503,6 +1584,17 @@ telescope.setup {
 
 
 -- }}}
+--
+-- textcase {{{
+
+require('textcase').setup {}
+require("telescope").load_extension('textcase')
+vim.api.nvim_set_keymap('n', 'ga.', '<cmd>TextCaseOpenTelescope<CR>', { desc = "Telescope" })
+vim.api.nvim_set_keymap('v', 'ga.', "<cmd>TextCaseOpenTelescope<CR>", { desc = "Telescope" })
+vim.api.nvim_set_keymap('n', 'gaa', "<cmd>TextCaseOpenTelescopeQuickChange<CR>", { desc = "Telescope Quick Change" })
+vim.api.nvim_set_keymap('n', 'gai', "<cmd>TextCaseOpenTelescopeLSPChange<CR>", { desc = "Telescope LSP Change" })
+
+-- }}}
 
 require 'colorizer'.setup()
-require 'mini.jump'.setup()
+-- require 'mini.jump'.setup()
