@@ -94,6 +94,7 @@
         "C:\\Users\\Przemyslaw Walkowiak\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\vim-moonfly-colors\\after",
         "C:\\Users\\Przemyslaw Walkowiak\\AppData\\Local\\nvim-data\\site\\pack\\packer\\start\\vim-vsnip-integ\\after",
         "C:\\Users\\Przemyslaw Walkowiak\\AppData\\Local\\nvim\\after",
-        "h:\\dev\\tools\\Neovim\\parsers"
+        "h:\\dev\\tools\\Neovim\\parsers",
+        "${3rd}/luassert/library"
     ]
 }
