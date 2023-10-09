@@ -3,8 +3,14 @@ vim.opt.termguicolors = true
 vim.g.loaded = 1
 vim.g.loaded_netrwPlugin = 1
 
+if vim.fn.hostname() == 'MA-605' then
+  vim.g.ts_parsers_path ="d:/dev/tools/nvim-win64/parsers"
+else
+  vim.g.ts_parsers_path ="h:/dev/tools/Neovim/parsers"
+end
+
 vim.api.nvim_command('filetype on')
-vim.opt.runtimepath:append("h:/dev/tools/Neovim/parsers")
+vim.opt.runtimepath:append(vim.g.ts_parsers_path)
 
 vim.api.nvim_create_augroup("GoToLastPosition", { clear = true })
 vim.api.nvim_create_autocmd({ 'BufRead', 'BufReadPost' }, {
@@ -897,7 +903,7 @@ require 'treesitter-context'.setup {
 }
 require('nvim-treesitter.install').compilers = { "clang" }
 require('nvim-treesitter.configs').setup({
-  parser_install_dir = "h:/dev/tools/Neovim/parsers",
+  parser_install_dir = vim.g.ts_parsers_path,
   modules = {},
 
   highlight = {
