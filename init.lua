@@ -1,3 +1,4 @@
+vim.loader.enable()
 vim.opt.termguicolors = true
 
 vim.g.loaded = 1
@@ -139,6 +140,7 @@ vim.opt.numberwidth = 5
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
+vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
 
 -- " Number line settings {{{
 local number_lines_id = vim.api.nvim_create_augroup("NumberLines", { clear = true })
@@ -753,7 +755,7 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local capabilitiesClangd = vim.deepcopy(capabilities)
 capabilitiesClangd.textDocument.completion.completionItem.snippetSupport = true
 
--- vim.lsp.set_log_level("OFF")
+vim.lsp.set_log_level("OFF")
 
 require 'lspconfig'.marksman.setup {
   capabilities = capabilities
@@ -876,7 +878,7 @@ vim.keymap.set('i', '<c-x><c-o>', require('cmp').complete, { remap = false })
 require("ibl").setup {
   enabled = true,
   debounce = 200,
-  scope = { },
+  scope = {},
   indent = { char = '▏' },
 }
 
@@ -906,6 +908,7 @@ require('nvim-treesitter.configs').setup({
   },
   ensure_installed = {
     'javascript',
+    'bash',
     'typescript',
     'tsx',
     'css',
@@ -925,6 +928,7 @@ require('nvim-treesitter.configs').setup({
     'hlsl',
     'vimdoc',
     'query',
+    'rst',
   },
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
@@ -1028,6 +1032,16 @@ end, 1)
 
 -- }}}
 require('hlargs').setup()
+
+require('lspsaga').setup({
+
+  lightbulb = {
+    sign = false,
+  },
+  outline = {
+    layout = "float",
+  }
+})
 
 vim.api.nvim_create_augroup("LspAttach_hlargs", { clear = true })
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -1256,6 +1270,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('n', '<Space>k', "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
     vim.keymap.set('n', '<Space>gt', "<cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>", opts)
     vim.keymap.set('n', '<Space>gr', "<cmd>lua require('telescope.builtin').lsp_references()<cr>", opts)
+    vim.keymap.set('n', '<Space>gs', "<cmd>Lspsaga outline<cr>", opts)
     vim.keymap.set('n', '<Space>T', "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>", opts)
     vim.keymap.set('n', '<Space>t', "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>", opts2)
     vim.keymap.set('n', '<F12>', "<cmd>lua require('telescope.builtin').lsp_incoming_calls()<cr>", opts)

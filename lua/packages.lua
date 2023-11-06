@@ -131,6 +131,7 @@ local packages_install = function()
     use { 'hrsh7th/cmp-nvim-lsp' }
     use { 'hrsh7th/cmp-nvim-lua' }
     use { 'hrsh7th/cmp-nvim-lsp-signature-help' }
+    use { 'nvimdev/lspsaga.nvim'}
 
     use 'Shougo/context_filetype.vim'
 
