@@ -48,16 +48,47 @@ local packages_install = function()
 
     use 'onsails/lspkind.nvim'
     use 'kyazdani42/nvim-web-devicons'
-    use { 'nvim-tree/nvim-tree.lua',
+    -- use { 'nvim-tree/nvim-tree.lua',
+      -- requires = {
+        -- 'nvim-tree/nvim-web-devicons', -- optional, for file icons
+      -- },
+      -- tag = 'nightly'                  -- optional, updated every week. (see issue #1193)
+    -- }
+    use {
+      "stevearc/oil.nvim",
+    }
+    use {
+      "nvim-neo-tree/neo-tree.nvim",
       requires = {
-        'nvim-tree/nvim-web-devicons', -- optional, for file icons
-      },
-      tag = 'nightly'                  -- optional, updated every week. (see issue #1193)
+        "nvim-lua/plenary.nvim",
+        "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+        "MunifTanjim/nui.nvim",
+        -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+        {
+          's1n7ax/nvim-window-picker',
+          version = '2.*',
+          config = function()
+            require 'window-picker'.setup({
+              filter_rules = {
+                include_current_win = false,
+                autoselect_one = true,
+                -- filter using buffer options
+                bo = {
+                  -- if the file type is one of following, the window will be ignored
+                  filetype = { 'neo-tree', "neo-tree-popup", "notify" },
+                  -- if the buffer type is one of following, the window will be ignored
+                  buftype = { 'terminal', "quickfix" },
+                },
+              },
+            })
+          end,
+        },
+      }
     }
     --" }}}
 
     -- " To sort {{{
-    use 'mbbill/undotree'
+    -- use 'mbbill/undotree'
     use {
       "folke/trouble.nvim",
       requires = "kyazdani42/nvim-web-devicons",
@@ -115,7 +146,7 @@ local packages_install = function()
     -- " }}}
 
     -- Tags {{{
-    use 'liuchengxu/vista.vim'
+    -- use 'liuchengxu/vista.vim'
     -- }}}
     -- Completion {{{
     use 'p00f/clangd_extensions.nvim'
@@ -126,12 +157,13 @@ local packages_install = function()
     use { 'hrsh7th/vim-vsnip-integ' }
     use { 'hrsh7th/cmp-buffer' }
     use { 'hrsh7th/cmp-path' }
+    use { 'L3MON4D3/LuaSnip' }
     use { 'saadparwaiz1/cmp_luasnip' }
     use 'hrsh7th/cmp-cmdline'
     use { 'hrsh7th/cmp-nvim-lsp' }
     use { 'hrsh7th/cmp-nvim-lua' }
     use { 'hrsh7th/cmp-nvim-lsp-signature-help' }
-    use { 'nvimdev/lspsaga.nvim'}
+    use { 'nvimdev/lspsaga.nvim' }
 
     use 'Shougo/context_filetype.vim'
 
@@ -153,6 +185,7 @@ local packages_install = function()
     -- " }}}
 
     -- " Filetype specific {{{
+    use { 'sbdchd/neoformat' }
     use { 'lervag/vimtex', ft = { 'tex' } }
     use { 'KeitaNakamura/tex-conceal.vim', ft = { 'tex' } }
     use 'wannesm/wmgraphviz.vim'
