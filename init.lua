@@ -611,8 +611,8 @@ local get_clangd_query_driver = function()
     "g++",
     "arm-none-eabi-g++",
     "arm-none-eabi-gcc",
-    os.getenv("ARM_GCC_PATH") .. "arm-none-eabi-g++",
-    os.getenv("ARM_GCC_PATH") .. "arm-none-eabi-g++"
+    -- os.getenv("ARM_GCC_PATH") .. "arm-none-eabi-g++",
+    -- os.getenv("ARM_GCC_PATH") .. "arm-none-eabi-g++"
   }
   return "--query-driver=" .. table.concat(drivers, ",")
 end
