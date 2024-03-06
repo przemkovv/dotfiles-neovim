@@ -13,10 +13,12 @@ local setup_colors = function()
   vim.g.moonflyWinSeparator = 2
 
 
+  --vim.cmd [[
+--silent! colorscheme evening
+--silent! colorscheme base16-chalk
+--silent! colorscheme moonfly
+--]]
   vim.cmd [[
-silent! colorscheme evening
-silent! colorscheme base16-chalk
-silent! colorscheme moonfly
 silent! colorscheme tokyonight-night
 ]]
 end
