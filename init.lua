@@ -4,12 +4,6 @@ vim.opt.termguicolors = true
 vim.g.loaded = 1
 vim.g.loaded_netrwPlugin = 1
 
-if vim.fn.hostname() == 'MA-605' then
-  vim.g.ts_parsers_path = "d:/dev/tools/nvim-win64/parsers"
-else
-  vim.g.ts_parsers_path = "h:/dev/tools/Neovim/parsers"
-end
-
 vim.api.nvim_command('filetype on')
 -- vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "/parsers/")
 

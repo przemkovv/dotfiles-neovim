@@ -1,19 +1,26 @@
-if vim.fn.hostname() == 'MA-605' then
-  vim.g.ts_parsers_path ="d:/dev/tools/nvim-win64/parsers"
-else
-  vim.g.ts_parsers_path ="h:/dev/tools/Neovim/parsers"
+
+local treesitter_parsers_path = vim.fn.stdpath('data') .. 'parsers/'
+
+if vim.fn.has('win32') then
+  if vim.fn.hostname() == 'MA-605' then
+    treesitter_parsers_path = "d:/dev/tools/nvim-win64/parsers"
+  else
+    treesitter_parsers_path = "h:/dev/tools/Neovim/parsers"
+  end
 end
 
 return {
   {
     'nvim-treesitter/nvim-treesitter',
     build = ":TSUpdate",
+    lazy = true,
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
-      vim.opt.rtp:prepend(vim.g.ts_parsers_path)
+      vim.opt.rtp:prepend(treesitter_parsers_path)
       require('nvim-treesitter.install').compilers = { "clang" }
       require("nvim-treesitter.configs").setup(
         {
-          parser_install_dir = vim.g.ts_parsers_path,
+          parser_install_dir = treesitter_parsers_path,
           modules = {},
 
           highlight = {
@@ -30,6 +37,7 @@ return {
             'lua',
             'cpp',
             'c',
+            'c_sharp',
             'rust',
             'python',
             'ninja',
@@ -100,14 +108,22 @@ return {
           },
 
         })
-    end
+    end,
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+      'nvim-treesitter/nvim-treesitter-context',
+      "lukas-reineke/indent-blankline.nvim",
+    }
   },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
-
+    lazy = true,
+    event = { "BufReadPre", "BufNewFile" },
   },
   {
     'nvim-treesitter/nvim-treesitter-context',
+    lazy = true,
+    event = { "BufReadPre", "BufNewFile" },
     opts = {
       enable = true,            -- Enable this plugin (Can be enabled/disabled later via commands)
       max_lines = 0,            -- How many lines the window should span. Values <= 0 mean no limit.
