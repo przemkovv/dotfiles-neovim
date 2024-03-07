@@ -2,6 +2,7 @@ return {
   'mrded/nvim-lsp-notify',
   'nvim-lua/lsp-status.nvim',
   'neovim/nvim-lspconfig',
+  { "folke/neodev.nvim", enabled = true, opts = {} },
   {
     'nvimdev/lspsaga.nvim',
     opts = {
