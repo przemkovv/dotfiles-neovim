@@ -5,9 +5,9 @@ vim.g.loaded = 1
 vim.g.loaded_netrwPlugin = 1
 
 if vim.fn.hostname() == 'MA-605' then
-  vim.g.ts_parsers_path ="d:/dev/tools/nvim-win64/parsers"
+  vim.g.ts_parsers_path = "d:/dev/tools/nvim-win64/parsers"
 else
-  vim.g.ts_parsers_path ="h:/dev/tools/Neovim/parsers"
+  vim.g.ts_parsers_path = "h:/dev/tools/Neovim/parsers"
 end
 
 vim.api.nvim_command('filetype on')
@@ -19,7 +19,7 @@ vim.g.mapleader = "<Space>"
 vim.g.maplocalleader = "\\"
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
@@ -61,6 +61,16 @@ vim.api.nvim_create_autocmd("BufEnter", {
   pattern = "*",
   callback = require('utils').auto_restore_win_view
 })
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
+
+
 -- vim.api.nvim_create_augroup("SaveWindowGroup", { clear = true })
 -- }}}
 
@@ -69,7 +79,7 @@ vim.opt.showmatch  = true
 vim.opt.ignorecase = true
 vim.opt.smartcase  = true
 vim.opt.incsearch  = true
-vim.opt.inccommand = "nosplit"
+vim.opt.inccommand = "split"
 vim.opt.autowrite  = true
 vim.opt.hidden     = true
 vim.opt.mouse      = "a"
@@ -93,7 +103,7 @@ vim.opt.showmode = true
 vim.opt.wildoptions:append { "pum" }
 vim.opt.wildmenu = true
 vim.opt.laststatus = 2
-vim.opt.scrolloff = 5
+vim.opt.scrolloff = 10
 vim.opt.shortmess = "aOstT"
 vim.opt.sidescrolloff = 5
 vim.opt.shiftround = true
@@ -167,36 +177,19 @@ local set_norelativenumbers = function() vim.opt.relativenumber = false end
 local set_relativenumbers = function()
   if vim.bo.filetype == 'NvimTree'
       or vim.bo.filetype == 'help'
-      or vim.bo.filetype == 'undotree'
-      or vim.bo.filetype == 'vista_kind'
       or vim.bo.filetype == 'neo-tree'
+      or vim.bo.filetype == 'DressingInput'
   then
     vim.opt.relativenumber = false
   else
     vim.opt.relativenumber = true
   end
 end
-vim.api.nvim_create_autocmd("FocusLost",
+vim.api.nvim_create_autocmd({ "FocusLost", "WinLeave", "InsertEnter" },
   {
     group = number_lines_id, pattern = "*", callback = set_norelativenumbers
   })
-vim.api.nvim_create_autocmd("WinLeave",
-  {
-    group = number_lines_id, pattern = "*", callback = set_norelativenumbers
-  })
-vim.api.nvim_create_autocmd("InsertEnter",
-  {
-    group = number_lines_id, pattern = "*", callback = set_norelativenumbers
-  })
-vim.api.nvim_create_autocmd("FocusGained",
-  {
-    group = number_lines_id, pattern = "*", callback = set_relativenumbers
-  })
-vim.api.nvim_create_autocmd("WinEnter",
-  {
-    group = number_lines_id, pattern = "*", callback = set_relativenumbers
-  })
-vim.api.nvim_create_autocmd("InsertLeave",
+vim.api.nvim_create_autocmd({ "FocusGained", "WinEnter", "InsertLeave" },
   {
     group = number_lines_id, pattern = "*", callback = set_relativenumbers
   })
@@ -211,7 +204,7 @@ vim.api.nvim_create_autocmd({ "BufWritePre", "FileWritePre" },
       if vim.bo[event.buf].filetype == 'oil' then
         return
       end
-      local file = vim.loop.fs_realpath(event.match) or event.match
+      local file = vim.uv.fs_realpath(event.match) or event.match
       vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
     end,
   })
@@ -433,19 +426,6 @@ vim.api.nvim_create_autocmd("BufWinEnter",
 
 -- " }}}
 --
-vim.api.nvim_create_user_command("Todo", "call myfunctions#todo#todo()", {})
-
--- " undotree {{{
-vim.g.undotree_WindowLayout = 2
-vim.g.undotree_SplitWidth = 33
--- " }}}
--- " nerdcommenter {{{
-vim.g.NERDSpaceDelims = 1
-vim.g.NERDCreateDefaultMappings = 0
-
-vim.keymap.set({ 'n', 'v' }, '<Space>cc', '<Plug>NERDCommenterComment', { silent = false })
-vim.keymap.set({ 'n', 'v' }, '<Space>cu', '<Plug>NERDCommenterUncomment', { silent = false })
--- " }}}
 
 
 -- " Secure Modelines {{{
@@ -458,13 +438,6 @@ vim.g.secure_modelines_allowed_items = {
 }
 -- " }}}
 -- " Signify {{{
-vim.g.signify_vcs_list = { 'git', 'svn' }
-vim.g.signify_mapping_next_hunk = ']c'
-vim.g.signify_mapping_prev_hunk = '[c'
-vim.keymap.set('n', '<nop>', '<plug>(signify-toggle-highlight)', { remap = true })
-vim.keymap.set('n', '<nop>', '<plug>(signify-toggle)', { remap = true })
-vim.keymap.set({ 'o', 'x' }, '<nop>', '<plug>(signify-motion-inner-pending)', { remap = true })
-vim.keymap.set({ 'o', 'x' }, '<nop>', '<plug>(signify-motion-inner-visual)', { remap = true })
 -- " }}}
 -- " exrc.nvim {{{
 -- disable built-in local config file support
@@ -479,71 +452,45 @@ vim.o.exrc = false
 -- " fzf {{{
 -- "
 -- " [Buffers] Jump to the existing window if possible
-vim.g.fzf_buffers_jump = 0
-vim.env.FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*" '
-vim.env.FZF_DEFAULT_OPTS = '--layout=reverse  --margin=1,2'
 
 
-vim.g.fzf_colors =
-{
-  ['fg'] = { 'fg', 'Normal' },
-  ['bg'] = { 'bg', 'Normal' },
-  ['hl'] = { 'fg', 'Comment' },
-  ['fg+'] = { 'fg', 'CursorLine', 'CursorColumn', 'Normal' },
-  ['bg+'] = { 'bg', 'CursorLine', 'CursorColumn' },
-  ['hl+'] = { 'fg', 'Statement' },
-  ['info'] = { 'fg', 'PreProc' },
-  ['border'] = { 'fg', 'Ignore' },
-  ['prompt'] = { 'fg', 'Conditional' },
-  ['pointer'] = { 'fg', 'Exception' },
-  ['marker'] = { 'fg', 'Keyword' },
-  ['spinner'] = { 'fg', 'Label' },
-  ['header'] = { 'fg', 'Comment' }
-}
+-- vim.g.fzf_colors =
+-- {
+-- ['fg'] = { 'fg', 'Normal' },
+-- ['bg'] = { 'bg', 'Normal' },
+-- ['hl'] = { 'fg', 'Comment' },
+-- ['fg+'] = { 'fg', 'CursorLine', 'CursorColumn', 'Normal' },
+-- ['bg+'] = { 'bg', 'CursorLine', 'CursorColumn' },
+-- ['hl+'] = { 'fg', 'Statement' },
+-- ['info'] = { 'fg', 'PreProc' },
+-- ['border'] = { 'fg', 'Ignore' },
+-- ['prompt'] = { 'fg', 'Conditional' },
+-- ['pointer'] = { 'fg', 'Exception' },
+-- ['marker'] = { 'fg', 'Keyword' },
+-- ['spinner'] = { 'fg', 'Label' },
+-- ['header'] = { 'fg', 'Comment' }
+-- }
 
 -- " Terminal buffer options for fzf
-vim.api.nvim_clear_autocmds({
-  event = "FileType",
-  pattern = "NvimTree"
-})
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "NvimTree" },
-  callback = function()
-    vim.opt.showmode = false
-    vim.opt.ruler = false
-    vim.opt.number = false
-  end
-})
 
 
-
-vim.g.fzf_files_options = ' --bind alt-a:select-all,alt-d:deselect-all '
+-- vim.g.fzf_files_options = ' --bind alt-a:select-all,alt-d:deselect-all '
 -- vim.keymap.set('i', '<c-x><c-f>', '<plug>(fzf-complete-path)', { remap = true })
 vim.keymap.set('i', '<c-x><c-f>', ":lua require('cmp').complete({config={sources ={{name='path'}}}})", { remap = true })
 vim.keymap.set('i', '<c-x><c-j>', '<plug>(fzf-complete-file-ag)', { remap = true })
 vim.keymap.set('i', '<c-x><c-l>', '<plug>(fzf-complete-line)', { remap = true })
-vim.g.fzf_action = {
-  ['ctrl-q'] = vim.fn['myfunctions#fzf#build_location_list'],
-  ['ctrl-t'] = 'tab split',
-  ['ctrl-x'] = 'split',
-  ['ctrl-v'] = 'vsplit'
-}
+-- vim.g.fzf_action = {
+-- ['ctrl-q'] = vim.fn['myfunctions#fzf#build_location_list'],
+-- ['ctrl-t'] = 'tab split',
+-- ['ctrl-x'] = 'split',
+-- ['ctrl-v'] = 'vsplit'
+-- }
 -- " }}}
 
 -- " Tagbar {{{
 vim.g.tagbar_left = 1
 vim.g.tagbar_width = 33
 vim.g.tagbar_compact = 1
--- " }}}
--- " Vista {{{
-vim.g.vista_default_executive = 'nvim_lsp'
-vim.g.vista_fzf_preview = { 'right:50%' }
-vim.g.vista_sidebar_position = "vertical topleft"
-vim.g.vista_sidebar_width = 33
-vim.g.tagbar_compact = 1
-vim.g.vista_disable_statusline = false
-vim.g.vista_echo_cursor_strategy = 'echo'
-vim.g.vista_echo_cursor = 1
 -- " }}}
 --
 -- " Vim-notes {{{
@@ -611,8 +558,6 @@ local get_clangd_query_driver = function()
     "g++",
     "arm-none-eabi-g++",
     "arm-none-eabi-gcc",
-    -- os.getenv("ARM_GCC_PATH") .. "arm-none-eabi-g++",
-    -- os.getenv("ARM_GCC_PATH") .. "arm-none-eabi-g++"
   }
   return "--query-driver=" .. table.concat(drivers, ",")
 end
@@ -847,9 +792,6 @@ vim.api.nvim_create_autocmd("LspDetach", {
 -- ]]
 -- })
 
--- require('overseer').setup()
--- require('dressing').setup()
-
 
 Signature_help_window_opened = false
 Signature_help_forced = false
@@ -1019,11 +961,6 @@ local opts = { remap = false }
 vim.keymap.set('n', '<Space>r', '<cmd>Telescope live_grep<CR>', opts)
 vim.keymap.set('n', '<Space>R', '<cmd>Telescope grep_string<CR>', opts)
 
-vim.cmd [[
-  command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#files(<q-args>, <bang>0)
-  ]]
-
 vim.keymap.set('n', '<Space>gg', "<cmd>lua require('telescope.builtin').builtin()<cr>", opts)
 vim.keymap.set('n', '<Space>?', '<cmd>Telescope help_tags<CR>', opts)
 vim.keymap.set('n', '<Space>f', '<cmd>Telescope find_files<CR>', opts)
@@ -1034,6 +971,7 @@ vim.keymap.set('n', '<Space>mn', "<cmd>lua require('telescope.builtin').keymaps{
 vim.keymap.set('n', '<Space>mx', "<cmd>lua require('telescope.builtin').keymaps{modes={'x'}}<cr>", opts)
 vim.keymap.set('n', '<Space>mi', "<cmd>lua require('telescope.builtin').keymaps{modes={'i'}}<cr>", opts)
 vim.keymap.set('n', '<Space>mo', "<cmd>lua require('telescope.builtin').keymaps{modes={'o'}}<cr>", opts)
+vim.keymap.set('n', '<Space>mt', "<cmd>lua require('telescope.builtin').keymaps{modes={'t'}}<cr>", opts)
 vim.keymap.set('n', '<Space>b', '<cmd>Telescope buffers<CR>', opts)
 vim.keymap.set('n', '<Space>h', '<cmd>Telescope<CR>', opts)
 -- vim.keymap.set('n', '<Space>T', '<cmd>Telescope current_buffer_tags<CR>', opts)
@@ -1042,20 +980,10 @@ vim.keymap.set('n', '<Space>o', '<cmd>OverseerToggle<CR>', opts)
 vim.keymap.set('n', '<Space>a', '<cmd>ToggleTerm<CR>', opts)
 vim.keymap.set('n', '\\c', '<cmd>Telescope colorscheme<CR>', opts)
 
--- local trouble = require("trouble.providers.telescope")
-
--- local telescope = require("telescope")
-
--- telescope.setup {
--- defaults = {
--- mappings = {
--- },
--- },
--- }
-
-
 
 -- }}}
+--
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 --
 -- textcase {{{
 
@@ -1065,12 +993,3 @@ vim.api.nvim_set_keymap('v', 'ga.', "<cmd>Telescope textcase<CR>", { desc = "Tel
 -- vim.api.nvim_set_keymap('n', 'gai', "<cmd>TextCaseOpenTelescopeLSPChange<CR>", { desc = "Telescope LSP Change" })
 
 -- }}}
---
--- Neoformat {{{
-vim.g.neoformat_markdown_remark = {
-  exe = "npx",
-  args = { 'remark', '--no-color', '--silent', '--config' },
-  stdin = 1,
-  try_node_exe = 1,
-}
-

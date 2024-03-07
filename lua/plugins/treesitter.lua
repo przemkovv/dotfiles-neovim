@@ -68,6 +68,8 @@ return {
                 ["af"] = "@function.outer",
                 ["if"] = "@function.inner",
                 ["ac"] = "@class.outer",
+                ["aC"] = "@comment.outer",
+                ["iC"] = "@comment.inner",
                 ["ia"] = "@parameter.inner",
                 ["aa"] = "@parameter.outer",
                 -- you can optionally set descriptions to the mappings (used in the desc parameter of nvim_buf_set_keymap

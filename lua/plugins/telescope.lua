@@ -1,11 +1,3 @@
-local fzf_opts = {
-  fuzzy = true,                   -- false will only do exact matching
-  override_generic_sorter = true, -- override the generic sorter
-  override_file_sorter = true,    -- override the file sorter
-  case_mode = "smart_case",       -- or "ignore_case" or "respect_case"
-  -- the default case_mode is "smart_case"
-}
-
 return {
 
   {
@@ -20,6 +12,16 @@ return {
       "johmsalas/text-case.nvim",
     },
     config = function()
+      vim.env.FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*" '
+      vim.env.FZF_DEFAULT_OPTS = '--layout=reverse  --margin=1,2'
+
+      local fzf_opts = {
+        fuzzy = true,                   -- false will only do exact matching
+        override_generic_sorter = true, -- override the generic sorter
+        override_file_sorter = true,    -- override the file sorter
+        case_mode = "smart_case",       -- or "ignore_case" or "respect_case"
+        -- the default case_mode is "smart_case"
+      }
       require('telescope').setup(
         {
           defaults = require('telescope.themes').get_ivy {
@@ -122,5 +124,5 @@ return {
     "johmsalas/text-case.nvim",
     lazy = true,
     opts = {},
-  }
+  },
 }
