@@ -30,15 +30,20 @@ end
 
 function M.lsp_status()
   local buf = tostring(vim.fn.bufnr("%"))
-  return vim.lsp.get_active_clients({ bufno = buf })
+  return vim.lsp.get_clients({ bufno = buf })
 end
 
 function M.toggle_diagnostic_text()
-  local lines_enabled = vim.diagnostic.config().virtual_lines
+  local lines_enabled = vim.diagnostic.config().virtual_text
   vim.diagnostic.config({
-    virtual_text = lines_enabled,
-    virtual_lines = not lines_enabled
+    virtual_text = not lines_enabled,
+    virtual_lines = lines_enabled
   })
+end
+
+function M.toggle_inlay_hints()
+  local enabled = vim.lsp.inlay_hint.is_enabled(0)
+  vim.lsp.inlay_hint.enable(0, not enabled)
 end
 
 return M

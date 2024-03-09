@@ -1,4 +1,6 @@
-local packages_install = function()
+local M = {}
+
+function M.install()
   local opts = {
     defaults = {
       lazy = false
@@ -32,6 +34,4 @@ local packages_install = function()
   require('lazy').setup("plugins", opts)
 end
 
-return {
-  install = packages_install
-}
+return M

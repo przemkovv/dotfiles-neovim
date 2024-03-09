@@ -2,7 +2,7 @@ return {
   'mrded/nvim-lsp-notify',
   'nvim-lua/lsp-status.nvim',
   'neovim/nvim-lspconfig',
-  { "folke/neodev.nvim", enabled = true, opts = {} },
+  { "folke/neodev.nvim",    enabled = false, opts = {} },
   {
     'nvimdev/lspsaga.nvim',
     opts = {
@@ -20,8 +20,10 @@ return {
   },
   'jackguo380/vim-lsp-cxx-highlight',
   {
-    "Maan2003/lsp_lines.nvim",
-    -- "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    -- "Maan2003/lsp_lines.nvim",
+    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    enabled = true,
+    opts = {},
     config = function()
       require("lsp_lines").setup()
     end,
@@ -119,7 +121,5 @@ return {
       use_diagnostic_sings = true
     }
   },
-  {
-    'm-demare/hlargs.nvim',
-  },
+  { 'm-demare/hlargs.nvim', opts = {} },
 }

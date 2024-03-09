@@ -117,3 +117,16 @@ vim.diagnostic.config({
   virtual_lines = false,
   float = { border = "single" }
 })
+
+vim.lsp.set_log_level("ERROR")
+
+vim.g.nremap = { ['<p'] = '', ['>p'] = '', ['<P'] = '', ['>P'] = '' }
+
+vim.filetype.add({
+  extension = {
+    glsl = 'glsl',
+    hlsl = 'hlsl',
+    psh = 'hlsl',
+    vsh = 'hlsl',
+  }
+})

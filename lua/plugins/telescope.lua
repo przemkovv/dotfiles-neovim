@@ -44,7 +44,7 @@ return {
             mappings = {
               i = {
                 ["<esc>"] = require('telescope.actions').close,
-                ["<C-w>"] = require('telescope.actions.layout').toggle_preview,
+                ["<C-space>"] = require('telescope.actions.layout').toggle_preview,
                 ["<c-t>"] = require('trouble.providers.telescope').open_with_trouble,
               },
               n = { ["<c-t>"] = require('trouble.providers.telescope').open_with_trouble },
@@ -62,6 +62,9 @@ return {
               sorter = require('telescope').extensions.fzf.native_fzf_sorter(fzf_opts)
             },
             live_grep = {
+            },
+            keymaps = {
+              -- entry_maker = gen_from_keymaps,
             },
             grep_string = {
             },

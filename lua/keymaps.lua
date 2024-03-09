@@ -1,5 +1,5 @@
-vim.keymap.set('n', '<space>cd', ':cd %:p:h<CR>:pwd<CR>')
-vim.keymap.set('n', '<space>sv', ':source $MYVIMRC<CR>')
+vim.keymap.set('n', '<space>cd', ':cd %:p:h<CR>:pwd<CR>', { desc = "Change working directory to the current file" })
+vim.keymap.set('n', '<space>sv', ':source $MYVIMRC<CR>', { desc = "Source $MYVIMRC" })
 vim.keymap.set('n', '<Space>ev', ':e  $MYVIMRC<CR>')
 vim.keymap.set('n', '<Space>eev', ':vsplit  $MYVIMRC<CR>')
 vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr><c-l>',
@@ -13,6 +13,10 @@ vim.keymap.set('n', 'k', "v:count ? 'k' : 'gk'", { expr = true })
 vim.keymap.set('', '<space><bs>', ':bprevious|bdelete #<CR>', { silent = true })
 vim.keymap.set('', '<space><space><bs>', ':bdelete!<CR>', { silent = true })
 vim.keymap.set('n', '<space>w', ':w<CR>', { silent = false })
+-- vim.keymap.set('n', '<space>ss', ':mksession! .session.vim<CR>', { silent = false })
+vim.keymap.set('n', '<space>ss', function() MiniSessions.write('.session.vim') end, { silent = false })
+vim.keymap.set('n', '<space>sl', function() MiniSessions.select() end, { silent = false })
+vim.keymap.set('n', '<space>sr', function() MiniSessions.delete() end, { silent = false })
 
 vim.keymap.set('n', '<Space>z', 'zMzvzz', { silent = false })
 vim.keymap.set('n', '<Space>8', ':let @/=\'\\<<C-R>=expand("<cword>")<CR>\\>\'<CR>:set hls<CR>', { silent = true })
@@ -32,8 +36,8 @@ vim.keymap.set('n', '<space>1', ':Neotree toggle<CR>', { silent = true })
 vim.keymap.set('n', '<space>2', ':Oil<CR>', { silent = true })
 vim.keymap.set('n', '<space>4', ':TroubleToggle workspace_diagnostics<CR>', { silent = true })
 vim.keymap.set('n', '<space>5', ':TroubleToggle document_diagnostics<CR>', { silent = true })
-vim.keymap.set('n', ']w', '<cmd>lua require("trouble").next({skip_groups = true, jump = true})<CR>', { silent = true })
-vim.keymap.set('n', '[w', '<cmd>lua require("trouble").previous({skip_groups = true, jump = true})<CR>',
+vim.keymap.set('n', ']w', function() require("trouble").next({ skip_groups = true, jump = true }) end, { silent = true })
+vim.keymap.set('n', '[w', function() require("trouble").previous({ skip_groups = true, jump = true }) end,
   { silent = true })
 
 
@@ -64,6 +68,34 @@ vim.keymap.set('c', '<c-g>', '<right>')
 vim.keymap.set('c', 'w!!', 'w !sudo tee % >/dev/null')
 
 -- }}}
--- completion {{{
 
--- }}}
+local opts = { remap = false }
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+vim.keymap.set('n', '<Space>r', '<cmd>Telescope live_grep<CR>', opts)
+vim.keymap.set('n', '<Space>R', '<cmd>Telescope grep_string<CR>', opts)
+
+vim.keymap.set('n', '<Space>gg', require('telescope.builtin').builtin, opts)
+vim.keymap.set('n', '<Space>?', '<cmd>Telescope help_tags<CR>', opts)
+vim.keymap.set('n', '<Space>f', '<cmd>Telescope find_files<CR>', opts)
+vim.keymap.set('n', '<Space>F', '<cmd>Telescope git_files<CR>', opts)
+vim.keymap.set('n', '<Space><c-F>', '<cmd>Telescope git_status<CR>', opts)
+vim.keymap.set('n', '<Space>mr', '<cmd>Telescope oldfiles<CR>', opts)
+vim.keymap.set('n', '<Space>mn', function() require('telescope.builtin').keymaps { modes = { 'n' } } end, opts)
+vim.keymap.set('n', '<Space>mx', function() require('telescope.builtin').keymaps { modes = { 'x' } } end, opts)
+vim.keymap.set('n', '<Space>mi', function() require('telescope.builtin').keymaps { modes = { 'i' } } end, opts)
+vim.keymap.set('n', '<Space>mo', function() require('telescope.builtin').keymaps { modes = { 'o' } } end, opts)
+vim.keymap.set('n', '<Space>mt', function() require('telescope.builtin').keymaps { modes = { 't' } } end, opts)
+vim.keymap.set('n', '<Space>b', '<cmd>Telescope buffers<CR>', opts)
+vim.keymap.set('n', '<Space>h', '<cmd>Telescope<CR>', opts)
+vim.keymap.set('n', '<Space>O', '<cmd>Telescope projects<CR>', opts)
+vim.keymap.set('n', '<Space>o', '<cmd>OverseerToggle<CR>', opts)
+vim.keymap.set('n', '<Space>a', '<cmd>ToggleTerm<CR>', opts)
+vim.keymap.set('n', '\\c', '<cmd>Telescope colorscheme<CR>', opts)
+vim.keymap.set('n', 'ga.', '<cmd>Telescope textcase<CR>', { desc = "Telescope" })
+vim.keymap.set('v', 'ga.', "<cmd>Telescope textcase<CR>", { desc = "Telescope" })
+
+
+vim.keymap.set("n", "<space>L", require('utils').toggle_diagnostic_text, { desc = "Toggle lsp_lines" })
+vim.keymap.set('n', '<space>sd', vim.diagnostic.open_float)
+

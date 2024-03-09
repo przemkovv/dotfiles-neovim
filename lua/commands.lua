@@ -77,3 +77,54 @@ vim.api.nvim_create_autocmd({ 'BufRead', 'BufReadPost' }, {
   end,
 })
 -- }}}
+--
+local ft_quickfix_id = vim.api.nvim_create_augroup("ft_quickfix", { clear = true })
+vim.api.nvim_create_autocmd("FileType",
+  {
+    group = ft_quickfix_id,
+    pattern = "qf",
+    callback = function()
+      vim.cmd [[wincmd L]]
+      -- vim.cmd [[resize 10]]
+      vim.cmd [[setlocal colorcolumn=0 nolist nocursorline nowrap tw=0]]
+    end
+  })
+-- " }}}
+
+-- " Vim {{{
+local ft_vim_id = vim.api.nvim_create_augroup("ft_vim", { clear = true })
+vim.api.nvim_create_autocmd("FileType",
+  {
+    group = ft_vim_id,
+    pattern = "vim",
+    callback = function()
+      vim.opt_local.foldmethod = "marker"
+    end
+  })
+vim.api.nvim_create_autocmd("FileType",
+  {
+    group = ft_vim_id,
+    pattern = "help",
+    callback = function()
+      vim.opt_local.textwidth = 78
+    end
+  })
+vim.api.nvim_create_autocmd("BufWinEnter",
+  {
+    group = ft_vim_id,
+    pattern = "*.txt",
+    callback = function()
+      if vim.bo.filetype == 'help' then
+        vim.cmd [[wincmd L]]
+      end
+    end
+  })
+
+-- }}}
+
+vim.api.nvim_create_user_command('Redir', function(ctx)
+  local lines = vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { plain = true })
+  vim.cmd('vnew')
+  vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+  vim.opt_local.modified = false
+end, { nargs = '+', complete = 'command' })

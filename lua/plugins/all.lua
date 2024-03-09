@@ -20,6 +20,12 @@ return {
         })
       local notify_opts = { ERROR = { duration = 10000 } }
       vim.notify = require('mini.notify').make_notify(notify_opts)
+
+      require ('mini.sessions').setup({
+        autoread = true,
+        file = '.session.vim',
+        force = { read = false, write = true, delete = true },
+      })
     end,
   },
 
