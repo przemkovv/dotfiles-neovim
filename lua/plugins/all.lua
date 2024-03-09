@@ -3,7 +3,8 @@ return {
 
   -- " To sort {{{
 
-  { 'stsewd/sphinx.nvim',             build = ":UpdateRemotePlugins" },
+  { "dstein64/vim-startuptime", },
+  { 'stsewd/sphinx.nvim',       build = ":UpdateRemotePlugins" },
   {
     'echasnovski/mini.nvim',
     version = false,
@@ -69,19 +70,18 @@ return {
       end
     },
   },
-  'ciaranm/securemodelines',
   {
-    'MunifTanjim/exrc.nvim',
-    opts = {
-      files = {
-        ".nvimrc.lua",
-        ".nvimrc",
-        ".exrc.lua",
-        ".exrc",
-      },
-    }
+    'ciaranm/securemodelines',
+    config = function()
+      vim.g.secure_modelines_allowed_items = {
+        "textwidth", "tw",
+        "foldmethod", "fdm",
+        "foldnextmax", "fdn",
+        "foldlevel", "foldlevelstart",
+        "spelllang", "ft"
+      }
+    end
   },
-
   {
     'numToStr/Comment.nvim',
     opts = {
@@ -109,6 +109,12 @@ return {
     'mattn/gist-vim',
     lazy = true,
     cmd = "Gist",
+    config = function()
+      vim.g.gist_post_private = 1
+      vim.g.gist_show_privates = 1
+      vim.g.gist_detect_filetype = 1
+      vim.g.gist_open_browser_after_post = 1
+    end
   },
   'mattn/webapi-vim',
   {
@@ -136,7 +142,13 @@ return {
   { 'lervag/vimtex',                 ft = { 'tex' } },
   { 'KeitaNakamura/tex-conceal.vim', ft = { 'tex' } },
   { 'wannesm/wmgraphviz.vim',        ft = { 'dot' } },
-  { 'chrisbra/csv.vim',              ft = { 'csv' } },
+  {
+    'chrisbra/csv.vim',
+    ft = { 'csv' },
+    config = function()
+      vim.g.csv_autocmd_arrange = 1
+    end
+  },
   { 'gennaro-tedesco/nvim-jqx',      ft = { 'json', 'yaml' } },
 
   -- " HTML/CSS/Javascript/Typescript {{{
