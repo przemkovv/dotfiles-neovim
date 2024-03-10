@@ -1,8 +1,14 @@
 return {
 
-  { "dstein64/vim-startuptime", },
+  {
+    "dstein64/vim-startuptime",
+    lazy = true,
+    cmd = "StartupTime"
+  },
   {
     'echasnovski/mini.nvim',
+    lazy = true,
+    event = 'VeryLazy',
     version = false,
     config = function()
       require 'mini.notify'.setup(
@@ -46,6 +52,7 @@ return {
     -- LEFTOFF: This is where I left off.
     --
     'folke/todo-comments.nvim',
+    lazy = true,
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = {
@@ -69,6 +76,8 @@ return {
   },
   {
     'lewis6991/gitsigns.nvim',
+    lazy = true,
+    event = { "BufReadPre", "BufNewFile" },
     opts = {
       signs     = {
         add = { text = '+' },
@@ -139,7 +148,12 @@ return {
   },
   { 'diepm/vim-rest-console',         ft = { 'rest' } },
   { 'vim-scripts/DoxygenToolkit.vim', cmd = { 'Dox', 'DoxAuthor', 'DoxBlock', 'DoxLic', 'DoxUndoc' } },
-  { 'norcalli/nvim-colorizer.lua',    opts = {} },
+  {
+    'norcalli/nvim-colorizer.lua',
+    lazy = true,
+    event = { "BufReadPre", "BufNewFile" },
+    opts = {}
+  },
   -- " }}}
 
   -- " Filetype specific {{{
@@ -154,7 +168,7 @@ return {
       }
     end,
   },
-  { 'stsewd/sphinx.nvim',       build = ":UpdateRemotePlugins",  ft = 'rst' },
+  { 'stsewd/sphinx.nvim',            build = ":UpdateRemotePlugins", ft = 'rst' },
   { 'lervag/vimtex',                 ft = { 'tex' } },
   { 'KeitaNakamura/tex-conceal.vim', ft = { 'tex' } },
   { 'wannesm/wmgraphviz.vim',        ft = { 'dot' } },

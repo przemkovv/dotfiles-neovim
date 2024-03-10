@@ -1,10 +1,19 @@
 return {
-  'mrded/nvim-lsp-notify',
-  'nvim-lua/lsp-status.nvim',
+  {
+    'mrded/nvim-lsp-notify',
+    lazy = true,
+    event = "LspAttach",
+  },
+  {
+    'nvim-lua/lsp-status.nvim',
+    lazy = true,
+    event = "LspAttach",
+  },
   'neovim/nvim-lspconfig',
-  { "folke/neodev.nvim",    enabled = false, opts = {} },
   {
     'nvimdev/lspsaga.nvim',
+    lazy = true,
+    event = "LspAttach",
     opts = {
 
       lightbulb = {
@@ -18,10 +27,16 @@ return {
       'nvim-tree/nvim-web-devicons'
     }
   },
-  'jackguo380/vim-lsp-cxx-highlight',
+  {
+    'jackguo380/vim-lsp-cxx-highlight',
+    lazy = true,
+    event = "LspAttach",
+  },
   {
     -- "Maan2003/lsp_lines.nvim",
     "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    lazy = true,
+    event = "LspAttach",
     enabled = true,
     opts = {},
     config = function()
@@ -30,6 +45,8 @@ return {
   },
   {
     'p00f/clangd_extensions.nvim',
+    lazy = true,
+    event = "LspAttach",
     opts = {
       -- These apply to the default ClangdSetInlayHints command
       inlay_hints = {
@@ -121,5 +138,10 @@ return {
       use_diagnostic_sings = true
     }
   },
-  { 'm-demare/hlargs.nvim', opts = {} },
+  {
+    'm-demare/hlargs.nvim',
+    opts = {},
+    lazy = true,
+    event = "LspAttach",
+  },
 }

@@ -8,6 +8,8 @@ return {
     dependencies = {
       'rafamadriz/friendly-snippets',
       "benfowler/telescope-luasnip.nvim",
+      { 'hrsh7th/vim-vsnip', },
+      { 'hrsh7th/vim-vsnip-integ', },
     },
     config = function(_, opts)
       if opts then require("luasnip").config.setup(opts) end
@@ -31,6 +33,4 @@ return {
       require("luasnip").filetype_extend("sh", { "shelldoc" })
     end,
   },
-  { 'hrsh7th/vim-vsnip', },
-  { 'hrsh7th/vim-vsnip-integ', },
 }

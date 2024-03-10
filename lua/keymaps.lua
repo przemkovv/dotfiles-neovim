@@ -32,7 +32,7 @@ vim.keymap.set('n', 'N', 'Nzzzv', { silent = false })
 vim.keymap.set('n', '<Space>q', ':cclose<bar>lclose<cr>', { silent = false })
 
 vim.keymap.set('n', '<space>1', ':Neotree toggle<CR>', { silent = true })
-vim.keymap.set('n', '<space>2', ':Oil<CR>', { silent = true })
+vim.keymap.set('n', '-', ':Oil<CR>', { silent = true })
 vim.keymap.set('n', '<space>4', ':TroubleToggle workspace_diagnostics<CR>', { silent = true })
 vim.keymap.set('n', '<space>5', ':TroubleToggle document_diagnostics<CR>', { silent = true })
 vim.keymap.set('n', ']w', function() require("trouble").next({ skip_groups = true, jump = true }) end,
