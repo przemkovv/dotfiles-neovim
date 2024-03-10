@@ -13,10 +13,9 @@ vim.keymap.set('n', 'k', "v:count ? 'k' : 'gk'", { expr = true })
 vim.keymap.set('', '<space><bs>', ':bprevious|bdelete #<CR>', { silent = true })
 vim.keymap.set('', '<space><space><bs>', ':bdelete!<CR>', { silent = true })
 vim.keymap.set('n', '<space>w', ':w<CR>', { silent = false })
--- vim.keymap.set('n', '<space>ss', ':mksession! .session.vim<CR>', { silent = false })
-vim.keymap.set('n', '<space>ss', function() MiniSessions.write('.session.vim') end, { silent = false })
-vim.keymap.set('n', '<space>sl', function() MiniSessions.select() end, { silent = false })
-vim.keymap.set('n', '<space>sr', function() MiniSessions.delete() end, { silent = false })
+vim.keymap.set('n', '<space>ss', require('session_manager').save_current_session, { silent = false })
+vim.keymap.set('n', '<space>sl', require('session_manager').load_session, { silent = false })
+vim.keymap.set('n', '<space>sr', require('session_manager').delete_session, { silent = false })
 
 vim.keymap.set('n', '<Space>z', 'zMzvzz', { silent = false })
 vim.keymap.set('n', '<Space>8', ':let @/=\'\\<<C-R>=expand("<cword>")<CR>\\>\'<CR>:set hls<CR>', { silent = true })
@@ -36,9 +35,10 @@ vim.keymap.set('n', '<space>1', ':Neotree toggle<CR>', { silent = true })
 vim.keymap.set('n', '<space>2', ':Oil<CR>', { silent = true })
 vim.keymap.set('n', '<space>4', ':TroubleToggle workspace_diagnostics<CR>', { silent = true })
 vim.keymap.set('n', '<space>5', ':TroubleToggle document_diagnostics<CR>', { silent = true })
-vim.keymap.set('n', ']w', function() require("trouble").next({ skip_groups = true, jump = true }) end, { silent = true })
+vim.keymap.set('n', ']w', function() require("trouble").next({ skip_groups = true, jump = true }) end,
+  { silent = true, desc = 'Next diagnostic with Trouble' })
 vim.keymap.set('n', '[w', function() require("trouble").previous({ skip_groups = true, jump = true }) end,
-  { silent = true })
+  { silent = true, desc = 'Next diagnostic with Trouble' })
 
 
 -- fallback if LSP does not support {{{
@@ -98,4 +98,3 @@ vim.keymap.set('v', 'ga.', "<cmd>Telescope textcase<CR>", { desc = "Telescope" }
 
 vim.keymap.set("n", "<space>L", require('utils').toggle_diagnostic_text, { desc = "Toggle lsp_lines" })
 vim.keymap.set('n', '<space>sd', vim.diagnostic.open_float)
-
