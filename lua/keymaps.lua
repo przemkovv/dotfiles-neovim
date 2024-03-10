@@ -2,6 +2,9 @@ vim.keymap.set('n', '<space>cd', ':cd %:p:h<CR>:pwd<CR>', { desc = "Change worki
 vim.keymap.set('n', '<space>sv', ':source $MYVIMRC<CR>', { desc = "Source $MYVIMRC" })
 vim.keymap.set('n', '<Space>ev', ':e  $MYVIMRC<CR>')
 vim.keymap.set('n', '<Space>eev', ':vsplit  $MYVIMRC<CR>')
+vim.keymap.set('n', '<Space>el', ':e  .nvim.lua<CR>')
+vim.keymap.set('n', '<space>ek', ':source .nvim.lua<CR>', { desc = "Source .nvim.lua" })
+
 vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr><c-l>',
   { silent = true })
 vim.keymap.set({ 'n', 'i' }, '<C-PageDown>', '<cmd>cnext<cr>', { silent = true })

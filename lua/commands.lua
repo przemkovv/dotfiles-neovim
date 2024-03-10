@@ -127,4 +127,4 @@ vim.api.nvim_create_user_command('Redir', function(ctx)
   vim.cmd('vnew')
   vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
   vim.opt_local.modified = false
-end, { nargs = '+', complete = 'command' })
+end, { nargs = '+', complete = 'command', force = true })
