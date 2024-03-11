@@ -1,6 +1,13 @@
 return {
 
   {
+    'kassio/neoterm',
+    config = function()
+      vim.g.neoterm_default_mod = 'botright vertical'
+      vim.g.neoterm_autoscroll = 'true'
+    end,
+  },
+  {
     "dstein64/vim-startuptime",
     lazy = true,
     cmd = "StartupTime"

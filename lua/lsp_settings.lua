@@ -13,7 +13,47 @@ require 'lspconfig'.marksman.setup {
 -- capabilities = capabilities
 -- }
 require('lspconfig').rust_analyzer.setup {
-  capabilities = capabilities
+  capabilities = capabilities,
+  settings = {
+    ["rust-analyzer"] = {
+      imports = {
+        granularity = {
+          group = "module",
+        },
+        prefix = "self",
+      },
+      cargo = {
+        buildScripts = {
+          enable = true,
+        },
+        features = "all",
+      },
+      completion = {
+        postfix = {
+          enable = true,
+        },
+        autoimport = {
+          enable = true
+        },
+      },
+      diagnostics = {
+        enable = true,
+        enableExperimental = true,
+      },
+      procMacro = {
+        enable = true
+      },
+      assist = {
+        emitMustUse = true
+      }
+      ,
+      inlayHints = {
+        chainingHints = true,
+        parameterHints = true,
+        typeHints = true,
+      }
+    }
+  }
 }
 require 'lspconfig'.glslls.setup {
   capabilities = capabilities

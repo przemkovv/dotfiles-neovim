@@ -5,7 +5,7 @@ if vim.fn.has('win32') then
   if vim.fn.hostname() == 'MA-605' then
     treesitter_parsers_path = "d:/dev/tools/nvim-win64/parsers"
   elseif vim.fn.hostname() == 'legolas' then
-    treesitter_parsers_path = vim.fn.stdpath('data') .. 'parsers/'
+    treesitter_parsers_path = nil
   else
     treesitter_parsers_path = "h:/dev/tools/Neovim/parsers"
   end
@@ -18,7 +18,9 @@ return {
     lazy = true,
     event = { "BufReadPre", "BufNewFile" },
     config = function()
-      vim.opt.rtp:prepend(treesitter_parsers_path)
+      if treesitter_parsers_path ~= nil then
+        vim.opt.rtp:prepend(treesitter_parsers_path)
+      end
       require('nvim-treesitter.install').compilers = { "clang" }
       require("nvim-treesitter.configs").setup(
         {
