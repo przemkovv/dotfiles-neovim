@@ -62,7 +62,7 @@ vim.opt.breakindentopt:append { "sbr" }
 vim.opt.tags:append { "tags", "./tags", "~/.vimtags" }
 vim.opt.completeopt = { "menu", "preview", "noselect", "menuone" }
 
-vim.opt.cmdheight = 2
+vim.opt.cmdheight = 1
 
 vim.opt.timeout = false
 vim.opt.ttimeout = true
