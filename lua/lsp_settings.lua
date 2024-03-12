@@ -28,6 +28,16 @@ require('lspconfig').rust_analyzer.setup {
         },
         features = "all",
       },
+      check = {
+        command = "clippy",
+        features = "all",
+      },
+      checkOnSave = true,
+      -- check = {
+      --   enable = true,
+      --   command = "clippy",
+      --   allFeatures = true,
+      -- },
       completion = {
         postfix = {
           enable = true,
