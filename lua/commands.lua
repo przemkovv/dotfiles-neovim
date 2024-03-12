@@ -86,7 +86,7 @@ vim.api.nvim_create_autocmd("FileType",
     callback = function()
       vim.cmd [[wincmd L]]
       -- vim.cmd [[resize 10]]
-      vim.cmd [[setlocal colorcolumn=0 nolist nocursorline nowrap tw=0]]
+      vim.cmd [[setlocal colorcolumn=0 nolist cursorline nowrap tw=0]]
     end
   })
 -- " }}}

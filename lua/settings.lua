@@ -88,7 +88,7 @@ vim.opt.number = true
 vim.opt.numberwidth = 5
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
-vim.opt.cursorlineopt = "number"
+vim.opt.cursorlineopt = "both"
 vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
 
 
@@ -115,7 +115,10 @@ vim.diagnostic.config({
   signs = false,
   virtual_text = true,
   virtual_lines = false,
-  float = { border = "single" }
+  float = {
+    border = "single",
+    source = "always"
+  }
 })
 
 vim.lsp.set_log_level("ERROR")
@@ -130,3 +133,18 @@ vim.filetype.add({
     vsh = 'hlsl',
   }
 })
+if vim.fn.has('win32') then
+  vim.opt.shell = "pwsh"
+  vim.opt.shellcmdflag = "-NoProfile -NoExit -NoLogo -ExecutionPolicy RemoteSigned -Command  [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';$PSStyle.OutputRendering = [System.Management.Automation.OutputRendering]::PlainText; "
+  vim.opt.shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode '
+  vim.opt.shellpipe = '2>&1 | %%{ "$_" } | Tee-Object %s; exit $LastExitCode '
+  vim.opt.shellquote = ""
+  vim.opt.shellxquote = ""
+  -- vim.opt.shell        = 'pwsh.exe'
+  -- vim.opt.shellcmdflag =
+  -- '-NoProfile -NoLogo -NoExit -ExecutionPolicy RemoteSigned -c { $PSStyle.OutputRendering = [System.Management.Automation.OutputRendering]::PlainText; Remove-Alias -Force -ErrorAction SilentlyContinue tee;'
+  -- vim.opt.shellxquote  = ' '
+  -- vim.opt.shellquote   = '"'
+  -- vim.opt.shellredir   = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode }'
+  -- vim.opt.shellpipe    = '2>&1 | %%{ "$_" } | Tee-Object %s; exit $LastExitCode }'
+end

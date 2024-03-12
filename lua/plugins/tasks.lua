@@ -20,5 +20,12 @@ return {
         end
       end
     }
-  }
+  },
+  {
+    'kassio/neoterm',
+    config = function()
+      vim.g.neoterm_default_mod = 'botright vertical'
+      vim.g.neoterm_autoscroll = 'true'
+    end,
+  },
 }

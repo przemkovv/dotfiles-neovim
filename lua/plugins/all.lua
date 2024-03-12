@@ -1,13 +1,6 @@
 return {
 
   {
-    'kassio/neoterm',
-    config = function()
-      vim.g.neoterm_default_mod = 'botright vertical'
-      vim.g.neoterm_autoscroll = 'true'
-    end,
-  },
-  {
     "dstein64/vim-startuptime",
     lazy = true,
     cmd = "StartupTime"
@@ -206,6 +199,13 @@ return {
     config = function() require("rust-tools").setup({}) end
   },
   { 'rust-lang/rust.vim', ft = { 'rust' } },
+  {
+    'saecki/crates.nvim',
+    event = { "BufRead Cargo.toml" },
+    config = function()
+      require('crates').setup()
+    end,
+  }
   -- " }}}
   -- " }}}
 }

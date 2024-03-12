@@ -10,6 +10,9 @@ return {
       { 'hrsh7th/cmp-path', },
       { 'FelipeLema/cmp-async-path', },
       { 'hrsh7th/cmp-cmdline', },
+      { 'dmitmel/cmp-cmdline-history' },
+
+
       { 'hrsh7th/cmp-nvim-lua', },
       { 'hrsh7th/cmp-nvim-lsp', },
       { 'hrsh7th/cmp-nvim-lsp-signature-help', },
@@ -45,10 +48,7 @@ return {
         snippet = {
           -- REQUIRED - you must specify a snippet engine
           expand = function(args)
-            -- vim.fn["vsnip#anonymous"](args.body)     -- For `vsnip` users.
             require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-            -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-            -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
           end,
 
         },
@@ -106,7 +106,6 @@ return {
           {
             { name = 'nvim_lsp' },
             { name = 'nvim_lsp_signature_help' },
-            { name = 'vsnip' },   -- For vsnip users.
             { name = 'luasnip' }, -- For luasnip users.
           },
           {
@@ -136,7 +135,8 @@ return {
       cmp.setup.cmdline('/', {
         mapping = cmp.mapping.preset.cmdline(),
         sources = {
-          { name = 'buffer' }
+          { name = 'buffer',           max_item_count = 15 },
+          { name = 'cmdline_history',  max_item_count = 15 }
         }
       })
 
@@ -146,7 +146,8 @@ return {
         sources = cmp.config.sources({
           { name = 'async_path' }
         }, {
-          { name = 'cmdline' }
+          { name = 'cmdline',          max_item_count = 15 },
+          { name = 'cmdline_history',  max_item_count = 15 }
         })
       })
     end
