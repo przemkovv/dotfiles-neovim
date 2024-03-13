@@ -1,7 +1,6 @@
-
 local treesitter_parsers_path = vim.fn.stdpath('data') .. 'parsers/'
 
-if vim.fn.has('win32') then
+if vim.fn.has('win32') == 1 then
   if vim.fn.hostname() == 'MA-605' then
     treesitter_parsers_path = "d:/dev/tools/nvim-win64/parsers"
   elseif vim.fn.hostname() == 'legolas' then
@@ -9,6 +8,8 @@ if vim.fn.has('win32') then
   else
     treesitter_parsers_path = "h:/dev/tools/Neovim/parsers"
   end
+else
+  treesitter_parsers_path = nil
 end
 
 return {
