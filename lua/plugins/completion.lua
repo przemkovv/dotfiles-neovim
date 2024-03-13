@@ -134,13 +134,13 @@ return {
         }
       })
       -- `/` cmdline setup.
-      cmp.setup.cmdline('/', {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = {
-          { name = 'buffer',          max_item_count = 15 },
-          { name = 'cmdline_history', max_item_count = 15 }
-        }
-      })
+      -- cmp.setup.cmdline('/', {
+      --   mapping = cmp.mapping.preset.cmdline(),
+      --   sources = {
+      --     { name = 'buffer',          max_item_count = 15 },
+      --     { name = 'cmdline_history', max_item_count = 15 }
+      --   }
+      -- })
 
       -- `:` cmdline setup.
       cmp.setup.cmdline(':', {

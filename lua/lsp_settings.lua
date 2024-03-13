@@ -31,21 +31,6 @@ require('lspconfig').rust_analyzer.setup {
       check = {
         command = "clippy",
         features = "all",
-        extraArgs = {
-          "--",
-          "-Dclippy::cargo",
-          "-Dclippy::complexity",
-          "-Dclippy::correctness",
-          "-Dclippy::nursery",
-          "-Dclippy::pedantic",
-          "-Dclippy::perf",
-          "-Aclippy::restriction",
-          "-Aclippy::implicit_return",
-          "-Aclippy::must_use_candidate",
-          "-Aclippy::self_named_module_files",
-          "-Dclippy::arithmetic_side_effects",
-
-        },
       },
       checkOnSave = true,
       completion = {
