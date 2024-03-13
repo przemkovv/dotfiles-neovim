@@ -57,6 +57,8 @@ return {
           documentation = cmp.config.window.bordered(winhighlight),
         },
         mapping = cmp.mapping.preset.insert({
+          ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
           -- Select the [n]ext item
           ['<C-n>'] = cmp.mapping.select_next_item(select_opts),
           -- Select the [p]revious item
@@ -135,20 +137,22 @@ return {
       cmp.setup.cmdline('/', {
         mapping = cmp.mapping.preset.cmdline(),
         sources = {
-          { name = 'buffer',           max_item_count = 15 },
-          { name = 'cmdline_history',  max_item_count = 15 }
+          { name = 'buffer',          max_item_count = 15 },
+          { name = 'cmdline_history', max_item_count = 15 }
         }
       })
 
       -- `:` cmdline setup.
       cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline(),
-        sources = cmp.config.sources({
-          { name = 'async_path' }
-        }, {
-          { name = 'cmdline',          max_item_count = 15 },
-          { name = 'cmdline_history',  max_item_count = 15 }
-        })
+        sources = cmp.config.sources(
+          {
+            { name = 'async_path' }
+          },
+          {
+            { name = 'cmdline',         max_item_count = 15, option = { ignore_cmds = { 'Main', '!', 'T' } } },
+            { name = 'cmdline_history', max_item_count = 15 }
+          })
       })
     end
 
