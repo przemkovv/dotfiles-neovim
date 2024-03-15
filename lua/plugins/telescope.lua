@@ -79,6 +79,12 @@ return {
                 untracked = "?",
               },
             },
+            buffers = {
+              mappings = {
+                i = { ["<c-d>"] = require('telescope.actions').delete_buffer
+                },
+              }
+            },
 
 
             -- Now the picker_config_key will be applied every time you call this

@@ -150,7 +150,7 @@ return {
             { name = 'async_path' }
           },
           {
-            { name = 'cmdline',         max_item_count = 15, option = { ignore_cmds = { 'Main', '!', 'T' } } },
+            { name = 'cmdline',         max_item_count = 15, option = { ignore_cmds = { 'Main', '!', 'T', '%s' } } },
             { name = 'cmdline_history', max_item_count = 15 }
           })
       })

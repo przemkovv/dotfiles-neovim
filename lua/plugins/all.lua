@@ -215,6 +215,7 @@ return {
     event = { "BufRead Cargo.toml" },
     config = function()
       require('crates').setup({
+        open_programs = { "explorer", "xdg-open", "open" },
         lsp = {
           enabled = true,
           actions = true,

@@ -23,6 +23,7 @@ return {
         vim.opt.rtp:prepend(treesitter_parsers_path)
       end
       require('nvim-treesitter.install').compilers = { "clang" }
+      require('nvim-treesitter.install').prefer_git = false
       require("nvim-treesitter.configs").setup(
         {
           parser_install_dir = treesitter_parsers_path,
