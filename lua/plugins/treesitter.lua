@@ -3,20 +3,20 @@ local treesitter_parsers_path = vim.fn.stdpath('data') .. 'parsers/'
 if vim.fn.has('win32') == 1 then
   if vim.fn.hostname() == 'MA-605' then
     treesitter_parsers_path = "d:/dev/tools/nvim-win64/parsers"
-  elseif vim.fn.hostname() == 'legolas' then
-    treesitter_parsers_path = nil
   else
     treesitter_parsers_path = "h:/dev/tools/Neovim/parsers"
   end
 else
-  treesitter_parsers_path = nil
+  if vim.fn.hostname() == 'legolas' then
+    treesitter_parsers_path = nil
+  end
 end
 
 return {
   {
     'nvim-treesitter/nvim-treesitter',
     build = ":TSUpdate",
-    lazy = true,
+    lazy = false,
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       if treesitter_parsers_path ~= nil then
@@ -102,13 +102,7 @@ return {
               include_surrounding_whitespace = true,
             },
             swap = {
-              enable = true,
-              swap_next = {
-                ["<leader>a"] = "@parameter.inner",
-              },
-              swap_previous = {
-                ["<leader>A"] = "@parameter.inner",
-              },
+              enable = false,
             },
 
           },

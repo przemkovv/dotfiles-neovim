@@ -2,7 +2,7 @@ return {
 
   {
     'hrsh7th/nvim-cmp',
-    lazy = true,
+    lazy = false,
     event = "InsertEnter",
     dependencies = {
       { 'hrsh7th/cmp-buffer', },
@@ -11,8 +11,6 @@ return {
       { 'FelipeLema/cmp-async-path', },
       { 'hrsh7th/cmp-cmdline', },
       { 'dmitmel/cmp-cmdline-history' },
-
-
       { 'hrsh7th/cmp-nvim-lua', },
       { 'hrsh7th/cmp-nvim-lsp', },
       { 'hrsh7th/cmp-nvim-lsp-signature-help', },
@@ -122,10 +120,10 @@ return {
         },
         sorting = {
           comparators = {
+            require("clangd_extensions.cmp_scores"),
             cmp.config.compare.offset,
             cmp.config.compare.exact,
             cmp.config.compare.recently_used,
-            require("clangd_extensions.cmp_scores"),
             cmp.config.compare.kind,
             cmp.config.compare.sort_text,
             cmp.config.compare.length,
@@ -150,8 +148,8 @@ return {
             { name = 'async_path' }
           },
           {
-            { name = 'cmdline',         max_item_count = 15, option = { ignore_cmds = { 'Main', '!', 'T', '%s' } } },
-            { name = 'cmdline_history', max_item_count = 15 }
+            { name = 'cmdline',         max_item_count = 40, option = { ignore_cmds = { 'Main', '!', 'T', '%s' } } },
+            { name = 'cmdline_history', max_item_count = 40 }
           })
       })
     end
