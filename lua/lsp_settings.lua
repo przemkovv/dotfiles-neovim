@@ -30,7 +30,8 @@ require('lspconfig').rust_analyzer.setup {
       },
       check = {
         command = "clippy",
-        features = "all",
+        -- features = "all",
+        -- extraArgs = {  "--all-features", "--all-targets", },
       },
       checkOnSave = true,
       completion = {

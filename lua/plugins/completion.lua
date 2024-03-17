@@ -31,14 +31,25 @@ return {
       cmp.setup({
         formatting = {
           format = lspkind.cmp_format({
-            mode = 'symbol_text',  -- show only symbol annotations
-            maxwidth = 70,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-            ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+            mode = 'symbol_text',      -- show only symbol annotations
+            maxwidth = 50,             -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            ellipsis_char = '...',     -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
             preset = 'codicons',
+            show_labelDetails = false, -- show labelDetails in menu. Disabled by default
 
             -- The function below will be called before any actual modifications from lspkind
             -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
             before = function(_, vim_item)
+              local MAX_ABBR_WIDTH, MAX_MENU_WIDTH = 35, 60 -- Truncate the label.
+              local ellipsis = '…'
+              if vim.api.nvim_strwidth(vim_item.abbr) > MAX_ABBR_WIDTH then
+                vim_item.abbr = vim.fn.strcharpart(vim_item.abbr, 0, MAX_ABBR_WIDTH) .. ellipsis
+              end
+
+              -- Truncate the description part.
+              if vim.api.nvim_strwidth(vim_item.menu or '') > MAX_MENU_WIDTH then
+                vim_item.menu = vim.fn.strcharpart(vim_item.menu, 0, MAX_MENU_WIDTH) .. ellipsis
+              end
               return vim_item
             end
           })
