@@ -125,6 +125,7 @@ return {
   -- " Dev Tools {{{
   {
     'tpope/vim-fugitive',
+    enabled = false,
     lazy = true,
     cmd = { "Git" }
   },
@@ -136,9 +137,22 @@ return {
 
       -- Only one of these is needed, not both.
       "nvim-telescope/telescope.nvim", -- optional
-      "ibhagwan/fzf-lua",              -- optional
+      -- "ibhagwan/fzf-lua",              -- optional
     },
-    config = true
+    opts = {
+      graph_style = "unicode",
+      kind = "replace",
+      integrations = {
+        fzf_lua = nil,
+      }
+    },
+    config = function(_, opts)
+      local neogit = require('neogit')
+      neogit.setup(opts)
+      vim.keymap.set('n', '<space>gg', function() neogit.open({ kind = "replace" }) end, { desc = "Neogit Replace" })
+      vim.keymap.set('n', '<space>GG', function() neogit.open({ kind = "auto" }) end, { desc = "Neogit auto split" })
+    end
+
   },
 
 
