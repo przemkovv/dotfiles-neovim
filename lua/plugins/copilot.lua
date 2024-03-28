@@ -64,6 +64,10 @@ return {
         require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
       end, { silent = true, desc = "CopilotChat - Prompt actions" })
 
+      vim.keymap.set('n', '<space>cct', function()
+        require("CopilotChat").toggle()
+      end, { silent = true, desc = "CopilotChat - Toggle" })
+
       vim.keymap.set({ 'x' }, '<space>ccp', function()
         local actions = require("CopilotChat.actions")
         require("CopilotChat.integrations.telescope").pick(actions.prompt_actions({

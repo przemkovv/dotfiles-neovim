@@ -150,7 +150,7 @@ return {
       local neogit = require('neogit')
       neogit.setup(opts)
       vim.keymap.set('n', '<space>gg', function() neogit.open({ kind = "replace" }) end, { desc = "Neogit Replace" })
-      vim.keymap.set('n', '<space>GG', function() neogit.open({ kind = "auto" }) end, { desc = "Neogit auto split" })
+      vim.keymap.set('n', '<space>gG', function() neogit.open({ kind = "auto" }) end, { desc = "Neogit auto split" })
     end
 
   },
