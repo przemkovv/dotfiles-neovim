@@ -11,16 +11,26 @@ return {
   },
   'neovim/nvim-lspconfig',
   {
+    enabled = true,
     'nvimdev/lspsaga.nvim',
     lazy = true,
     event = "LspAttach",
     opts = {
-
+      breadcrumbs = {
+        enable = true,
+        delay = 1000,
+      },
       lightbulb = {
         sign = false,
       },
       outline = {
         layout = "float",
+      },
+      implement = {
+        enable = false,
+      },
+      beacon = {
+        enable = false,
       }
     },
     dependencies = {
@@ -160,5 +170,5 @@ return {
     end,
     requires = { "nvim-lua/plenary.nvim" },
 
-  }
+  },
 }
