@@ -45,9 +45,9 @@ return {
               i = {
                 ["<esc>"] = require('telescope.actions').close,
                 ["<C-space>"] = require('telescope.actions.layout').toggle_preview,
-                ["<c-t>"] = require('trouble.providers.telescope').open_with_trouble,
+                ["<c-t>"] = require('trouble.sources.telescope').open,
               },
-              n = { ["<c-t>"] = require('trouble.providers.telescope').open_with_trouble },
+              n = { ["<c-t>"] = require('trouble.sources.telescope').open },
             },
             preview = {
               hide_on_startup = true -- hide previewer when picker starts
