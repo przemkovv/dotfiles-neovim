@@ -61,6 +61,12 @@ return {
 
       chat.setup(opts)
 
+      vim.api.nvim_create_user_command("CopilotChatBuffer",
+        function(args) chat.ask(args.args, { selection = select.buffer }) end, { nargs = "*", range = true })
+
+      vim.api.nvim_create_user_command("CopilotChatVisual",
+        function(args) chat.ask(args.args, { selection = select.visual }) end, { nargs = "*", range = true })
+
       local mappings = {
         { mode = 'n', key = '<space>cce', action = "<cmd>CopilotChatExplain<cr>",                           desc = "CopilotChat - Explain code" },
         { mode = 'n', key = '<space>cct', action = "<cmd>CopilotChatTests<cr>",                             desc = "CopilotChat - Generate tests" },
