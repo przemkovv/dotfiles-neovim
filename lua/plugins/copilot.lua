@@ -46,76 +46,58 @@ return {
         local select = require("CopilotChat.select")
         return select.visual(source) or select.line(source)
       end,
+      mappings = {
+        submit_prompt = {
+          normal = '<CR>',
+          insert = '<C-CR>'
+        },
+      }
     },
     config = function(_, opts)
       local chat = require("CopilotChat")
       local select = require("CopilotChat.select")
-      require("CopilotChat").setup(opts)
-      vim.api.nvim_create_user_command("CopilotChatBuffer", function(args)
-        chat.ask(args.args, { selection = select.buffer })
-      end, { nargs = "*", range = true })
+      local actions = require("CopilotChat.actions")
+      local telescope = require("CopilotChat.integrations.telescope")
 
-      vim.api.nvim_create_user_command("CopilotChatVisual", function(args)
-        chat.ask(args.args, { selection = select.visual })
-      end, { nargs = "*", range = true })
+      chat.setup(opts)
 
-      vim.keymap.set('n', '<space>ccp', function()
-        local actions = require("CopilotChat.actions")
-        require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
-      end, { silent = true, desc = "CopilotChat - Prompt actions" })
+      local mappings = {
+        { mode = 'n', key = '<space>cce', action = "<cmd>CopilotChatExplain<cr>",                           desc = "CopilotChat - Explain code" },
+        { mode = 'n', key = '<space>cct', action = "<cmd>CopilotChatTests<cr>",                             desc = "CopilotChat - Generate tests" },
+        { mode = 'n', key = '<space>ccr', action = "<cmd>CopilotChatReview<cr>",                            desc = "CopilotChat - Review code" },
+        { mode = 'n', key = '<space>ccR', action = "<cmd>CopilotChatRefactor<cr>",                          desc = "CopilotChat - Refactor code" },
+        { mode = 'n', key = '<space>ccn', action = "<cmd>CopilotChatBetterNamings<cr>",                     desc = "CopilotChat - Better Naming" },
+        { mode = 'n', key = '<space>ccp', action = function() telescope.pick(actions.prompt_actions()) end, desc = "CopilotChat - Prompt actions" },
+        { mode = 'n', key = '<space>cct', action = chat.toggle,                                             desc = "CopilotChat - Toggle" },
+        { mode = 'x', key = '<space>ccv', action = "<cmd>CopilotChatVisual<CR>",                            desc = "CopilotChat - Open in vertical split" },
+        { mode = 'n', key = '<space>cch', action = function() telescope.pick(actions.help_actions()) end,   desc = "CopilotChat - Help actions" },
+        { mode = 'n', key = '<space>ccm', action = "<cmd>CopilotChatCommit<cr>",                            desc = "CopilotChat - Generate commit message for all changes" },
+        { mode = 'n', key = '<space>ccM', action = "<cmd>CopilotChatCommitStaged<cr>",                      desc = "CopilotChat - Generate commit message for staged changes" },
+        {
+          mode = 'x',
+          key = '<space>ccp',
+          action = function()
+            telescope.pick(actions.prompt_actions({
+              selection = opts
+                  .selection
+            }))
+          end,
+          desc = "CopilotChat - Prompt actions"
+        },
+        {
+          mode = 'n',
+          key = '<space>ccq',
+          action = function()
+            local input = vim.fn.input("Quick Chat: ")
+            if input ~= "" then vim.cmd("CopilotChatBuffer " .. input) end
+          end,
+          desc = "CopilotChat - Quick chat"
+        },
+      }
 
-      vim.keymap.set('n', '<space>cct', function()
-        require("CopilotChat").toggle()
-      end, { silent = true, desc = "CopilotChat - Toggle" })
-
-      vim.keymap.set({ 'x' }, '<space>ccp', function()
-        local actions = require("CopilotChat.actions")
-        require("CopilotChat.integrations.telescope").pick(actions.prompt_actions({
-          selection = require('CopilotChat.select').visual
-        }))
-      end, { silent = true, desc = "CopilotChat - Prompt actions" })
-
-      vim.keymap.set({ 'x' }, '<space>ccv', "<cmd>CopilotChatVisual<CR>",
-        { silent = true, desc = "CopilotChat - Open in vertical split" })
+      for _, mapping in ipairs(mappings) do
+        vim.keymap.set(mapping.mode, mapping.key, mapping.action, { silent = true, desc = mapping.desc })
+      end
     end,
-    keys = {
-      -- Show help actions with telescope
-      {
-        "<space>cch",
-        function()
-          local actions = require("CopilotChat.actions")
-          require("CopilotChat.integrations.telescope").pick(actions.help_actions())
-        end,
-        desc = "CopilotChat - Help actions",
-      },
-      -- Generate commit message based on the git diff
-      {
-        "<space>ccm",
-        "<cmd>CopilotChatCommit<cr>",
-        desc = "CopilotChat - Generate commit message for all changes",
-      },
-      {
-        "<space>ccM",
-        "<cmd>CopilotChatCommitStaged<cr>",
-        desc = "CopilotChat - Generate commit message for staged changes",
-      },
-      -- Quick chat with Copilot
-      {
-        "<space>ccq",
-        function()
-          local input = vim.fn.input("Quick Chat: ")
-          if input ~= "" then
-            vim.cmd("CopilotChatBuffer " .. input)
-          end
-        end,
-        desc = "CopilotChat - Quick chat",
-      },
-      -- Code related commands
-      { "<space>cce", "<cmd>CopilotChatExplain<cr>",       desc = "CopilotChat - Explain code" },
-      { "<space>cct", "<cmd>CopilotChatTests<cr>",         desc = "CopilotChat - Generate tests" },
-      { "<space>ccr", "<cmd>CopilotChatReview<cr>",        desc = "CopilotChat - Review code" },
-      { "<space>ccR", "<cmd>CopilotChatRefactor<cr>",      desc = "CopilotChat - Refactor code" },
-      { "<space>ccn", "<cmd>CopilotChatBetterNamings<cr>", desc = "CopilotChat - Better Naming" },
-    }
   },
 }
