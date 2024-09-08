@@ -3,6 +3,8 @@ local capabilities = vim.tbl_deep_extend("force",
   require('cmp_nvim_lsp').default_capabilities()
 )
 
+capabilities.offsetEncoding = { "utf-16" }
+
 -- local capabilitiesClangd = vim.deepcopy(capabilities)
 -- capabilitiesClangd.textDocument.completion.completionItem.snippetSupport = true
 --
@@ -133,6 +135,9 @@ require("lspconfig").clangd.setup {
 }
 
 require('lspconfig').pylsp.setup {
+  capabilities = capabilities
+}
+require('lspconfig').jsonls.setup {
   capabilities = capabilities
 }
 require 'lspconfig'.esbonio.setup {

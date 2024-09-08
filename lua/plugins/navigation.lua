@@ -4,12 +4,20 @@ return {
   {
     "ahmedkhalf/project.nvim",
     main = "project_nvim",
+    enabled = true,
     opts =
     {
+      manual_mode = true,
       exclude_dirs = { '~/Downloads' },
-      detection_methods = { "lsp", "pattern" },
-      patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile" },
-    }
+      detection_methods = { "lsp" },
+      ignore_lsp = { "cmake" },
+      -- detection_methods = { "lsp", "pattern" },
+      patterns = {},
+      -- patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile" },
+    },
+    config = function(_, opts)
+      require("project_nvim").setup(opts)
+    end
   },
   {
     "stevearc/oil.nvim",

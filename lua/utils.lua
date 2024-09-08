@@ -42,8 +42,12 @@ function M.toggle_diagnostic_text()
 end
 
 function M.toggle_inlay_hints()
-  local enabled = vim.lsp.inlay_hint.is_enabled(0)
-  vim.lsp.inlay_hint.enable(0, not enabled)
+  local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
+  vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
+end
+
+function M.toggle_diagnostics_current_buffer()
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled({ bufnr = 0 }), { bufnr = 0 })
 end
 
 return M

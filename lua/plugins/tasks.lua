@@ -5,13 +5,20 @@ return {
     'stevearc/overseer.nvim',
     lazy = true,
     cmd = "OverseerToggle",
-    opts = {},
+    opts = {
+      templates = { "builtin", "command_runner" },
+      task_list = {
+        direction = "right",
+        max_width = { 300, 0.3 },
+      }
+    },
   },
   {
     "akinsho/toggleterm.nvim",
     lazy = true,
-    cmd = "ToggleTerm",
+    cmd = { "ToggleTerm", "TermSelect" },
     opts = {
+      direction = "vertical",
       size = function(term)
         if term.direction == "horizontal" then
           return 15
@@ -23,8 +30,9 @@ return {
   },
   {
     'kassio/neoterm',
+    enabled = false,
     config = function()
-      vim.g.neoterm_default_mod = 'botright vertical'
+      vim.g.neoterm_default_mod = 'botright horizontal'
       vim.g.neoterm_autoscroll = 'true'
     end,
   },

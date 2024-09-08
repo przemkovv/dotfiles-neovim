@@ -21,6 +21,56 @@ return {
   {
     enabled = true,
 
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+
+        panel = {
+          enabled = false,
+          auto_refresh = true,
+          keymap = {
+            jump_prev = "[[",
+            jump_next = "]]",
+            accept = "<CR>",
+            refresh = "gr",
+            open = "<M-CR>"
+          },
+          layout = {
+            position = "left", -- | top | left | right
+            ratio = 0.4
+          },
+        },
+        suggestion = {
+          enabled = true,
+          auto_trigger = true,
+          hide_during_completion = false,
+          debounce = 75,
+          keymap = {
+            accept = "<C-j>",
+            accept_word = false,
+            accept_line = false,
+            next = "<C-]>",
+            prev = false,
+            dismiss = false,
+          },
+        },
+        filetypes = {
+          help = false,
+          gitcommit = false,
+          gitrebase = false,
+          hgcommit = false,
+          svn = false,
+          cvs = false,
+          ["*"] = true,
+        },
+      })
+    end,
+  },
+  {
+    enabled = false,
+
     "github/copilot.vim",
     config = function()
       vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {

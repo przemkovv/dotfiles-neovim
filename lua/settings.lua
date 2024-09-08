@@ -22,6 +22,8 @@ vim.opt.mouse        = "a"
 vim.opt.hlsearch     = true
 vim.opt.history      = 10000
 vim.opt.undolevels   = 1000
+vim.opt.sessionoptions:remove { "folds" }
+vim.opt.formatoptions = "jcroql/"
 
 vim.opt.wildignore:append { "*.swp", "*.bak", "*.pyc", "*.class" }
 vim.opt.wildignore:append { "*/tmp/*", "*.so", "*.swp", "*.zip", "*.d", "*.o" }
@@ -134,6 +136,7 @@ vim.filetype.add({
     hlsl = 'hlsl',
     psh = 'hlsl',
     vsh = 'hlsl',
+    fxh = 'hlsl',
   }
 })
 if vim.fn.has('win32') == 1 and vim.fn.hostname() == 'MA-605' then

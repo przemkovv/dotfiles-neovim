@@ -4,6 +4,8 @@ vim.keymap.set('n', '<Space>ev', ':e  $MYVIMRC<CR>')
 vim.keymap.set('n', '<Space>eev', ':vsplit  $MYVIMRC<CR>')
 vim.keymap.set('n', '<Space>el', ':e  .nvim.lua<CR>')
 vim.keymap.set('n', '<space>ek', ':source .nvim.lua<CR>', { desc = "Source .nvim.lua" })
+vim.keymap.set('n', '<space>ss', ':mksession! .session.vim<CR>', { desc = "Save Current Session" })
+vim.keymap.set('n', '<space>sl', ':source .session.vim<CR>', { desc = "Load Session" })
 
 vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr><c-l>',
   { silent = true })
@@ -16,10 +18,6 @@ vim.keymap.set('n', 'k', "v:count ? 'k' : 'gk'", { expr = true })
 vim.keymap.set('', '<space><bs>', ':bprevious|bdelete #<CR>', { silent = true })
 vim.keymap.set('', '<space><space><bs>', ':bdelete!<CR>', { silent = true })
 vim.keymap.set('n', '<space>w', ':w<CR>', { silent = false })
-vim.keymap.set('n', '<space>ss', require('session_manager').save_current_session,
-  { desc = "Save Current Session", silent = false })
-vim.keymap.set('n', '<space>sl', require('session_manager').load_session, { desc = "Load Session", silent = false })
-vim.keymap.set('n', '<space>sr', require('session_manager').delete_session, { desc = "Delete Session", silent = false })
 
 vim.keymap.set('n', '<Space>z', 'zMzvzz', { silent = false })
 vim.keymap.set('n', '<Space>8', ':let @/=\'\\<<C-R>=expand("<cword>")<CR>\\>\'<CR>:set hls<CR>', { silent = true })
@@ -105,6 +103,7 @@ vim.keymap.set('n', '<Space>b', '<cmd>Telescope buffers<CR>')
 vim.keymap.set('n', '<Space>O', '<cmd>Telescope projects<CR>')
 vim.keymap.set('n', '<Space>o', '<cmd>OverseerToggle<CR>')
 vim.keymap.set('n', '<Space>a', '<cmd>ToggleTerm<CR>')
+vim.keymap.set('n', '<Space>A', '<cmd>TermSelect<CR>')
 vim.keymap.set('n', '\\c', '<cmd>Telescope colorscheme<CR>')
 vim.keymap.set('n', 'ga.', '<cmd>Telescope textcase<CR>')
 vim.keymap.set('v', 'ga.', "<cmd>Telescope textcase<CR>")
@@ -112,3 +111,10 @@ vim.keymap.set('v', 'ga.', "<cmd>Telescope textcase<CR>")
 
 vim.keymap.set("n", "<space>L", require('utils').toggle_diagnostic_text, { desc = "Toggle lsp_lines" })
 vim.keymap.set('n', '<space>sd', vim.diagnostic.open_float)
+vim.keymap.set("n", "<space>dl", require('utils').toggle_diagnostics_current_buffer,
+  { desc = "Toggle diagnostics in current buffer" })
+
+vim.keymap.set('n', 'md', require('remedybg').run_debugger, { silent = true })
+vim.keymap.set('n', '<space>ds', require('remedybg').stop_debug, { silent = true })
+vim.keymap.set('n', '<space>dr', require('remedybg').start_debug, { silent = true })
+vim.keymap.set('n', '<space>db', require('remedybg').toggle_breakpoint, { silent = true })
