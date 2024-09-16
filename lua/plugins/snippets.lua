@@ -3,7 +3,7 @@ return {
     'L3MON4D3/LuaSnip',
     lazy = true,
     event = "InsertEnter",
-    build = "make install_jsregexp",
+    -- build = "make install_jsregexp",
     -- opts = {},
     dependencies = {
       'rafamadriz/friendly-snippets',

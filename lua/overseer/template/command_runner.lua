@@ -4,6 +4,7 @@ return
   builder = function(params)
     return {
       cmd = params.cmd,
+      cwd = params.cwd,
       name = params.name,
       desc = params.desc,
       -- strategy = {
@@ -34,6 +35,10 @@ return
   params = {
     cmd = {
       type = "string"
+    },
+    cwd = {
+      type = "string",
+      optional = true
     },
     name = {
       type = "string",
