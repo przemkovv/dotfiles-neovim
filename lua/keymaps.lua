@@ -72,8 +72,8 @@ vim.keymap.set('c', '<c-@>', '<c-f>')
 
 vim.keymap.set('c', '<c-j>', '<down>')
 vim.keymap.set('c', '<c-k>', '<up>')
-vim.keymap.set('c', '<c-f>', '<left>')
-vim.keymap.set('c', '<c-g>', '<right>')
+-- vim.keymap.set('c', '<c-f>', '<left>')
+-- vim.keymap.set('c', '<c-g>', '<right>')
 
 vim.keymap.set('c', 'w!!', 'w !sudo tee % >/dev/null')
 
