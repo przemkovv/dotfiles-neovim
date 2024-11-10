@@ -188,7 +188,11 @@ return {
       }
     end,
   },
-  { 'stsewd/sphinx.nvim',            build = ":UpdateRemotePlugins", ft = 'rst' },
+  {
+    'stsewd/sphinx.nvim',
+    -- build = ":UpdateRemotePlugins",
+    ft = 'rst'
+  },
   { 'lervag/vimtex',                 ft = { 'tex' } },
   { 'KeitaNakamura/tex-conceal.vim', ft = { 'tex' } },
   { 'wannesm/wmgraphviz.vim',        ft = { 'dot' } },
@@ -241,7 +245,41 @@ return {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
-    build = "cd app && npm install",
+    build = "cd app && npm install && git restore .",
+  },
+  {
+    'willothy/wezterm.nvim',
+    config = true
+  },
+  {
+    "benlubas/molten-nvim",
+    enabled = false,
+    dependencies = { "willothy/wezterm.nvim" },
+    version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
+    -- build = ":UpdateRemotePlugins",
+    init = function()
+      -- this is an example, not a default. Please see the readme for more configuration options
+      vim.g.molten_output_win_max_height = 12
+      vim.g.molten_auto_open_output = false
+      -- vim.g.molten_image_provider = "image.nvim"
+      local NS = { noremap = true, silent = true }
+      vim.keymap.set("n", "<localleader>mi", ":MoltenInit<CR>",
+        { silent = true, desc = "Initialize the plugin" })
+      vim.keymap.set("n", "<localleader>e", ":MoltenEvaluateOperator<CR>",
+        { silent = true, desc = "run operator selection" })
+      vim.keymap.set("n", "<localleader>rd", ":MoltenDelete<CR>",
+        { silent = true, desc = "delete cell" })
+      vim.keymap.set("n", "<localleader>ro", ":MoltenShowOutput<CR>",
+        { silent = true, desc = "show output" })
+      vim.keymap.set("n", "<localleader>rq", ":noautocmd MoltenEnterOutput<CR>",
+        { silent = true, desc = "enter output" })
+      vim.keymap.set("n", "<localleader>rl", ":MoltenEvaluateLine<CR>",
+        { silent = true, desc = "evaluate line" })
+      vim.keymap.set("n", "<localleader>rr", ":MoltenReevaluateCell<CR>",
+        { silent = true, desc = "re-evaluate cell" })
+      vim.keymap.set("v", "<localleader>r", ":<C-u>MoltenEvaluateVisual<CR>gv",
+        { silent = true, desc = "evaluate visual selection" })
+    end,
   },
 
   -- " }}}

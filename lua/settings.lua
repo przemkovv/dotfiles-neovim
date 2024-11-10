@@ -67,7 +67,7 @@ vim.opt.breakindentopt:append { "sbr" }
 vim.opt.tags:append { "tags", "./tags", "~/.vimtags" }
 vim.opt.completeopt = { "menu", "preview", "noselect", "menuone" }
 
-vim.opt.cmdheight = 1
+vim.opt.cmdheight = 2
 
 vim.opt.timeout = false
 vim.opt.ttimeout = true
@@ -147,4 +147,10 @@ if vim.fn.has('win32') == 1 and vim.fn.hostname() == 'MA-605' then
   vim.opt.shellpipe = '2>&1 | %%{ "$_" } | Tee-Object %s; exit $LastExitCode '
   vim.opt.shellquote = ""
   vim.opt.shellxquote = ""
+end
+if vim.fn.has('win32') == 1 and vim.fn.hostname() == 'ARAGORN' then
+  local pythonpath = "H:\\dev\\tools\\Python\\Python312"
+  vim.g.python3_host_prog = "H:\\dev\\tools\\Python\\Python312\\python.exe"
+  vim.opt.rtp:prepend(pythonpath..'Scripts')
+  vim.opt.rtp:prepend(pythonpath)
 end

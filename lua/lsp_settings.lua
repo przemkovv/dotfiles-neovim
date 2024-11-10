@@ -146,10 +146,19 @@ require 'lspconfig'.esbonio.setup {
 require('lspconfig').vimls.setup {
   capabilities = capabilities
 }
+
+local get_build_dir = function()
+  local build_dir = "build/"
+  if vim.g.build_dir ~= nil then
+    build_dir = vim.g.build_dir
+  end
+  return build_dir
+end
+
 require('lspconfig').cmake.setup {
   capabilities = capabilities,
   init_options = {
-    buildDirectory = "out/build/windows-msvc-debug",
+    buildDirectory = get_build_dir(),
     root_pattern = { 'CMakePresets.json', 'CTestConfig.cmake', '.git', 'build', 'cmake', 'out' }
   }
 }
@@ -322,11 +331,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('n', '<Space>T', require('telescope.builtin').lsp_document_symbols, opts)
     vim.keymap.set('n', '<Space>t', require('telescope.builtin').lsp_dynamic_workspace_symbols, opts2)
     vim.keymap.set('n', '<F12>', require('telescope.builtin').lsp_incoming_calls, opts)
-    vim.keymap.set('n', '<Space>ca', vim.lsp.buf.code_action, opts)
-    vim.keymap.set('v', '<Space>ca', vim.lsp.buf.code_action, opts)
-    vim.keymap.set('n', '<Space>cr', vim.lsp.buf.rename, opts)
-    vim.keymap.set("n", "[g", function() vim.diagnostic.goto_prev({ float = false }) end, opts)
-    vim.keymap.set("n", "]g", function() vim.diagnostic.goto_next({ float = false }) end, opts)
+    -- vim.keymap.set('n', '<Space>ca', vim.lsp.buf.code_action, opts)
+    -- vim.keymap.set('v', '<Space>ca', vim.lsp.buf.code_action, opts)
+    -- vim.keymap.set('n', '<Space>cr', vim.lsp.buf.rename, opts)
+    -- vim.keymap.set("n", "[g", function() vim.diagnostic.goto_prev({ float = false }) end, opts)
+    -- vim.keymap.set("n", "]g", function() vim.diagnostic.goto_next({ float = false }) end, opts)
     vim.keymap.set("n", "<space>dd", vim.diagnostic.setqflist, opts)
     vim.keymap.set('n', '\\wa', vim.lsp.buf.add_workspace_folder, opts)
     vim.keymap.set('n', '\\wr', vim.lsp.buf.remove_workspace_folder, opts)
