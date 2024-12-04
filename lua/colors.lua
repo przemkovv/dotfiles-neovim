@@ -19,9 +19,15 @@ function M.setup_colors()
   --silent! colorscheme base16-chalk
   --silent! colorscheme moonfly
   --]]
+
+  require('tokyonight').setup({
+    on_highlights = function(hl, c)
+      hl.IncSearch = { bg = "#99663c" }
+    end
+  })
   vim.cmd [[
-silent! colorscheme tokyonight-night
-]]
+  silent! colorscheme tokyonight-night
+  ]]
 end
 
 return M
