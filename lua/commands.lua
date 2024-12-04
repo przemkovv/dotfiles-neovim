@@ -123,8 +123,22 @@ vim.api.nvim_create_autocmd("BufWinEnter",
 -- }}}
 
 vim.api.nvim_create_user_command('Redir', function(ctx)
-  local lines = vim.split(vim.api.nvim_exec2(ctx.args, { output = true }).output, '\n', { plain = true })
+  local cmd = ctx.args
+  if ctx.range > 0 then
+    cmd = ctx.line1 .. "," .. ctx.line2 .. ctx.args
+  end
+  local lines = vim.split(vim.api.nvim_exec2(cmd, { output = true }).output, '\n', { plain = true })
   vim.cmd('vnew')
   vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
   vim.opt_local.modified = false
-end, { nargs = '+', complete = 'command', force = true })
+end, { nargs = '+', complete = 'command', force = true, range = true })
+
+vim.api.nvim_create_user_command('Redir2Reg', function(ctx)
+  local cmd = ctx.args
+  if ctx.range > 0 then
+    cmd = ctx.line1 .. "," .. ctx.line2 .. ctx.args
+  end
+  vim.print("Executing: " .. cmd)
+  local lines = vim.split(vim.api.nvim_exec2(cmd, { output = true }).output, '\n', { plain = true })
+  vim.fn.setreg("", lines, "l")
+end, { nargs = '+', complete = 'command', force = true, range = true })

@@ -33,13 +33,10 @@ vim.keymap.set('n', 'N', 'Nzzzv', { silent = false })
 
 vim.keymap.set('n', '<Space>q', ':cclose<bar>lclose<cr>', { silent = false })
 vim.keymap.set('n', '<Space>Q', ':copen<cr>', { silent = false })
-vim.keymap.set('n', '<Space>x', function()
-  if vim.bo.filetype == 'lua' then
-    local line = vim.api.nvim_get_current_line()
-    print(line)
-    print(vim.api.nvim_exec2(':lua ' .. line, { output = true }).output)
-  end
-end, { silent = false, desc = "Execute current lua line" })
+vim.keymap.set("n", "<space>x", "<cmd>.lua<CR>")
+vim.keymap.set("v", "<space>x", "<cmd>lua<CR>")
+vim.keymap.set("n", "<space>X", "<cmd>Redir2Reg .lua<CR>")
+vim.keymap.set("v", "<space>X", "<cmd>Redir2Reg lua<CR>")
 
 vim.keymap.set('n', '<space>1', ':Neotree toggle<CR>', { silent = true })
 vim.keymap.set('n', '-', ':Oil<CR>', { silent = false })
