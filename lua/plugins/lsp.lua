@@ -151,6 +151,7 @@ return {
   },
   {
     'm-demare/hlargs.nvim',
+    enable = false,
     opts = {},
     lazy = true,
     event = "LspAttach",

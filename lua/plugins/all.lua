@@ -89,9 +89,11 @@ return {
   {
     'numToStr/Comment.nvim',
     enabled = true,
-    opts = {
-      -- add any options here
-    },
+    config = function()
+      require('Comment').setup()
+      local ft = require('Comment.ft')
+      ft.hlsl = ft.get('cpp')
+    end,
     lazy = false,
   },
 

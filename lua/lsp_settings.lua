@@ -146,6 +146,20 @@ require 'lspconfig'.esbonio.setup {
 require('lspconfig').vimls.setup {
   capabilities = capabilities
 }
+require('lspconfig').slangd.setup {
+  capabilities = capabilities,
+  cmd = {
+    "slangd", "--debug"
+  },
+  settings = {
+    slang = {
+      inlayHints = {
+        deducedTypes = true,
+        parameterNames = true,
+      }
+    }
+  }
+}
 
 local get_build_dir = function()
   local build_dir = "build/"
@@ -211,11 +225,11 @@ require 'lspconfig'.pylsp.setup {
 vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
   .handlers['textDocument/publishDiagnostics'])
 
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
-  vim.lsp.handlers.hover, {
-    border = "single"
-  }
-)
+-- vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
+--   vim.lsp.handlers.hover, {
+--     border = "single"
+--   }
+-- )
 vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
   require('lsp_utils').My_signature_help_handler(vim.lsp.handlers.signature_help),
   {
@@ -226,32 +240,32 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
 
 -- " hlargs {{{
 
-local hlargs_group_id = vim.api.nvim_create_augroup("LspAttach_hlargs", { clear = true })
-vim.api.nvim_create_autocmd("LspAttach", {
-  group = hlargs_group_id,
-  callback = function(args)
-    if not (args.data and args.data.client_id) then
-      return
-    end
-
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client == nil then
-      return
-    end
-    local caps = client.server_capabilities
-    if caps
-        and caps.semanticTokensProvider
-        and caps.semanticTokensProvider.full then
-      require("hlargs").disable_buf(args.buf)
-    end
-  end,
-})
-vim.api.nvim_create_autocmd("LspDetach", {
-  group = hlargs_group_id,
-  callback = function(args)
-    require("hlargs").enable_buf(args.buf)
-  end,
-})
+-- local hlargs_group_id = vim.api.nvim_create_augroup("LspAttach_hlargs", { clear = true })
+-- vim.api.nvim_create_autocmd("LspAttach", {
+--   group = hlargs_group_id,
+--   callback = function(args)
+--     if not (args.data and args.data.client_id) then
+--       return
+--     end
+--
+--     local client = vim.lsp.get_client_by_id(args.data.client_id)
+--     if client == nil then
+--       return
+--     end
+--     local caps = client.server_capabilities
+--     if caps
+--         and caps.semanticTokensProvider
+--         and caps.semanticTokensProvider.full then
+--       require("hlargs").disable_buf(args.buf)
+--     end
+--   end,
+-- })
+-- vim.api.nvim_create_autocmd("LspDetach", {
+--   group = hlargs_group_id,
+--   callback = function(args)
+--     require("hlargs").enable_buf(args.buf)
+--   end,
+-- })
 
 -- " }}}
 
@@ -275,6 +289,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set('v', '<Space>gf', vim.lsp.formatexpr, opts)
       end
 
+      if client:supports_method('textDocument/foldingRange') then
+        vim.wo.foldmethod = 'expr'
+        vim.wo.foldexpr = 'v:lua.vim.lsp.foldexpr()'
+      end
       if client.server_capabilities.definitionProvider then
         bufopt.tagfunc = "v:lua.vim.lsp.tagfunc"
       end
@@ -284,24 +302,24 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set('n', '<space>sF', ':ClangdSwitchSourceHeaderVSplit<CR>')
       end
 
-      if client.server_capabilities.documentHighlightProvider then
-        vim.opt.updatetime = 300
-        local lsp_document_highlight_id = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
-        vim.api.nvim_create_autocmd(
-          { "CursorHold", "CursorHoldI" },
-          {
-            callback = vim.lsp.buf.document_highlight,
-            buffer = bufnr,
-            group = lsp_document_highlight_id,
-            desc = "Document Highlight",
-          })
-        vim.api.nvim_create_autocmd("CursorMoved", {
-          callback = vim.lsp.buf.clear_references,
-          buffer = bufnr,
-          group = lsp_document_highlight_id,
-          desc = "Clear All the References",
-        })
-      end
+      -- if client.server_capabilities.documentHighlightProvider then
+      --   vim.opt.updatetime = 300
+      --   local lsp_document_highlight_id = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
+      --   vim.api.nvim_create_autocmd(
+      --     { "CursorHold", "CursorHoldI" },
+      --     {
+      --       callback = vim.lsp.buf.document_highlight,
+      --       buffer = bufnr,
+      --       group = lsp_document_highlight_id,
+      --       desc = "Document Highlight",
+      --     })
+      --   vim.api.nvim_create_autocmd("CursorMoved", {
+      --     callback = vim.lsp.buf.clear_references,
+      --     buffer = bufnr,
+      --     group = lsp_document_highlight_id,
+      --     desc = "Clear All the References",
+      --   })
+      -- end
 
       if client.server_capabilities.signatureHelpProvider then
         local signature_help_id = vim.api.nvim_create_augroup("lsp_signature_help", { clear = true })
