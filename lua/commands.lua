@@ -135,10 +135,19 @@ end, { nargs = '+', complete = 'command', force = true, range = true })
 
 vim.api.nvim_create_user_command('Redir2Reg', function(ctx)
   local cmd = ctx.args
+  if vim.fn.mode() == 'v' or vim.fn.mode() == 'V' then
+    local vstart = vim.fn.getpos "v"
+    local vend = vim.fn.getpos "."
+    if vstart[2] == vend[2] and vstart[2] == 0 then
+      vstart = vim.fn.getpos "v"
+      vend = vim.fn.getpos "."
+    end
+    vim.print { vstart = vstart, vend = vend }
+    cmd = vstart[2] .. "," .. vend[2] .. ctx.args
+  end
   if ctx.range > 0 then
     cmd = ctx.line1 .. "," .. ctx.line2 .. ctx.args
   end
-  vim.print("Executing: " .. cmd)
   local lines = vim.split(vim.api.nvim_exec2(cmd, { output = true }).output, '\n', { plain = true })
   vim.fn.setreg("", lines, "l")
 end, { nargs = '+', complete = 'command', force = true, range = true })

@@ -36,7 +36,7 @@ vim.keymap.set('n', '<Space>Q', ':copen<cr>', { silent = false })
 vim.keymap.set("n", "<space>x", "<cmd>.lua<CR>")
 vim.keymap.set("v", "<space>x", "<cmd>lua<CR>")
 vim.keymap.set("n", "<space>X", "<cmd>Redir2Reg .lua<CR>")
-vim.keymap.set("v", "<space>X", "<cmd>Redir2Reg lua<CR>")
+vim.keymap.set("v", "<space>X", "<cmd>Redir2Reg lua<CR><esc>")
 
 vim.keymap.set('n', '<space>1', ':Neotree toggle<CR>', { silent = true })
 vim.keymap.set('n', '-', ':Oil<CR>', { silent = false })
