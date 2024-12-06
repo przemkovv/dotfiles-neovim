@@ -149,10 +149,21 @@ require('lspconfig').vimls.setup {
 require('lspconfig').slangd.setup {
   capabilities = capabilities,
   cmd = {
-    "slangd", "--debug"
+    "slangd"
   },
+  root_dir = function(fname)
+    return require('lspconfig').util.find_git_ancestor(fname)
+  end,
   settings = {
+    slangLanguageServer = {
+      trace = {
+        -- server = "messages"
+      },
+    },
     slang = {
+      format = {
+        -- clangFormatStyle = "file",
+      },
       inlayHints = {
         deducedTypes = true,
         parameterNames = true,
