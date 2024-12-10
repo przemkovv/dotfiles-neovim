@@ -10,6 +10,7 @@ return {
       'nvim-telescope/telescope-ui-select.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
       "johmsalas/text-case.nvim",
+      'nvim-telescope/telescope-symbols.nvim'
     },
     config = function()
       vim.env.FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*" '
@@ -50,7 +51,7 @@ return {
               n = { ["<c-t>"] = require('trouble.sources.telescope').open },
             },
             preview = {
-              hide_on_startup = true -- hide previewer when picker starts
+              hide_on_startup = false -- hide previewer when picker starts
             }
           },
           pickers = {
@@ -59,6 +60,8 @@ return {
               find_command = { "rg", "--files", "--hidden", "--follow", "--glob", "!.git/*" },
             },
             lsp_dynamic_workspace_symbols = {
+              fname_width = 120,
+              symbol_width = 35,
               sorter = require('telescope').extensions.fzf.native_fzf_sorter(fzf_opts)
             },
             live_grep = {

@@ -1,9 +1,5 @@
 vim.keymap.set('n', '<space>cd', ':cd %:p:h<CR>:pwd<CR>', { desc = "Change working directory to the current file" })
-vim.keymap.set('n', '<space>sv', ':source $MYVIMRC<CR>', { desc = "Source $MYVIMRC" })
-vim.keymap.set('n', '<Space>ev', ':e  $MYVIMRC<CR>')
-vim.keymap.set('n', '<Space>eev', ':vsplit  $MYVIMRC<CR>')
-vim.keymap.set('n', '<Space>el', ':e  .nvim.lua<CR>')
-vim.keymap.set('n', '<space>ek', ':source .nvim.lua<CR>', { desc = "Source .nvim.lua" })
+
 vim.keymap.set('n', '<space>ss', ':mksession! .session.vim<CR>', { desc = "Save Current Session" })
 vim.keymap.set('n', '<space>sl', ':source .session.vim<CR>', { desc = "Load Session" })
 
@@ -81,11 +77,11 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 vim.keymap.set('n', '<Space>r', '<cmd>Telescope live_grep<CR>')
 vim.keymap.set('n', '<Space>R', '<cmd>Telescope grep_string<CR>')
 vim.keymap.set('n', '<Space>h', require('telescope.builtin').builtin, { desc = "Built-in" })
-vim.keymap.set('n', '<Space>?', '<cmd>Telescope help_tags<CR>')
-vim.keymap.set('n', '<Space>f', '<cmd>Telescope find_files<CR>')
-vim.keymap.set('n', '<Space>F', '<cmd>Telescope git_files<CR>')
+vim.keymap.set('n', '<Space>fh', '<cmd>Telescope help_tags<CR>')
+vim.keymap.set('n', '<Space>fd', '<cmd>Telescope find_files<CR>')
+vim.keymap.set('n', '<Space>fg', '<cmd>Telescope git_files<CR>')
 vim.keymap.set('n', '<Space><c-F>', '<cmd>Telescope git_status<CR>')
-vim.keymap.set('n', '<Space>mr', '<cmd>Telescope oldfiles<CR>')
+vim.keymap.set('n', '<Space>fr', '<cmd>Telescope oldfiles<CR>')
 vim.keymap.set('n', '<Space>mn', function() require('telescope.builtin').keymaps { modes = { 'n' } } end,
   { desc = "Keymaps N" })
 vim.keymap.set('n', '<Space>mx', function() require('telescope.builtin').keymaps { modes = { 'x' } } end,
@@ -96,8 +92,13 @@ vim.keymap.set('n', '<Space>mo', function() require('telescope.builtin').keymaps
   { desc = "Keymaps O" })
 vim.keymap.set('n', '<Space>mt', function() require('telescope.builtin').keymaps { modes = { 't' } } end,
   { desc = "Keymaps T" })
-vim.keymap.set('n', '<Space>b', '<cmd>Telescope buffers<CR>')
-vim.keymap.set('n', '<Space>O', '<cmd>Telescope projects<CR>')
+vim.keymap.set('n', '<Space>en', function()
+    local opts = require('telescope.themes').get_ivy({ cwd = vim.fn.stdpath('config') })
+    require('telescope.builtin').find_files(opts)
+  end,
+  { desc = "Edit neovim config" })
+vim.keymap.set('n', '<Space>fb', '<cmd>Telescope buffers<CR>')
+vim.keymap.set('n', '<Space>fp', '<cmd>Telescope projects<CR>')
 vim.keymap.set('n', '<Space>o', '<cmd>OverseerToggle<CR>')
 vim.keymap.set('n', '<Space>a', '<cmd>ToggleTerm<CR>')
 vim.keymap.set('n', '<Space>A', '<cmd>TermSelect<CR>')
@@ -107,7 +108,6 @@ vim.keymap.set('v', 'ga.', "<cmd>Telescope textcase<CR>")
 
 
 vim.keymap.set("n", "<space>L", require('utils').toggle_diagnostic_text, { desc = "Toggle lsp_lines" })
-vim.keymap.set('n', '<space>sd', vim.diagnostic.open_float)
 vim.keymap.set("n", "<space>dl", require('utils').toggle_diagnostics_current_buffer,
   { desc = "Toggle diagnostics in current buffer" })
 
