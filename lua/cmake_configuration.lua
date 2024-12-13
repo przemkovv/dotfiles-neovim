@@ -17,6 +17,17 @@ local file_exists = function(name)
   end
 end
 
+local get_table_length = function(t)
+  if t == nil then
+    return 0
+  end
+  local count = 0
+  for _ in pairs(t) do
+    count = count + 1
+  end
+  return count
+end
+
 function M.get_cmake_preset_build_configurations()
   local presets_file = "CMakePresets.json"
   if not file_exists(presets_file) then
@@ -33,24 +44,69 @@ function M.get_cmake_preset_build_configurations()
   local binary_dir_template = nil
   local install_dir_template = nil
 
+  local configurePresets = {}
+  local configurePresetsToProcess = {}
   for _, preset in ipairs(presets.configurePresets) do
     if preset.name == "conf-common" then
       binary_dir_template = preset.binaryDir
       install_dir_template = preset.installDir
     end
+
+    if preset.binaryDir ~= nil then
+      configurePresets[preset.name] = preset
+    else
+      configurePresetsToProcess[preset.name] = preset
+    end
   end
+  while configurePresetsToProcess ~= nil and get_table_length(configurePresetsToProcess) > 0 do
+    for name, preset in pairs(configurePresetsToProcess) do
+      local all_inherited_checked = true
+      if preset.inherits ~= nil then
+        if type(preset.inherits) == "string" then
+          inherit = preset.inherits
+          if configurePresets[inherit] ~= nil then
+            if configurePresets[inherit].binaryDir ~= nil then
+              preset.binaryDir = configurePresets[inherit].binaryDir
+            end
+          else
+            all_inherited_checked = false
+          end
+        else
+          for _, inherit in ipairs(preset.inherits) do
+            if configurePresets[inherit] ~= nil then
+              if configurePresets[inherit].binaryDir ~= nil then
+                preset.binaryDir = configurePresets[inherit].binaryDir
+              end
+            else
+              all_inherited_checked = false
+            end
+          end
+        end
+      end
+
+      if all_inherited_checked == true then
+        configurePresets[name] = preset
+        configurePresetsToProcess[name] = nil
+      end
+    end
+  end
+
 
 
   local all_build_presets = presets.buildPresets or {}
   local build_presets = {}
   for _, preset in ipairs(all_build_presets) do
     if preset.hidden == nil or preset.hidden == false then
+      local configure_preset = configurePresets[preset.configurePreset]
+      if configure_preset.binaryDir ~= nil then
+        binary_dir_template = configurePresets[preset.configurePreset].binaryDir
+      end
       build_presets[preset.name] = {
         name = preset.name,
         description = preset.description,
         configure_preset = preset.configurePreset,
-        binary_dir = parse_cmake_preset({ sourceDir = ".", presetName = preset.name }, binary_dir_template),
-        install_dir = parse_cmake_preset({ sourceDir = ".", presetName = preset.name }, install_dir_template)
+        binary_dir = parse_cmake_preset({ sourceDir = ".", presetName = configure_preset.name }, binary_dir_template),
+        install_dir = parse_cmake_preset({ sourceDir = ".", presetName = configure_preset.name }, install_dir_template)
       }
     end
   end
@@ -81,6 +137,7 @@ function M.setup_make(configuration)
     fallback = true
   end
   if fallback == false then
+    vim.notify("Not Fallback")
     vim.opt.makeprg = "cmake --build --preset " .. build_configurations[configuration].name
     vim.g.configureprg = "cmake --preset " .. build_configurations[configuration].configure_preset
     vim.g.remedy_session_file = "./endorobot.rdbg"
@@ -90,6 +147,7 @@ function M.setup_make(configuration)
   end
 
   if fallback == true then
+    vim.notify("Fallback")
     if vim.fn.has('windows') then
       vim.opt.makeprg = "cmake --build --preset windows-" .. configuration
       vim.g.configureprg = "cmake --preset windows-msvc-" .. configuration
