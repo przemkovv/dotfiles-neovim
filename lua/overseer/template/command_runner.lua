@@ -7,18 +7,18 @@ return
       cwd = params.cwd,
       name = params.name,
       desc = params.desc,
-      -- strategy = {
-      --   "jobstart",
-      --   preserve_output = true,
-      --   use_terminal = false,
-      -- },
       strategy = {
-        "toggleterm",
-        use_shell = false,
-        direction = "vertical",
-        close_on_exit = false,
-        open_on_start = false,
+        "jobstart",
+        preserve_output = true,
+        use_terminal = false,
       },
+      -- strategy = {
+      --   "toggleterm",
+      --   use_shell = false,
+      --   direction = "vertical",
+      --   close_on_exit = false,
+      --   open_on_start = false,
+      -- },
       components = {
         {
           "on_output_quickfix",

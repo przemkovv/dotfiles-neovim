@@ -13,7 +13,6 @@ vim.keymap.set('n', 'k', "v:count ? 'k' : 'gk'", { expr = true })
 
 vim.keymap.set('', '<space><bs>', ':bprevious|bdelete #<CR>', { silent = true })
 vim.keymap.set('', '<space><space><bs>', ':bdelete!<CR>', { silent = true })
-vim.keymap.set('n', '<space>w', ':w<CR>', { silent = false })
 
 vim.keymap.set('n', '<Space>z', 'zMzvzz', { silent = false })
 vim.keymap.set('n', '<Space>8', ':let @/=\'\\<<C-R>=expand("<cword>")<CR>\\>\'<CR>:set hls<CR>', { silent = true })
@@ -97,6 +96,11 @@ vim.keymap.set('n', '<Space>en', function()
     require('telescope.builtin').find_files(opts)
   end,
   { desc = "Edit neovim config" })
+vim.keymap.set('n', '<Space>ep', function()
+    local opts = require('telescope.themes').get_ivy({ cwd = vim.fs.joinpath(vim.fn.stdpath('data'),"lazy") })
+    require('telescope.builtin').find_files(opts)
+  end,
+  { desc = "Edit neovim plugin" })
 vim.keymap.set('n', '<Space>fb', '<cmd>Telescope buffers<CR>')
 vim.keymap.set('n', '<Space>fp', '<cmd>Telescope projects<CR>')
 vim.keymap.set('n', '<Space>o', '<cmd>OverseerToggle<CR>')

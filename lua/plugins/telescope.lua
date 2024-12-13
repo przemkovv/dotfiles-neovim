@@ -51,7 +51,10 @@ return {
               n = { ["<c-t>"] = require('trouble.sources.telescope').open },
             },
             preview = {
-              hide_on_startup = false -- hide previewer when picker starts
+              check_mime_type = true,
+              hide_on_startup = false, -- hide previewer when picker starts
+              filesize_limit = 0.2,
+              highlight_limit = 0.05,
             }
           },
           pickers = {

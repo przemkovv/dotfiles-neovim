@@ -69,7 +69,7 @@ vim.opt.tags:append { "tags", "./tags", "~/.vimtags" }
 vim.opt.completeopt = { "menu", "preview", "noselect", "menuone" }
 
 vim.opt.cmdheight = 1
-vim.opt.messagesopt = "wait:200,history:500"
+-- vim.opt.messagesopt = "wait:0,history:500"
 
 
 vim.opt.timeout = false
