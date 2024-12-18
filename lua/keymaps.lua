@@ -79,11 +79,10 @@ vim.keymap.set('n', '<Space>h', require('telescope.builtin').builtin, { desc = "
 vim.keymap.set('n', '<Space>fh', '<cmd>Telescope help_tags<CR>')
 vim.keymap.set('n', '<Space>fd', '<cmd>Telescope find_files<CR>')
 vim.keymap.set('n', '<Space>fD', function()
-    local opts = require('telescope.themes').get_ivy({
+    require('telescope.builtin').find_files({
       cwd = vim.g.build_dir,
       find_command = { "rg", "-u", "--files", "--hidden", "--follow", "--glob", "!.git/*" },
     })
-    require('telescope.builtin').find_files(opts)
   end,
   { desc = "Find files in the build directory" })
 vim.keymap.set('n', '<Space>fg', '<cmd>Telescope git_files<CR>')
@@ -100,13 +99,11 @@ vim.keymap.set('n', '<Space>mo', function() require('telescope.builtin').keymaps
 vim.keymap.set('n', '<Space>mt', function() require('telescope.builtin').keymaps { modes = { 't' } } end,
   { desc = "Keymaps T" })
 vim.keymap.set('n', '<Space>en', function()
-    local opts = require('telescope.themes').get_ivy({ cwd = vim.fn.stdpath('config') })
-    require('telescope.builtin').find_files(opts)
+    require('telescope.builtin').find_files({ cwd = vim.fn.stdpath('config') })
   end,
   { desc = "Edit neovim config" })
 vim.keymap.set('n', '<Space>ep', function()
-    local opts = require('telescope.themes').get_ivy({ cwd = vim.fs.joinpath(vim.fn.stdpath('data'), "lazy") })
-    require('telescope.builtin').find_files(opts)
+    require('telescope.builtin').find_files({ cwd = vim.fs.joinpath(vim.fn.stdpath('data'), "lazy") })
   end,
   { desc = "Edit neovim plugin" })
 vim.keymap.set('n', '<Space>fb', '<cmd>Telescope buffers<CR>')
@@ -118,6 +115,8 @@ vim.keymap.set('n', '\\c', '<cmd>Telescope colorscheme<CR>')
 vim.keymap.set('n', 'ga.', '<cmd>Telescope textcase<CR>')
 vim.keymap.set('v', 'ga.', "<cmd>Telescope textcase<CR>")
 
+vim.keymap.set('n', '<Space>ff', require('telescope.builtin').resume, { desc = "Resume last telescope" })
+vim.keymap.set('n', '<Space>fF', require('telescope.builtin').pickers, { desc = "List all telescope pickers" })
 
 vim.keymap.set("n", "<space>L", require('utils').toggle_diagnostic_text, { desc = "Toggle lsp_lines" })
 vim.keymap.set("n", "<space>dl", require('utils').toggle_diagnostics_current_buffer,
@@ -127,3 +126,15 @@ vim.keymap.set("n", "<space>dl", require('utils').toggle_diagnostics_current_buf
 vim.keymap.set('n', '<space>ds', require('remedybg').stop_debug, { silent = true })
 vim.keymap.set('n', '<space>dr', require('remedybg').start_debug, { silent = true })
 vim.keymap.set('n', '<space>db', require('remedybg').toggle_breakpoint, { silent = true })
+
+vim.keymap.set('i', '<C-x><C-o>', function()
+  require('blink.cmp').show()
+  require('blink.cmp').show_documentation()
+  require('blink.cmp').hide_documentation()
+end, { silent = false });
+
+vim.keymap.set('i', '<C-x><C-f>', function()
+  require('blink.cmp').show({ providers = { 'path' } })
+  require('blink.cmp').show_documentation()
+  require('blink.cmp').hide_documentation()
+end, { silent = false });

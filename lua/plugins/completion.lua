@@ -1,8 +1,70 @@
 return {
 
   {
+    'saghen/blink.cmp',
+    lazy = false, -- lazy loading handled internally
+    -- dependencies = 'rafamadriz/friendly-snippets',
+    dependencies = 'L3MON4D3/LuaSnip',
+
+    -- version = 'v0.*',
+    build = 'cargo build --release',
+    opts = {
+      keymap = {
+        preset = 'default',
+      },
+
+      appearance = {
+        nerd_font_variant = 'mono'
+      },
+      completion = {
+        menu = {
+          auto_show = true,
+          enabled = true,
+          min_width = 30,
+          max_height = 15,
+          -- winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel",
+          border = 'padded',
+
+          draw = {
+            treesitter = {},
+            columns = { { "kind_icon", "label", "label_description", gap = 1 }, { "kind" } },
+          }
+        },
+        documentation = {
+          -- Controls whether the documentation window will automatically show when selecting a completion item
+          auto_show = true,
+          treesitter_highlighting = true,
+        }
+      },
+      signature = {
+        enabled = true,
+        trigger = {
+          blocked_trigger_characters = {},
+          blocked_retrigger_characters = {},
+          -- When true, will show the signature help window when the cursor comes after a trigger character when entering insert mode
+          show_on_insert_on_trigger_character = true,
+        },
+      },
+      snippets = {
+        expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
+        active = function(filter)
+          if filter and filter.direction then
+            return require('luasnip').jumpable(filter.direction)
+          end
+          return require('luasnip').in_snippet()
+        end,
+        jump = function(direction) require('luasnip').jump(direction) end,
+      },
+      sources = {
+        default = { 'lsp', 'path', 'luasnip', 'buffer' },
+      },
+
+    },
+  },
+  {
     'hrsh7th/nvim-cmp',
     lazy = false,
+    enabled = false,
     event = "InsertEnter",
     dependencies = {
       { 'hrsh7th/cmp-buffer', },
@@ -31,16 +93,16 @@ return {
       cmp.setup({
         formatting = {
           format = lspkind.cmp_format({
-            mode = 'symbol_text',      -- show only symbol annotations
-            maxwidth = 50,             -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-            ellipsis_char = '...',     -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+            mode = 'symbol_text', -- show only symbol annotations
+            maxwidth = 70, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            ellipsis_char = '', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
             preset = 'codicons',
             show_labelDetails = false, -- show labelDetails in menu. Disabled by default
 
             -- The function below will be called before any actual modifications from lspkind
             -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
             before = function(_, vim_item)
-              local MAX_ABBR_WIDTH, MAX_MENU_WIDTH = 35, 60 -- Truncate the label.
+              local MAX_ABBR_WIDTH, MAX_MENU_WIDTH = 50, 70 -- Truncate the label.
               local ellipsis = '…'
               if vim.api.nvim_strwidth(vim_item.abbr) > MAX_ABBR_WIDTH then
                 vim_item.abbr = vim.fn.strcharpart(vim_item.abbr, 0, MAX_ABBR_WIDTH) .. ellipsis

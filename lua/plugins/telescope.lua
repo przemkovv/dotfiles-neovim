@@ -55,6 +55,9 @@ return {
               hide_on_startup = false, -- hide previewer when picker starts
               filesize_limit = 0.2,
               highlight_limit = 0.05,
+            },
+            cache_picker = {
+              num_pickers = 10,
             }
           },
           pickers = {
