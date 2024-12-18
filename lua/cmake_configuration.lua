@@ -2,7 +2,10 @@ local M = {}
 
 local parse_cmake_preset = function(vars, text)
   -- str = "${sourceDir}/out/build/${presetName}"
-  return text:gsub("%${(.-)}", function(key)
+  -- str = "$env{RTT_BUILD_ROOT}/out/build/${presetName}"
+  return text:gsub("%$env{(.-)}", function(key)
+    return vim.env[key] or key
+  end):gsub("%${(.-)}", function(key)
     return vars[key] or key
   end)
 end
@@ -101,12 +104,16 @@ function M.get_cmake_preset_build_configurations()
       if configure_preset.binaryDir ~= nil then
         binary_dir_template = configurePresets[preset.configurePreset].binaryDir
       end
+      local replacement_opts = {
+        sourceDir = ".",
+        presetName = configure_preset.name,
+      }
       build_presets[preset.name] = {
         name = preset.name,
         description = preset.description,
         configure_preset = preset.configurePreset,
-        binary_dir = parse_cmake_preset({ sourceDir = ".", presetName = configure_preset.name }, binary_dir_template),
-        install_dir = parse_cmake_preset({ sourceDir = ".", presetName = configure_preset.name }, install_dir_template)
+        binary_dir = parse_cmake_preset(replacement_opts, binary_dir_template),
+        install_dir = parse_cmake_preset(replacement_opts, install_dir_template)
       }
     end
   end
