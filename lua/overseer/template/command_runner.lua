@@ -7,6 +7,7 @@ return
       cwd = params.cwd,
       name = params.name,
       desc = params.desc,
+      tags = { require("overseer").TAG.BUILD },
       strategy = {
         "jobstart",
         preserve_output = true,

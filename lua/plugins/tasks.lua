@@ -6,7 +6,7 @@ return {
     lazy = true,
     cmd = "OverseerToggle",
     opts = {
-      templates = { "builtin", "command_runner" },
+      templates = { "builtin", "command_runner", "run_ctest" },
       task_list = {
         direction = "right",
         max_width = { 300, 0.3 },

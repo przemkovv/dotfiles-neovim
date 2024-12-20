@@ -1,7 +1,14 @@
+
+local cmp_capabilities = nil
+if package.loaded["blink.cmp"] then
+  cmp_capabilities = require('blink.cmp').get_lsp_capabilities()
+else
+  cmp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+end
+
 local capabilities = vim.tbl_deep_extend("force",
   vim.lsp.protocol.make_client_capabilities(),
-  require('blink.cmp').get_lsp_capabilities()
-  -- require('cmp_nvim_lsp').default_capabilities()
+  cmp_capabilities
 )
 
 capabilities.offsetEncoding = { "utf-16" }

@@ -3,6 +3,7 @@ return {
   {
     'saghen/blink.cmp',
     lazy = false, -- lazy loading handled internally
+    enabled = false,
     -- dependencies = 'rafamadriz/friendly-snippets',
     dependencies = 'L3MON4D3/LuaSnip',
 
@@ -64,7 +65,7 @@ return {
   {
     'hrsh7th/nvim-cmp',
     lazy = false,
-    enabled = false,
+    enabled = true,
     event = "InsertEnter",
     dependencies = {
       { 'hrsh7th/cmp-buffer', },
