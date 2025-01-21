@@ -217,4 +217,102 @@ function M.pick_cmake_configuration()
   }):find()
 end
 
+function M.compile_current_file()
+  -- Get the current file path
+  local current_file = vim.api.nvim_buf_get_name(0)
+
+  -- Load compile_commands.json file
+  local compile_commands_path = vim.g.build_dir .. "/compile_commands.json"
+  local compile_commands_file = io.open(compile_commands_path, "r")
+  if not compile_commands_file then
+    print("Could not open compile_commands.json")
+    return
+  end
+
+  local compile_commands_content = compile_commands_file:read("*a")
+  compile_commands_file:close()
+
+  -- Parse the JSON content
+  local compile_commands = vim.fn.json_decode(compile_commands_content)
+
+  -- Find the current file in the list
+  local compile_command = nil
+  for _, command in ipairs(compile_commands) do
+    if command.file == current_file then
+      compile_command = command.command
+      break
+    end
+  end
+
+  if not compile_command then
+    print("Could not find compile command for the current file")
+    return
+  end
+
+  -- Run the command
+  require("overseer").run_template(
+    {
+      name = "Command runner",
+      params = {
+        cmd = compile_command,
+        cwd = vim.g.build_dir,
+        desc = "Compile current file"
+      }
+    })
+end
+
+function M.setup()
+  vim.api.nvim_create_user_command("CMake",
+    function(params)
+      local prg = nil
+      if params.fargs[1] == "build" then
+        prg = vim.o.makeprg
+      elseif params.fargs[1] == "configure" then
+        prg = vim.g.configureprg
+      elseif params.fargs[1] == "build_and_run" then
+        prg = vim.o.makeprg
+      else
+        return
+      end
+
+      local args = vim.fn.expandcmd(string.sub(params.args, string.len(params.fargs[1]) + 1))
+      -- Insert args at the '$*' in the makeprg
+      local cmd, num_subs = prg:gsub("%$%*", args)
+      if num_subs == 0 then
+        cmd = cmd .. " " .. args
+      end
+      vim.notify("Starting " .. cmd)
+
+      require("overseer").run_template(
+        {
+          name = "Command runner",
+          params = {
+            cmd = cmd,
+            desc = "CMake runner"
+          }
+        })
+    end,
+    {
+      desc = "Run your makeprg as an Overseer task",
+      nargs = "*",
+      bang = true,
+      complete = function(ArgLead, CmdLine, CursorPos)
+        return { "build", "configure", "build_and_run" }
+      end,
+    })
+
+
+  -- vim.g.msvcpath = vim.fn.shellescape(vim.fn.expand("${VCToolsInstallDir}")) .. "include/.*"
+  local msvcpath = vim.fn.getenv("VCToolsInstallDir"):gsub("\\", "/"):gsub(" ", "\\ ")
+  local msvcpath_expr = msvcpath .. "include/*"
+
+  vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+    pattern = msvcpath_expr,
+    callback = function()
+      local buf = vim.api.nvim_get_current_buf()
+      vim.api.nvim_set_option_value("filetype", "cpp", { buf = buf })
+    end
+  })
+end
+
 return M

@@ -1,6 +1,11 @@
 return {
   'tpope/vim-dispatch',
-
+  {
+    "nvim-neorg/neorg",
+    lazy = false,  -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
+    version = "*", -- Pin Neorg to the latest stable release
+    config = true,
+  },
   {
     'stevearc/overseer.nvim',
     lazy = true,

@@ -1,4 +1,3 @@
-
 local cmp_capabilities = nil
 if package.loaded["blink.cmp"] then
   cmp_capabilities = require('blink.cmp').get_lsp_capabilities()
@@ -169,6 +168,7 @@ require('lspconfig').slangd.setup {
       },
     },
     slang = {
+      additionalSearchPaths = { "H:/Projects/robotron/software/endorobot_app/src/shaders/common", },
       format = {
         -- clangFormatStyle = "file",
       },
@@ -249,12 +249,12 @@ vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_pu
 --     border = "single"
 --   }
 -- )
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
-  require('lsp_utils').My_signature_help_handler(vim.lsp.handlers.signature_help),
-  {
-    border = "single"
-  }
-)
+-- vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
+--   require('lsp_utils').My_signature_help_handler(vim.lsp.handlers.signature_help),
+--   {
+--     border = "single"
+--   }
+-- )
 
 
 -- " hlargs {{{
@@ -340,39 +340,27 @@ vim.api.nvim_create_autocmd("LspAttach", {
       --   })
       -- end
 
-      if client.server_capabilities.signatureHelpProvider then
-        local signature_help_id = vim.api.nvim_create_augroup("lsp_signature_help", { clear = true })
-        vim.api.nvim_create_autocmd("CursorHoldI", {
-          callback = vim.lsp.buf.signature_help,
-          buffer = bufnr,
-          group = signature_help_id,
-        })
-      end
       if client.server_capabilities.hoverProvider then
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+        vim.keymap.set('n', 'K', require('lsp_utils').hover, opts)
       end
       if client.server_capabilities.inlayHintProvider then
         vim.keymap.set('n', '<space>l', require('utils').toggle_inlay_hints, opts)
       end
     end
-    vim.keymap.set('n', '<Space>dc', vim.lsp.buf.declaration, opts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', '<Space>gd', vim.lsp.buf.declaration, opts)
+    -- vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'gd', require('lsp_utils').definition, opts)
     vim.keymap.set('n', 'gD', function() require "telescope.builtin".lsp_definitions({ jump_type = "vsplit" }) end,
       opts)
     vim.keymap.set('n', '<Space>gi', vim.lsp.buf.implementation, opts)
-    vim.keymap.set('n', '<C-k>', require('lsp_utils').Force_signature_help, opts)
-    vim.keymap.set('i', '<C-k>', require('lsp_utils').Force_signature_help, opts)
+    vim.keymap.set('n', '<C-k>', require('lsp_utils').signature_help, opts)
+    vim.keymap.set('i', '<C-k>', require('lsp_utils').signature_help, opts)
     vim.keymap.set('n', '<Space>gt', require('telescope.builtin').lsp_type_definitions, opts)
     vim.keymap.set('n', '<Space>gr', require('telescope.builtin').lsp_references, opts)
     vim.keymap.set('n', '<Space>gs', "<cmd>Lspsaga outline<cr>", opts)
     vim.keymap.set('n', '<Space>T', require('telescope.builtin').lsp_document_symbols, opts)
     vim.keymap.set('n', '<Space>t', require('telescope.builtin').lsp_dynamic_workspace_symbols, opts2)
-    vim.keymap.set('n', '<F12>', require('telescope.builtin').lsp_incoming_calls, opts)
-    -- vim.keymap.set('n', '<Space>ca', vim.lsp.buf.code_action, opts)
-    -- vim.keymap.set('v', '<Space>ca', vim.lsp.buf.code_action, opts)
-    -- vim.keymap.set('n', '<Space>cr', vim.lsp.buf.rename, opts)
-    -- vim.keymap.set("n", "[g", function() vim.diagnostic.goto_prev({ float = false }) end, opts)
-    -- vim.keymap.set("n", "]g", function() vim.diagnostic.goto_next({ float = false }) end, opts)
+    vim.keymap.set('n', '<space>ic', require('telescope.builtin').lsp_incoming_calls, opts)
     vim.keymap.set("n", "<space>dd", vim.diagnostic.setqflist, opts)
     vim.keymap.set('n', '\\wa', vim.lsp.buf.add_workspace_folder, opts)
     vim.keymap.set('n', '\\wr', vim.lsp.buf.remove_workspace_folder, opts)

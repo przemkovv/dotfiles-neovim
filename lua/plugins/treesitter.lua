@@ -16,8 +16,8 @@ return {
   {
     'nvim-treesitter/nvim-treesitter',
     build = ":TSUpdate",
-    lazy = false,
-    event = { "BufReadPre", "BufNewFile" },
+    -- lazy = false,
+    -- event = { "BufReadPre", "BufNewFile" },
     config = function()
       if treesitter_parsers_path ~= nil then
         vim.opt.rtp:prepend(treesitter_parsers_path)
@@ -72,33 +72,33 @@ return {
           },
           textobjects = {
             select = {
-              enable = true,
+              enable = false,
 
               -- Automatically jump forward to textobj, similar to targets.vim
               lookahead = true,
 
-              keymaps = {
-                -- You can use the capture groups defined in textobjects.scm
-                ["af"] = "@function.outer",
-                ["if"] = "@function.inner",
-                ["ac"] = "@class.outer",
-                ["aC"] = "@comment.outer",
-                ["iC"] = "@comment.inner",
-                ["ia"] = "@parameter.inner",
-                ["aa"] = "@parameter.outer",
-                ["ii"] = "@block.inner",
-                ["ai"] = "@block.outer",
-                -- you can optionally set descriptions to the mappings (used in the desc parameter of nvim_buf_set_keymap
-                ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-              },
-              -- You can choose the select mode (default is charwise 'v')
-              selection_modes = {
-                ['@parameter.outer'] = 'v', -- charwise
-                ['@function.outer'] = 'V',  -- linewise
-                ['@block.inner'] = 'V',     -- linewise
-                ['@block.outer'] = 'V',     -- linewise
-                ['@class.outer'] = '<c-v>', -- blockwise
-              },
+              -- keymaps = {
+              --   -- You can use the capture groups defined in textobjects.scm
+              --   ["af"] = "@function.outer",
+              --   ["if"] = "@function.inner",
+              --   ["ac"] = "@class.outer",
+              --   ["aC"] = "@comment.outer",
+              --   ["iC"] = "@comment.inner",
+              --   ["ia"] = "@parameter.inner",
+              --   ["aa"] = "@parameter.outer",
+              --   ["ii"] = "@block.inner",
+              --   ["ai"] = "@block.outer",
+              --   -- you can optionally set descriptions to the mappings (used in the desc parameter of nvim_buf_set_keymap
+              --   ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+              -- },
+              -- -- You can choose the select mode (default is charwise 'v')
+              -- selection_modes = {
+              --   ['@parameter.outer'] = 'v', -- charwise
+              --   ['@function.outer'] = 'V',  -- linewise
+              --   ['@block.inner'] = 'V',     -- linewise
+              --   ['@block.outer'] = 'V',     -- linewise
+              --   ['@class.outer'] = '<c-v>', -- blockwise
+              -- },
               -- If you set this to `true` (default is `false`) then any textobject is
               -- extended to include preceding xor succeeding whitespace. Succeeding
               -- whitespace has priority in order to act similarly to eg the built-in
@@ -127,8 +127,81 @@ return {
   },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
-    lazy = true,
-    event = { "BufReadPre", "BufNewFile" },
+    lazy = false,
+    -- event = { "BufReadPre", "BufNewFile" },
+  },
+  {
+    'echasnovski/mini.nvim',
+    lazy = false,
+    -- event = 'VeryLazy',
+    version = false,
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-treesitter/nvim-treesitter-textobjects'
+    },
+    config = function()
+      local spec_treesitter = require('mini.ai').gen_spec.treesitter
+      require('mini.ai').setup({
+        custom_textobjects = {
+          f = spec_treesitter({ a = '@function.outer', i = '@function.inner' }),
+          C = spec_treesitter({ a = '@comment.outer', i = '@comment.inner' }),
+          o = spec_treesitter({
+            a = { '@conditional.outer', '@loop.outer' },
+            i = { '@conditional.inner', '@loop.inner' },
+          })
+        },
+        mappings = {
+          -- Main textobject prefixes
+          around = 'a',
+          inside = 'i',
+
+          -- Next/last textobjects
+          around_next = 'an',
+          inside_next = 'in',
+          around_last = 'al',
+          inside_last = 'il',
+
+          -- Move cursor to corresponding edge of `a` textobject
+          goto_left = 'g[',
+          goto_right = 'g]',
+        },
+      })
+      require 'mini.surround'.setup()
+      require 'mini.move'.setup({
+        mappings = {
+          left       = '<S-left>',
+          right      = '<S-right>',
+          down       = '<S-down>',
+          up         = '<S-up>',
+
+          line_left  = '<S-left>',
+          line_right = '<S-right>',
+          line_down  = '<S-down>',
+          line_up    = '<S-up>',
+        }
+      })
+      require 'mini.notify'.setup(
+        {
+          window = {
+            config = {
+              width = 70,
+              anchor = "SW",
+            },
+          },
+        })
+      local notify_opts = {
+        INFO = {
+          duration = 2000,
+        },
+        WARN = {
+          duration = 2000,
+        },
+        ERROR = {
+          duration = 2000,
+        },
+      }
+      vim.notify = require('mini.notify').make_notify(notify_opts)
+    end,
   },
   {
     'nvim-treesitter/nvim-treesitter-context',

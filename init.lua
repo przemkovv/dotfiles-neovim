@@ -21,5 +21,6 @@ vim.opt.rtp:prepend(lazypath)
 
 require('packages').install()
 require('colors').setup_colors()
+require('cmake_configuration').setup()
 require('keymaps')
 require('lsp_settings')

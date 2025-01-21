@@ -6,6 +6,7 @@ return {
   },
   {
     'nvim-lua/lsp-status.nvim',
+    enabled = false,
     lazy = true,
     event = "LspAttach",
   },
@@ -39,6 +40,7 @@ return {
   },
   {
     'jackguo380/vim-lsp-cxx-highlight',
+    enabled = false,
     lazy = true,
     event = "LspAttach",
   },
@@ -91,22 +93,40 @@ return {
       },
       ast = {
         -- These are unicode, should be available in any font
+        -- role_icons = {
+        --   type = "🄣",
+        --   declaration = "🄓",
+        --   expression = "🄔",
+        --   statement = ";",
+        --   specifier = "🄢",
+        --   ["template argument"] = "🆃",
+        -- },
+        -- kind_icons = {
+        --   Compound = "🄲",
+        --   Recovery = "🅁",
+        --   TranslationUnit = "🅄",
+        --   PackExpansion = "🄿",
+        --   TemplateTypeParm = "🅃",
+        --   TemplateTemplateParm = "🅃",
+        --   TemplateParamObject = "🅃",
+        -- },
         role_icons = {
-          type = "🄣",
-          declaration = "🄓",
-          expression = "🄔",
-          statement = ";",
-          specifier = "🄢",
-          ["template argument"] = "🆃",
+          type = "",
+          declaration = "",
+          expression = "",
+          specifier = "",
+          statement = "",
+          ["template argument"] = "",
         },
+
         kind_icons = {
-          Compound = "🄲",
-          Recovery = "🅁",
-          TranslationUnit = "🅄",
-          PackExpansion = "🄿",
-          TemplateTypeParm = "🅃",
-          TemplateTemplateParm = "🅃",
-          TemplateParamObject = "🅃",
+          Compound = "",
+          Recovery = "",
+          TranslationUnit = "",
+          PackExpansion = "",
+          TemplateTypeParm = "",
+          TemplateTemplateParm = "",
+          TemplateParamObject = "",
         },
         --[[ These require codicons (https://github.com/microsoft/vscode-codicons)
             role_icons = {
@@ -126,17 +146,18 @@ return {
                 TemplateTypeParm = "",
                 TemplateTemplateParm = "",
                 TemplateParamObject = "",
-            }, ]]
+            },
+            ]]
 
         highlights = {
           detail = "Comment",
         },
       },
       memory_usage = {
-        border = "none",
+        border = "rounded",
       },
       symbol_info = {
-        border = "none",
+        border = "rounded",
       },
     }
   },

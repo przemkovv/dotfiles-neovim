@@ -76,4 +76,19 @@ function M.Force_signature_help()
   vim.lsp.buf.signature_help()
 end
 
+local win_opts = { border = "rounded" }
+function M.signature_help()
+  vim.lsp.buf.signature_help(win_opts)
+end
+
+function M.hover()
+  vim.lsp.buf.hover(win_opts)
+end
+
+function M.definition()
+  local pos = vim.api.nvim_win_get_cursor(0)
+  vim.api.nvim_buf_set_mark(0, 'A', pos[1], pos[2], {})
+  vim.lsp.buf.definition()
+end
+
 return M

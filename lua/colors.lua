@@ -7,7 +7,13 @@ function M.setup_colors()
     pattern = "*",
     callback = function()
       vim.api.nvim_set_hl(0, "User1",
-        { cterm = "bold", ctermfg = 14, fg = "#e1a3ee", ctermbg = 1, bg = "#202020" })
+        {
+          ctermfg = 14,
+          fg = "#e1a3ee",
+          ctermbg = 1,
+          bg = "#202020",
+          bold = true,
+        })
     end
   })
 
@@ -21,13 +27,14 @@ function M.setup_colors()
   --]]
 
   require('tokyonight').setup({
+    -- style = "day",
+    style = "night", -- The theme comes in three styles, `storm`, a darker variant `night` and `day`
     on_highlights = function(hl, c)
       hl.IncSearch = { bg = "#99663c" }
-    end
+    end,
+    day_brightness = 0.05, -- Adjusts the brightness of the colors of the **Day** style. Number between 0 and 1, from dull to vibrant colors
   })
-  vim.cmd [[
-  silent! colorscheme tokyonight-night
-  ]]
+  vim.cmd.colorscheme("tokyonight")
 end
 
 return M

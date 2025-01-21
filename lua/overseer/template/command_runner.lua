@@ -26,7 +26,7 @@ return
           open = false,
           open_height = 8,
           tail = false,
-          open_on_exit = "always"
+          open_on_exit = "failure"
         },
         { "on_complete_notify" },
         "default",

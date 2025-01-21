@@ -33,7 +33,7 @@ return {
       require('lualine').setup({
         options = {
           icons_enabled = true,
-          theme = custom_powerline_dark,
+          -- theme = custom_powerline_dark,
           component_separators = { left = '', right = '' },
           section_separators = { left = '', right = '' },
           disabled_filetypes = {
@@ -52,10 +52,14 @@ return {
         sections = {
           lualine_a = { { 'mode', fmt = function(str) return str:sub(1, 1) end } },
 
-          lualine_b = { 'branch', 'diff' },
+          lualine_b = {
+            -- 'branch',
+            'diff',
+          },
           lualine_c = {
-            { overseer_status },
-            { 'filename',     path = 1 },
+            { "overseer", unique = true },
+            -- { overseer_status },
+            { 'filename', path = 1 },
           },
           lualine_x = { 'filetype' },
           lualine_y = { 'encoding', 'fileformat' },
@@ -75,8 +79,9 @@ return {
           lualine_a = {},
           lualine_b = {},
           lualine_c = {
-            { overseer_status },
-            { 'filename',     path = 1 },
+            { "overseer", unique = true },
+            -- { overseer_status },
+            { 'filename', path = 1 },
           },
           lualine_x = { 'filetype' },
           lualine_y = { 'encoding', 'fileformat' },
@@ -88,9 +93,17 @@ return {
         tabline = {},
         winbar = {},
         inactive_winbar = {},
-        extensions = { 'quickfix',
+        extensions = {
+          'quickfix',
           -- 'nvim-tree',
-          'overseer', 'trouble', 'toggleterm', 'man', 'fugitive', }
+          'overseer',
+          'trouble',
+          'toggleterm',
+          'man',
+          'fugitive',
+          'oil',
+          'lazy',
+        }
       })
     end
   },

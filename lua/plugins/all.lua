@@ -6,25 +6,6 @@ return {
     cmd = "StartupTime"
   },
   {
-    'echasnovski/mini.nvim',
-    lazy = true,
-    event = 'VeryLazy',
-    version = false,
-    config = function()
-      require 'mini.notify'.setup(
-        {
-          window = {
-            config = {
-              width = 70,
-              anchor = "SW",
-            },
-          },
-        })
-      local notify_opts = { ERROR = { duration = 10000 } }
-      vim.notify = require('mini.notify').make_notify(notify_opts)
-    end,
-  },
-  {
     -- TODO: This is a todo message.
     -- HACK: This is a hack.
     -- FIXME: This should really be fixed.
@@ -108,14 +89,15 @@ return {
   -- " Dev Tools {{{
   {
     'tpope/vim-fugitive',
-    enabled = false,
-    lazy = true,
-    cmd = { "Git" }
+    enabled = true,
+    lazy = false,
+    -- cmd = { "Git" }
   },
   {
     "NeogitOrg/neogit",
+    enabled = false,
     -- branch = "nightly",
-    commit = "fffb448615f45db90b59461a537075d6966e9eda",
+    -- commit = "fffb448615f45db90b59461a537075d6966e9eda",
     dependencies = {
       "nvim-lua/plenary.nvim",  -- required
       "sindrets/diffview.nvim", -- optional - Diff integration
@@ -170,11 +152,15 @@ return {
   {
     'Wansmer/treesj',
     lazy = true,
-    keys = { "<space>j" },
+    keys = {
+      "<space>J",
+    },
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
       require('treesj').setup({ use_default_keymaps = false })
-      vim.keymap.set('n', '<space>j', require('treesj').toggle)
+      vim.keymap.set('n', '<space>J', function()
+        require('treesj').toggle({ split = { recursive = true } })
+      end)
     end,
   },
 
