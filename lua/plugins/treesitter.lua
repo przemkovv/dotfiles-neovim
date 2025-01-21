@@ -150,6 +150,7 @@ return {
             i = { '@conditional.inner', '@loop.inner' },
           })
         },
+        n_lines = 1000,
         mappings = {
           -- Main textobject prefixes
           around = 'a',
@@ -166,7 +167,9 @@ return {
           goto_right = 'g]',
         },
       })
-      require 'mini.surround'.setup()
+      require 'mini.surround'.setup({
+        n_lines = 1000,
+      })
       require 'mini.move'.setup({
         mappings = {
           left       = '<S-left>',
