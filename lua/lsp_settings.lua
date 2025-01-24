@@ -321,25 +321,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set('n', '<space>sF', ':ClangdSwitchSourceHeaderVSplit<CR>')
       end
 
-      -- if client.server_capabilities.documentHighlightProvider then
-      --   vim.opt.updatetime = 300
-      --   local lsp_document_highlight_id = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
-      --   vim.api.nvim_create_autocmd(
-      --     { "CursorHold", "CursorHoldI" },
-      --     {
-      --       callback = vim.lsp.buf.document_highlight,
-      --       buffer = bufnr,
-      --       group = lsp_document_highlight_id,
-      --       desc = "Document Highlight",
-      --     })
-      --   vim.api.nvim_create_autocmd("CursorMoved", {
-      --     callback = vim.lsp.buf.clear_references,
-      --     buffer = bufnr,
-      --     group = lsp_document_highlight_id,
-      --     desc = "Clear All the References",
-      --   })
-      -- end
-
       if client.server_capabilities.hoverProvider then
         vim.keymap.set('n', 'K', require('lsp_utils').hover, opts)
       end
@@ -348,7 +329,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
       end
     end
     vim.keymap.set('n', '<Space>gd', vim.lsp.buf.declaration, opts)
-    -- vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
     vim.keymap.set('n', 'gd', require('lsp_utils').definition, opts)
     vim.keymap.set('n', 'gD', function() require "telescope.builtin".lsp_definitions({ jump_type = "vsplit" }) end,
       opts)
@@ -358,6 +338,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('n', '<Space>gt', require('telescope.builtin').lsp_type_definitions, opts)
     vim.keymap.set('n', '<Space>gr', require('telescope.builtin').lsp_references, opts)
     vim.keymap.set('n', '<Space>gs', "<cmd>Lspsaga outline<cr>", opts)
+    vim.keymap.set('n', '<Space>gp', "<cmd>Lspsaga peek_definition<cr>", opts)
     vim.keymap.set('n', '<Space>T', require('telescope.builtin').lsp_document_symbols, opts)
     vim.keymap.set('n', '<Space>t', require('telescope.builtin').lsp_dynamic_workspace_symbols, opts2)
     vim.keymap.set('n', '<space>ic', require('telescope.builtin').lsp_incoming_calls, opts)
