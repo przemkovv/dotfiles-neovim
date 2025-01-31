@@ -144,7 +144,6 @@ function M.setup_make(configuration)
     fallback = true
   end
   if fallback == false then
-    vim.notify("Not Fallback")
     vim.opt.makeprg = "cmake --build --preset " .. build_configurations[configuration].name
     vim.g.configureprg = "cmake --preset " .. build_configurations[configuration].configure_preset
     vim.g.remedy_session_file = "./endorobot.rdbg"

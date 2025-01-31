@@ -40,7 +40,7 @@ return {
     },
     -- stylua: ignore
     keys = {
-      { "s",        mode = { "n", "x", }, function() require("flash").jump() end,              desc = "Flash" },
+      { "<c-s>",    mode = { "n", "x", }, function() require("flash").jump() end,              desc = "Flash" },
       { "S",        mode = { "n", "x", }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
       { "<space>s", mode = { "o" },       function() require("flash").jump() end,              desc = "Flash" },
       { "<space>S", mode = { "o" },       function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
@@ -50,7 +50,7 @@ return {
     },
   },
   -- 'wellle/targets.vim',
-  { 'tpope/vim-surround',     enabled = false },
+  { 'tpope/vim-surround',            enabled = false },
   -- { 'kylechui/nvim-surround', opts = {} },
   'tpope/vim-repeat',
   { 'jeetsukumaran/vim-pythonsense', ft = { 'python' } },

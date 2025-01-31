@@ -12,15 +12,12 @@ local capabilities = vim.tbl_deep_extend("force",
 
 capabilities.offsetEncoding = { "utf-16" }
 
--- local capabilitiesClangd = vim.deepcopy(capabilities)
--- capabilitiesClangd.textDocument.completion.completionItem.snippetSupport = true
+vim.lsp.config('*', {
+  capabilities = capabilities,
+  root_markers = { '.git' },
+})
+
 --
-require 'lspconfig'.marksman.setup {
-  capabilities = capabilities
-}
--- require('lspconfig').rls.setup {
--- capabilities = capabilities
--- }
 require('lspconfig').rust_analyzer.setup {
   capabilities = capabilities,
   settings = {
@@ -76,217 +73,23 @@ require('lspconfig').rust_analyzer.setup {
     }
   }
 }
-require 'lspconfig'.glslls.setup {
-  capabilities = capabilities
-}
-
-local get_clangd_path = function()
-  if vim.fn.has('windows') then
-    return 'clangd'
-  else
-    return "/opt/clang/latest/bin/clangd"
-  end
-end
-
-local get_clangd_query_driver = function()
-  local drivers = {
-    "clang-cl.exe",
-    "clang++",
-    "clang",
-    "gcc",
-    "g++",
-    "arm-none-eabi-g++",
-    "arm-none-eabi-gcc",
-  }
-  return "--query-driver=" .. table.concat(drivers, ",")
-end
 
 
-require("lspconfig").clangd.setup {
-  capabilities = capabilities,
-  cmd = {
-    -- see clangd --help-hidden
-    get_clangd_path(),
-    -- by default, clang-tidy use -checks=clang-diagnostic-*,clang-analyzer-*
-    -- to add more checks, create .clang-tidy file in the root directory
-    -- and add Checks key, see https://clang.llvm.org/extra/clang-tidy/
-    "--background-index",
-    "--background-index-priority=low",
-    "--clang-tidy",
-    "--pch-storage=memory",
-    "--completion-style=bundled",
-    "--header-insertion=iwyu",
-    "--log=error",
-    get_clangd_query_driver()
-  },
-  init_options = {
-    clangdFileStatus = true, -- Provides information about activity on clangd’s per-file worker thread
-    usePlaceholders = true,
-    completeUnimported = true,
-    semanticHighlighting = true,
-  },
-  commands = {
-    ClangdSwitchSourceHeader = {
-      function() require('lsp_utils').switch_source_header_splitcmd(0, "edit") end,
-      description = "Open source/header in current buffer",
-    },
-    ClangdSwitchSourceHeaderVSplit = {
-      function() require('lsp_utils').switch_source_header_splitcmd(0, "vsplit") end,
-      description = "Open source/header in a new vsplit",
-    },
-    ClangdSwitchSourceHeaderSplit = {
-      function() require('lsp_utils').switch_source_header_splitcmd(0, "split") end,
-      description = "Open source/header in a new split",
-    }
-  }
-}
 
-require('lspconfig').pylsp.setup {
-  capabilities = capabilities
-}
-require('lspconfig').jsonls.setup {
-  capabilities = capabilities
-}
-require 'lspconfig'.esbonio.setup {
-  capabilities = capabilities
-}
-require('lspconfig').vimls.setup {
-  capabilities = capabilities
-}
-require('lspconfig').slangd.setup {
-  capabilities = capabilities,
-  cmd = {
-    "slangd"
-  },
-  root_dir = function(fname)
-    return require('lspconfig').util.find_git_ancestor(fname)
-  end,
-  settings = {
-    slangLanguageServer = {
-      trace = {
-        -- server = "messages"
-      },
-    },
-    slang = {
-      additionalSearchPaths = { "H:/Projects/robotron/software/endorobot_app/src/shaders/common", },
-      format = {
-        -- clangFormatStyle = "file",
-      },
-      inlayHints = {
-        deducedTypes = true,
-        parameterNames = true,
-      }
-    }
-  }
-}
-
-local get_build_dir = function()
-  local build_dir = "build/"
-  if vim.g.build_dir ~= nil then
-    build_dir = vim.g.build_dir
-  end
-  return build_dir
-end
-
-require('lspconfig').cmake.setup {
-  capabilities = capabilities,
-  init_options = {
-    buildDirectory = get_build_dir(),
-    root_pattern = { 'CMakePresets.json', 'CTestConfig.cmake', '.git', 'build', 'cmake', 'out' }
-  }
-}
-require 'lspconfig'.lua_ls.setup {
-  capabilities = capabilities,
-  settings = {
-    Lua = {
-      runtime = {
-        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-        version = 'LuaJIT',
-      },
-      diagnostics = {
-        -- Get the language server to recognize the `vim` global
-        globals = { 'vim' },
-      },
-      workspace = {
-        checkThirdParty = false,
-        -- Make the server aware of Neovim runtime files
-        library = {
-          '${3rd}/luv/library',
-          '${3rd}/busted/library',
-          vim.api.nvim_get_runtime_file("", true),
-        },
-      },
-      completion = {
-        callSnippet = 'Replace',
-      },
-      -- Do not send telemetry data containing a randomized but unique identifier
-      telemetry = {
-        enable = false,
-      },
-    },
-  },
-}
-
--- " lua require('lsp_settings').rust()
-require 'lspconfig'.pylsp.setup {
-  settings = {
-    pylsp = {
-      plugins = {
-        pycodestyle = {
-          ignore = { 'W391' },
-          maxLineLength = 100
-        }
-      }
-    }
-  }
-}
+vim.lsp.enable('marksman')
+vim.lsp.enable('glslls')
+vim.lsp.enable('clangd')
+vim.lsp.enable('pylsp')
+vim.lsp.enable('jsonls')
+vim.lsp.enable('esbonio')
+vim.lsp.enable('vimls')
+vim.lsp.enable('slangd')
+vim.lsp.enable('cmake')
+vim.lsp.enable('lua_ls')
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
   .handlers['textDocument/publishDiagnostics'])
 
--- vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
---   vim.lsp.handlers.hover, {
---     border = "single"
---   }
--- )
--- vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
---   require('lsp_utils').My_signature_help_handler(vim.lsp.handlers.signature_help),
---   {
---     border = "single"
---   }
--- )
-
-
--- " hlargs {{{
-
--- local hlargs_group_id = vim.api.nvim_create_augroup("LspAttach_hlargs", { clear = true })
--- vim.api.nvim_create_autocmd("LspAttach", {
---   group = hlargs_group_id,
---   callback = function(args)
---     if not (args.data and args.data.client_id) then
---       return
---     end
---
---     local client = vim.lsp.get_client_by_id(args.data.client_id)
---     if client == nil then
---       return
---     end
---     local caps = client.server_capabilities
---     if caps
---         and caps.semanticTokensProvider
---         and caps.semanticTokensProvider.full then
---       require("hlargs").disable_buf(args.buf)
---     end
---   end,
--- })
--- vim.api.nvim_create_autocmd("LspDetach", {
---   group = hlargs_group_id,
---   callback = function(args)
---     require("hlargs").enable_buf(args.buf)
---   end,
--- })
-
--- " }}}
 
 -- " nvim-lsp {{{
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -299,7 +102,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     if client ~= nil then
       if client.server_capabilities.completionProvider then
-        bufopt.omnifunc = "v:lua.vim.lsp.omnifunc"
+        -- bufopt.omnifunc = "v:lua.vim.lsp.omnifunc"
+        vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
       end
       if client.server_capabilities.documentRangeFormattingProvider or client.server_capabilities.documentFormattingProvider then
         bufopt.formatexpr = 'v:lua.vim.lsp.formatexpr(#{timeout_ms:250})'
@@ -332,7 +136,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('n', 'gd', require('lsp_utils').definition, opts)
     vim.keymap.set('n', 'gD', function() require "telescope.builtin".lsp_definitions({ jump_type = "vsplit" }) end,
       opts)
-    vim.keymap.set('n', '<Space>gi', vim.lsp.buf.implementation, opts)
     vim.keymap.set('n', '<C-k>', require('lsp_utils').signature_help, opts)
     vim.keymap.set('i', '<C-k>', require('lsp_utils').signature_help, opts)
     vim.keymap.set('n', '<Space>gt', require('telescope.builtin').lsp_type_definitions, opts)
