@@ -27,6 +27,8 @@ return {
         checkThirdParty = false,
         -- Make the server aware of Neovim runtime files
         library = {
+          vim.fn.expand('$VIMRUNTIME/lua'),
+          vim.fn.expand('$VIMRUNTIME/lua/vim/lsp'),
           '${3rd}/luv/library',
           '${3rd}/busted/library',
           vim.api.nvim_get_runtime_file("", true),

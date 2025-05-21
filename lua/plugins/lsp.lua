@@ -1,5 +1,29 @@
 return {
   {
+    'stevearc/conform.nvim',
+    opts = {},
+    config = function()
+      require('conform').setup({
+
+        formatters_by_ft = {
+          cmake = {
+            "gersemi",
+            lsp_format = "never",
+          }
+        },
+        default_format_opts = {
+          lsp_format = "prefer",
+
+        }
+      })
+      vim.o.formatexpr = 'v:lua.require("conform").formatexpr()'
+      local opts = { silent = true }
+      local conform = require('conform')
+      vim.keymap.set('n', '<Space>=', conform.format, opts)
+      vim.keymap.set('v', '<Space>=', conform.format, opts)
+    end,
+  },
+  {
     'mrded/nvim-lsp-notify',
     lazy = true,
     event = "LspAttach",

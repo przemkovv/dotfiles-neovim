@@ -138,6 +138,8 @@ vim.filetype.add({
     glsl = 'glsl',
     hlsl = 'hlsl',
     psh = 'hlsl',
+    ash = 'hlsl',
+    msh = 'hlsl',
     vsh = 'hlsl',
     fxh = 'hlsl',
   }
@@ -157,3 +159,5 @@ if vim.fn.has('win32') == 1 and vim.fn.hostname() == 'ARAGORN' then
   vim.opt.rtp:prepend(pythonpath..'Scripts')
   vim.opt.rtp:prepend(pythonpath)
 end
+
+require('vim._extui').enable({})

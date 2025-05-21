@@ -45,7 +45,7 @@ vim.keymap.set('n', '[w', function() require("trouble").previous({ skip_groups =
 
 -- fallback if LSP does not support {{{
 vim.keymap.set('n', '<space>sf', ':FSHere<CR>')
-vim.keymap.set('n', '<space>=', ':keepjumps normal mzgg=Gg`zzz<CR>')
+-- vim.keymap.set('n', '<space>=', ':keepjumps normal mzgg=Gg`zzz<CR>')
 -- }}}
 
 
@@ -140,14 +140,16 @@ vim.keymap.set('n', '<space>mt', function()
   end,
   { noremap = true, silent = true })
 
-vim.keymap.set('i', '<C-x><C-o>', function()
-  require('blink.cmp').show()
-  require('blink.cmp').show_documentation()
-  require('blink.cmp').hide_documentation()
-end, { silent = false });
+if package.loaded["blink.cmp"] then
+  vim.keymap.set('i', '<C-x><C-o>', function()
+    require('blink.cmp').show()
+    require('blink.cmp').show_documentation()
+    require('blink.cmp').hide_documentation()
+  end, { silent = false });
 
-vim.keymap.set('i', '<C-x><C-f>', function()
-  require('blink.cmp').show({ providers = { 'path' } })
-  require('blink.cmp').show_documentation()
-  require('blink.cmp').hide_documentation()
-end, { silent = false });
+  vim.keymap.set('i', '<C-x><C-f>', function()
+    require('blink.cmp').show({ providers = { 'path' } })
+    require('blink.cmp').show_documentation()
+    require('blink.cmp').hide_documentation()
+  end, { silent = false });
+end

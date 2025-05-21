@@ -103,13 +103,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
     if client ~= nil then
       if client.server_capabilities.completionProvider then
         -- bufopt.omnifunc = "v:lua.vim.lsp.omnifunc"
-        vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
+        vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = false })
       end
       if client.server_capabilities.documentRangeFormattingProvider or client.server_capabilities.documentFormattingProvider then
-        bufopt.formatexpr = 'v:lua.vim.lsp.formatexpr(#{timeout_ms:250})'
-        vim.keymap.set('n', '<Space>=', vim.lsp.buf.format, opts)
-        vim.keymap.set('v', '<Space>=', vim.lsp.buf.format, opts)
         vim.keymap.set('v', '<Space>gf', vim.lsp.formatexpr, opts)
+      end
+
+      if client.server_capabilities.inlayHintProvider then
+        vim.lsp.inlay_hint.enable(false)
       end
 
       if client:supports_method('textDocument/foldingRange') then
@@ -143,7 +144,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('n', '<Space>gs', "<cmd>Lspsaga outline<cr>", opts)
     vim.keymap.set('n', '<Space>gp', "<cmd>Lspsaga peek_definition<cr>", opts)
     vim.keymap.set('n', '<Space>T', require('telescope.builtin').lsp_document_symbols, opts)
-    vim.keymap.set('n', '<Space>t', require('telescope.builtin').lsp_dynamic_workspace_symbols, opts2)
+    -- vim.keymap.set('n', '<Space>t', require('telescope.builtin').lsp_dynamic_workspace_symbols, opts2)
+    vim.keymap.set('n', '<Space>t', require('telescope.builtin').lsp_workspace_symbols, opts2)
     vim.keymap.set('n', '<space>ic', require('telescope.builtin').lsp_incoming_calls, opts)
     vim.keymap.set("n", "<space>dd", vim.diagnostic.setqflist, opts)
     vim.keymap.set('n', '\\wa', vim.lsp.buf.add_workspace_folder, opts)
@@ -160,8 +162,7 @@ vim.api.nvim_create_autocmd("LspDetach", {
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     if client ~= nil then
       if client.server_capabilities.documentRangeFormattingProvider or client.server_capabilities.documentFormattingProvider then
-        vim.keymap.del('n', '<Space>=', opts)
-        vim.keymap.del('v', '<Space>=', opts)
+        vim.keymap.del('v', '<Space>gf', opts)
       end
     end
     local lsp_document_highlight_id = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = false })

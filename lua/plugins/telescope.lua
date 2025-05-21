@@ -65,6 +65,11 @@ return {
             find_files = {
               find_command = { "rg", "--files", "--hidden", "--follow", "--glob", "!.git/*" },
             },
+            lsp_workspace_symbols = {
+              fname_width = 120,
+              symbol_width = 35,
+              sorter = require('telescope').extensions.fzf.native_fzf_sorter(fzf_opts)
+            },
             lsp_dynamic_workspace_symbols = {
               fname_width = 120,
               symbol_width = 35,
