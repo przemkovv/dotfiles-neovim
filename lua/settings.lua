@@ -11,6 +11,7 @@ vim.g.mapleader      = "<Space>"
 vim.g.maplocalleader = "\\"
 
 vim.opt.showcmd      = true
+vim.opt.cmdheight    = 1
 vim.opt.showmatch    = true
 vim.opt.ignorecase   = true
 vim.opt.smartcase    = true
@@ -24,7 +25,7 @@ vim.opt.history      = 10000
 vim.opt.undolevels   = 1000
 vim.opt.sessionoptions:remove { "folds" }
 vim.opt.formatoptions = "jcroql/"
-vim.opt.virtualedit  = "block"
+vim.opt.virtualedit   = "block"
 
 vim.opt.wildignore:append { "*.swp", "*.bak", "*.pyc", "*.class" }
 vim.opt.wildignore:append { "*/tmp/*", "*.so", "*.swp", "*.zip", "*.d", "*.o" }
@@ -68,8 +69,6 @@ vim.opt.breakindentopt:append { "sbr" }
 vim.opt.tags:append { "tags", "./tags", "~/.vimtags" }
 vim.opt.completeopt = { "menu", "preview", "noselect", "menuone" }
 
-vim.opt.cmdheight = 1
--- vim.opt.messagesopt = "wait:0,history:500"
 
 
 vim.opt.timeout = false
@@ -125,7 +124,7 @@ vim.diagnostic.config({
   virtual_lines = false,
   float = {
     border = "single",
-    source = "always"
+    source = true
   }
 })
 
@@ -156,7 +155,7 @@ end
 if vim.fn.has('win32') == 1 and vim.fn.hostname() == 'ARAGORN' then
   local pythonpath = "H:\\dev\\tools\\Python\\Python312"
   vim.g.python3_host_prog = "H:\\dev\\tools\\Python\\Python312\\python.exe"
-  vim.opt.rtp:prepend(pythonpath..'Scripts')
+  vim.opt.rtp:prepend(pythonpath .. 'Scripts')
   vim.opt.rtp:prepend(pythonpath)
 end
 

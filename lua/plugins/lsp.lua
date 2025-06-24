@@ -26,6 +26,7 @@ return {
   {
     'mrded/nvim-lsp-notify',
     lazy = true,
+    enabled = false,
     event = "LspAttach",
   },
   {

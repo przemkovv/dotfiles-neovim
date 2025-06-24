@@ -183,27 +183,27 @@ return {
           line_up    = '<S-up>',
         }
       })
-      require 'mini.notify'.setup(
-        {
-          window = {
-            config = {
-              width = 70,
-              anchor = "SW",
-            },
-          },
-        })
-      local notify_opts = {
-        INFO = {
-          duration = 2000,
-        },
-        WARN = {
-          duration = 2000,
-        },
-        ERROR = {
-          duration = 2000,
-        },
-      }
-      vim.notify = require('mini.notify').make_notify(notify_opts)
+      -- require 'mini.notify'.setup(
+      --   {
+      --     window = {
+      --       config = {
+      --         width = 70,
+      --         anchor = "SW",
+      --       },
+      --     },
+      --   })
+      -- local notify_opts = {
+      --   INFO = {
+      --     duration = 2000,
+      --   },
+      --   WARN = {
+      --     duration = 2000,
+      --   },
+      --   ERROR = {
+      --     duration = 2000,
+      --   },
+      -- }
+      -- vim.notify = require('mini.notify').make_notify(notify_opts)
     end,
   },
   {
