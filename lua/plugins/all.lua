@@ -11,13 +11,18 @@ return {
     -- FIXME: This should really be fixed.
     -- NOTE: This is just a note.
     -- LEFTOFF: This is where I left off.
+    -- TODO(PW): This is a todo message.
+    -- HACK(PW): This is a hack.
+    -- FIXME(PW): This should really be fixed.
+    -- NOTE(PW): This is just a note.
+    -- LEFTOFF(PW): This is where I left off.
     --
     'folke/todo-comments.nvim',
     lazy = true,
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = {
-      signs = false,
+      signs = true,
       keywords = {
         TODO = { color = "#ff0000" },
         HACK = { color = "#ff6600" },
@@ -26,12 +31,11 @@ return {
         LEFTOFF = { color = "#ffff99" },
       },
       highlight = {
-
-        pattern = [[\s+(KEYWORDS)\s*(\([^\)]*\))?:?]],
+        pattern = [[.*<((KEYWORDS)%(\(.{-1,}\))?):]],
         keyword = "fg",
       },
       search = {
-        pattern = [[\b(KEYWORDS)]], -- ripgrep regex
+        pattern = [[\b(KEYWORDS)(\([^\)]*\))?:]]
       }
     },
   },

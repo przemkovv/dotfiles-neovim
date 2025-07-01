@@ -1,5 +1,5 @@
 return { {
-  "Willem-J-an/adopure.nvim",
+  "przemkovv/adopure.nvim",
 
   dependencies = {
     "nvim-lua/plenary.nvim",
