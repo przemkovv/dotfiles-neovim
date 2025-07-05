@@ -301,17 +301,22 @@ function M.setup()
     })
 
 
-  -- vim.g.msvcpath = vim.fn.shellescape(vim.fn.expand("${VCToolsInstallDir}")) .. "include/.*"
-  local msvcpath = vim.fn.getenv("VCToolsInstallDir"):gsub("\\", "/"):gsub(" ", "\\ ")
-  local msvcpath_expr = msvcpath .. "include/*"
+  if vim.fn.has('win32') then
+    -- vim.g.msvcpath = vim.fn.shellescape(vim.fn.expand("${VCToolsInstallDir}")) .. "include/.*"
+    local msvcpath = vim.fn.getenv("VCToolsInstallDir")
+    if msvcpath ~= vim.NIL then
+      msvcpath = msvcpath:gsub("\\", "/"):gsub(" ", "\\ ")
+      local msvcpath_expr = msvcpath .. "include/*"
 
-  vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-    pattern = msvcpath_expr,
-    callback = function()
-      local buf = vim.api.nvim_get_current_buf()
-      vim.api.nvim_set_option_value("filetype", "cpp", { buf = buf })
+      vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+        pattern = msvcpath_expr,
+        callback = function()
+          local buf = vim.api.nvim_get_current_buf()
+          vim.api.nvim_set_option_value("filetype", "cpp", { buf = buf })
+        end
+      })
     end
-  })
+  end
 end
 
 return M

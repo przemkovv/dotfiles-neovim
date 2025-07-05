@@ -241,6 +241,7 @@ return {
   },
   {
     'willothy/wezterm.nvim',
+    enabled = function() if vim.fn.has('win32') == 1 then return true else return false end end,
     config = true
   },
   {

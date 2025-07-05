@@ -6,10 +6,8 @@ if vim.fn.has('win32') == 1 then
   else
     treesitter_parsers_path = "h:/dev/tools/Neovim/parsers"
   end
-else
-  if vim.fn.hostname() == 'legolas' then
+elseif vim.fn.has('linux') then
     treesitter_parsers_path = nil
-  end
 end
 
 return {
