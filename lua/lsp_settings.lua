@@ -86,6 +86,7 @@ vim.lsp.enable('vimls')
 vim.lsp.enable('slangd')
 vim.lsp.enable('cmake')
 vim.lsp.enable('lua_ls')
+vim.lsp.enable('roslyn_ls')
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
   .handlers['textDocument/publishDiagnostics'])
