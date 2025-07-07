@@ -6,6 +6,9 @@ return { {
     "nvim-telescope/telescope.nvim",
     "sindrets/diffview.nvim" -- Optionally required to open PR in diffview
   },
+
+  lazy = true,
+  cmd = "AdoPure",
   config = function()
     vim.g.adopure = {}
     local function set_keymap(keymap, command)

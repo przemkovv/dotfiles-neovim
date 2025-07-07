@@ -64,9 +64,9 @@ return {
   },
   {
     'hrsh7th/nvim-cmp',
-    lazy = false,
+    lazy = true,
     enabled = true,
-    event = "InsertEnter",
+    event = { "InsertEnter", "CmdwinEnter", "CmdlineEnter" },
     dependencies = {
       { 'hrsh7th/cmp-buffer', },
       { 'amarakon/nvim-cmp-buffer-lines', },

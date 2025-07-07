@@ -1,3 +1,4 @@
+---@type LazySpec
 return {
   cmd = { "lua-language-server" },
   filetypes = { "lua" },
@@ -18,6 +19,10 @@ return {
       runtime = {
         -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
         version = 'LuaJIT',
+        path = {
+          'lua/?.lua',
+          'lua/?/init.lua',
+        },
       },
       diagnostics = {
         -- Get the language server to recognize the `vim` global
@@ -26,13 +31,13 @@ return {
       workspace = {
         checkThirdParty = false,
         -- Make the server aware of Neovim runtime files
-        library = {
+        library = vim.iter({
           vim.fn.expand('$VIMRUNTIME/lua'),
           vim.fn.expand('$VIMRUNTIME/lua/vim/lsp'),
           '${3rd}/luv/library',
           '${3rd}/busted/library',
-          vim.api.nvim_get_runtime_file("", true),
-        },
+          vim.api.nvim_get_runtime_file("lua", true),
+        }):flatten():totable(),
       },
       completion = {
         callSnippet = 'Replace',

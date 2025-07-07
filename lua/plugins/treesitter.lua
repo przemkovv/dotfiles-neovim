@@ -14,8 +14,8 @@ return {
   {
     'nvim-treesitter/nvim-treesitter',
     build = ":TSUpdate",
-    -- lazy = false,
-    -- event = { "BufReadPre", "BufNewFile" },
+    lazy = true,
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
       if treesitter_parsers_path ~= nil then
         vim.opt.rtp:prepend(treesitter_parsers_path)
@@ -123,15 +123,15 @@ return {
       "lukas-reineke/indent-blankline.nvim",
     }
   },
-  {
-    'nvim-treesitter/nvim-treesitter-textobjects',
-    lazy = false,
-    -- event = { "BufReadPre", "BufNewFile" },
-  },
+  -- {
+  --   'nvim-treesitter/nvim-treesitter-textobjects',
+  --   lazy = false,
+  --   -- event = { "BufReadPre", "BufNewFile" },
+  -- },
   {
     'echasnovski/mini.nvim',
-    lazy = false,
-    -- event = 'VeryLazy',
+    lazy = true,
+    event = 'VeryLazy',
     version = false,
     dependencies = {
       'nvim-treesitter/nvim-treesitter',

@@ -1,6 +1,11 @@
+---@type LazySpec
 return {
 
-  'vim-scripts/FSwitch',
+  {
+    'vim-scripts/FSwitch',
+    lazy = true,
+    cmd = { "FSHere" },
+  },
   {
     "ahmedkhalf/project.nvim",
     main = "project_nvim",

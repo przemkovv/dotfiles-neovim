@@ -35,12 +35,6 @@ vim.keymap.set("v", "<space>X", "<cmd>Redir2Reg lua<CR><esc>")
 
 vim.keymap.set('n', '<space>1', ':Neotree toggle<CR>', { silent = true })
 vim.keymap.set('n', '-', ':Oil<CR>', { silent = false })
-vim.keymap.set('n', '<space>4', '<cmd>Trouble diagnostics toggle<CR>', { silent = true })
-vim.keymap.set('n', '<space>5', '<cmd>Trouble document_diagnostics toggle<CR>', { silent = true })
-vim.keymap.set('n', ']w', function() require("trouble").next({ skip_groups = true, jump = true }) end,
-  { silent = true, desc = 'Next diagnostic with Trouble' })
-vim.keymap.set('n', '[w', function() require("trouble").previous({ skip_groups = true, jump = true }) end,
-  { silent = true, desc = 'Next diagnostic with Trouble' })
 
 
 -- fallback if LSP does not support {{{

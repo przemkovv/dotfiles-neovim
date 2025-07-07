@@ -1,5 +1,5 @@
+---@type LazySpec
 return {
-
   {
     "dstein64/vim-startuptime",
     lazy = true,
@@ -54,8 +54,10 @@ return {
       numhl     = true,  -- Toggle with `:Gitsigns toggle_numhl`
       linehl    = false, -- Toggle with `:Gitsigns toggle_linehl`
       on_attach = function(bufnr)
-        vim.keymap.set('n', ']c', require("gitsigns").next_hunk, { buffer = bufnr })
-        vim.keymap.set('n', '[c', require("gitsigns").prev_hunk, { buffer = bufnr })
+        vim.keymap.set('n', ']c', function() require("gitsigns").nav_hunk('next', { wrap = true, }) end,
+          { buffer = bufnr, desc = "Next Git Hunk" })
+        vim.keymap.set('n', '[c', function() require("gitsigns").nav_hunk('prev', { wrap = true, }) end,
+          { buffer = bufnr, desc = "Previous Git Hunk" })
       end
     },
   },
@@ -242,7 +244,9 @@ return {
   {
     'willothy/wezterm.nvim',
     enabled = function() if vim.fn.has('win32') == 1 then return true else return false end end,
-    config = true
+    config = true,
+    lazy = true,
+    event = 'VeryLazy'
   },
   {
     "benlubas/molten-nvim",

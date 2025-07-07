@@ -46,9 +46,7 @@ return {
               i = {
                 ["<esc>"] = require('telescope.actions').close,
                 ["<C-space>"] = require('telescope.actions.layout').toggle_preview,
-                ["<c-t>"] = require('trouble.sources.telescope').open,
               },
-              n = { ["<c-t>"] = require('trouble.sources.telescope').open },
             },
             preview = {
               check_mime_type = true,

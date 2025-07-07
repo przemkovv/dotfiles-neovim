@@ -187,21 +187,19 @@ function M.setup_make(configuration)
   })
 end
 
--- Create a custom picker
-local pickers = require('telescope.pickers')
-local actions = require('telescope.actions')
-local actions_state = require('telescope.actions.state')
-local finders = require('telescope.finders')
-local sorters = require('telescope.sorters')
-
 local switch_cmake_configuration_telescope = function(prompt_bufnr)
+  local actions_state = require('telescope.actions.state')
   local selection = actions_state.get_selected_entry()
+  local actions = require('telescope.actions')
   actions.close(prompt_bufnr)
   M.setup_make(selection[1])
   vim.notify("Configuration switched to " .. selection[1])
 end
 
 function M.pick_cmake_configuration()
+  local sorters = require('telescope.sorters')
+  local pickers = require('telescope.pickers')
+  local finders = require('telescope.finders')
   pickers.new({}, {
     prompt_title = "CMake configuration",
     finder = finders.new_table {

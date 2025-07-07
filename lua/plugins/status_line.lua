@@ -97,7 +97,6 @@ return {
           'quickfix',
           -- 'nvim-tree',
           'overseer',
-          'trouble',
           'toggleterm',
           'man',
           'fugitive',

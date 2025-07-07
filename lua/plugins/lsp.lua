@@ -196,15 +196,6 @@ return {
     }
   },
   {
-    "folke/trouble.nvim",
-    branch = "main",
-    cmd = { "TroubleToggle", "Trouble" },
-    dependencies = "nvim-tree/nvim-web-devicons",
-    opts = {
-      use_diagnostic_sings = true
-    }
-  },
-  {
     'm-demare/hlargs.nvim',
     enable = false,
     opts = {},
