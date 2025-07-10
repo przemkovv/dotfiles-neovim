@@ -259,7 +259,6 @@ return {
       vim.g.molten_output_win_max_height = 12
       vim.g.molten_auto_open_output = false
       -- vim.g.molten_image_provider = "image.nvim"
-      local NS = { noremap = true, silent = true }
       vim.keymap.set("n", "<localleader>mi", ":MoltenInit<CR>",
         { silent = true, desc = "Initialize the plugin" })
       vim.keymap.set("n", "<localleader>e", ":MoltenEvaluateOperator<CR>",

@@ -193,6 +193,7 @@ return {
           -- autocomplete = false
         },
         sorting = {
+          priority_weight = 1,
           comparators = {
             require("clangd_extensions.cmp_scores"),
             cmp.config.compare.offset,

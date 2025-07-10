@@ -1,26 +1,4 @@
-local overseer_status = function()
-  if not require('lazy.core.config').plugins['overseer.nvim']._.loaded then
-    return ""
-  end
-  local overseer = require('overseer')
-
-  local is_running = #overseer.list_tasks({ status = "RUNNING" })
-  if is_running > 0 then
-    return "%#DiagnosticWarn#R"
-  end
-  local all_tasks = overseer.list_tasks({ recent_first = true })
-  if #all_tasks == 0 then
-    return ""
-  else
-    local status = all_tasks[1].status
-    if status == "SUCCESS" then
-      return "%#DiagnosticHint#S"
-    else
-      return "%#DiagnosticError#F"
-    end
-  end
-end
-
+---@type LazySpec
 return {
   {
     'nvim-lualine/lualine.nvim',
@@ -58,7 +36,6 @@ return {
           },
           lualine_c = {
             { "overseer", unique = true },
-            -- { overseer_status },
             { 'filename', path = 1 },
           },
           lualine_x = { 'filetype' },
@@ -80,7 +57,6 @@ return {
           lualine_b = {},
           lualine_c = {
             { "overseer", unique = true },
-            -- { overseer_status },
             { 'filename', path = 1 },
           },
           lualine_x = { 'filetype' },

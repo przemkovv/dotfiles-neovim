@@ -66,7 +66,7 @@ function M.get_cmake_preset_build_configurations()
       local all_inherited_checked = true
       if preset.inherits ~= nil then
         if type(preset.inherits) == "string" then
-          inherit = preset.inherits
+          local inherit = preset.inherits
           if configurePresets[inherit] ~= nil then
             if configurePresets[inherit].binaryDir ~= nil then
               preset.binaryDir = configurePresets[inherit].binaryDir
@@ -132,6 +132,20 @@ function M.get_cmake_preset_build_configurations_names()
   return names
 end
 
+function M.select_cmake_configuration()
+  local build_configurations = M.get_cmake_preset_build_configurations()
+  local all_configurations = {}
+  if build_configurations ~= nil then
+    all_configurations = vim.fn.keys(build_configurations)
+  end
+  vim.ui.select(all_configurations, {
+    prompt = "Select CMake configuration",
+  }, function(choice)
+    vim.print("Selected configuration: " .. choice)
+    M.setup_make(choice)
+  end)
+end
+
 function M.setup_make(configuration)
   local build_configurations = M.get_cmake_preset_build_configurations()
   local fallback = false
@@ -139,17 +153,16 @@ function M.setup_make(configuration)
     vim.notify("Could not find CMakePresets.json")
     fallback = true
   end
+
   if build_configurations ~= nil and build_configurations[configuration] == nil then
     vim.notify("Could not find build configuration " .. configuration)
     fallback = true
   end
-  if fallback == false then
+  if build_configurations ~= nil and build_configurations[configuration] ~= nil then
     vim.opt.makeprg = "cmake --build --preset " .. build_configurations[configuration].name
     vim.g.configureprg = "cmake --preset " .. build_configurations[configuration].configure_preset
     vim.g.remedy_session_file = "./endorobot.rdbg"
     vim.g.build_dir = build_configurations[configuration].binary_dir
-  else
-    vim.notify("Could not find CMakePresets.json")
   end
 
   if fallback == true then
@@ -167,11 +180,9 @@ function M.setup_make(configuration)
   end
 
   for _, client in ipairs(vim.lsp.get_clients({ name = "cmake" })) do
-    -- client.config.init_options.buildDirectory = vim.g.build_dir
-    vim.notify("Notifying cmake lsp")
-    -- client.notify("workspace/didChangeConfiguration")
-    client.notify("workspace/didChangeConfiguration", {
-      settings = { initialization_options = { buildDirectory = vim.g.build_dir } } })
+    client:notify('workspace/didChangeConfiguration',
+      {
+        settings = { initialization_options = { buildDirectory = vim.g.build_dir } } })
   end
 
   vim.api.nvim_create_autocmd("LspAttach", {
@@ -179,8 +190,7 @@ function M.setup_make(configuration)
     callback = function(args)
       local client = vim.lsp.get_client_by_id(args.data.client_id)
       if client ~= nil and client.name == "cmake" then
-        -- client.config.init_options.buildDirectory = vim.g.build_dir
-        client.notify("workspace/didChangeConfiguration", {
+        client:notify("workspace/didChangeConfiguration", {
           settings = { initialization_options = { buildDirectory = vim.g.build_dir } } })
       end
     end,
@@ -293,7 +303,7 @@ function M.setup()
       desc = "Run your makeprg as an Overseer task",
       nargs = "*",
       bang = true,
-      complete = function(ArgLead, CmdLine, CursorPos)
+      complete = function()
         return { "build", "configure", "build_and_run" }
       end,
     })
