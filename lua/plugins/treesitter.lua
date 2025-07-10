@@ -34,6 +34,7 @@ return {
           ensure_installed = {
             'javascript',
             'bash',
+            'diff',
             'typescript',
             'tsx',
             'css',

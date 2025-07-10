@@ -1,5 +1,5 @@
 return {
-  cmd = { "python3", "-m", "esbonio" },
+  cmd = { "python", "-m", "esbonio" },
   filetypes = { "rst" },
   root_markers = { '.git' },
 }
