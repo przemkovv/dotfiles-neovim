@@ -5,6 +5,10 @@ function M.install()
     defaults = {
       lazy = false
     },
+    spec = {
+      -- import your plugins
+      { import = "plugins" },
+    },
     performance = {
       rtp = {
         disabled_plugins = {
@@ -29,9 +33,11 @@ function M.install()
         },
       },
     },
+    -- automatically check for plugin updates
+    checker = { enabled = true },
   }
 
-  require('lazy').setup("plugins", opts)
+  require('lazy').setup(opts)
 end
 
 return M

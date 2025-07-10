@@ -1,3 +1,4 @@
+--- @type string | nil
 local treesitter_parsers_path = vim.fn.stdpath('data') .. 'parsers/'
 
 if vim.fn.has('win32') == 1 then
@@ -7,15 +8,16 @@ if vim.fn.has('win32') == 1 then
     treesitter_parsers_path = "h:/dev/tools/Neovim/parsers"
   end
 elseif vim.fn.has('linux') then
-    treesitter_parsers_path = nil
+  treesitter_parsers_path = nil
 end
 
 return {
   {
     'nvim-treesitter/nvim-treesitter',
     build = ":TSUpdate",
-    lazy = true,
-    event = { "BufReadPre", "BufNewFile" },
+    lazy = false,
+    priority = 60,
+    event = { "VeryLazy", "BufReadPre", "BufNewFile" },
     config = function()
       if treesitter_parsers_path ~= nil then
         vim.opt.rtp:prepend(treesitter_parsers_path)
