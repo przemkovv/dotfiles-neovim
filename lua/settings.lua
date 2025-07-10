@@ -10,19 +10,12 @@ vim.api.nvim_command('filetype on')
 vim.g.mapleader      = "<Space>"
 vim.g.maplocalleader = "\\"
 
-vim.opt.showcmd      = true
-vim.opt.cmdheight    = 1
 vim.opt.showmatch    = true
 vim.opt.ignorecase   = true
 vim.opt.smartcase    = true
-vim.opt.incsearch    = true
 vim.opt.inccommand   = "split"
 vim.opt.autowrite    = true
-vim.opt.hidden       = true
 vim.opt.mouse        = "a"
-vim.opt.hlsearch     = true
-vim.opt.history      = 10000
-vim.opt.undolevels   = 1000
 vim.opt.sessionoptions:remove { "folds" }
 vim.opt.formatoptions = "jcroql/"
 vim.opt.virtualedit   = "block"
@@ -40,14 +33,9 @@ vim.opt.wildignorecase = true
 vim.opt.wildmode = { "longest", "full" }
 vim.opt.title = true
 vim.opt.undofile = true
-vim.opt.showmode = true
-vim.opt.wildoptions:append { "pum" }
-vim.opt.wildmenu = true
-vim.opt.laststatus = 2
 vim.opt.scrolloff = 10
 vim.opt.shortmess = "aOstT"
 vim.opt.sidescrolloff = 5
-vim.opt.shiftround = true
 vim.opt.report = 0
 vim.opt.shiftround = true
 vim.opt.list = true
@@ -73,10 +61,7 @@ vim.opt.completeopt = { "menu", "preview", "noselect", "menuone" }
 
 
 vim.opt.timeout = false
-vim.opt.ttimeout = true
 vim.opt.ttimeoutlen = 200
-
-vim.opt.startofline = false
 
 local data_dir = vim.fn.stdpath('data')
 vim.opt.backupdir = data_dir .. '/backup'
@@ -100,11 +85,9 @@ vim.opt.cursorlineopt = "both"
 vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
 
 
-vim.opt.switchbuf = "useopen"
-vim.opt.showtabline = 1
-vim.opt.tabpagemax = 15
+vim.opt.switchbuf = "uselast"
 
-vim.opt.grepprg = "rg --vimgrep"
+vim.opt.grepprg = "rg --vimgrep -S"
 
 -- " Folding ----------------------------------------------------------------- {{{
 vim.opt.foldlevelstart = 99
