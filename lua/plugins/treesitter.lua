@@ -31,6 +31,9 @@ return {
 
           highlight = {
             enable = true,
+            disable = function(lang, bufnr) -- Disable in large buffers
+              return vim.api.nvim_buf_line_count(bufnr) > 50000
+            end,
             -- disable = { "lua", "cpp", "c" },
           },
           ensure_installed = {
@@ -58,6 +61,7 @@ return {
             'vimdoc',
             'query',
             'rst',
+            'xml',
           },
           -- Install parsers synchronously (only applied to `ensure_installed`)
           sync_install = false,
@@ -222,8 +226,10 @@ return {
       -- Separator between context and content. Should be a single character string, like '-'.
       -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
       separator = nil,
-      zindex = 20,     -- The Z-index of the context window
-      on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+      zindex = 20, -- The Z-index of the context window
+      on_attach = function(bufnr)        -- Disable in large buffers
+        return vim.api.nvim_buf_line_count(bufnr) < 10000
+      end,
     }
   },
   {

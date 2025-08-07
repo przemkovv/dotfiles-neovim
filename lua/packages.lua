@@ -34,7 +34,7 @@ function M.install()
       },
     },
     -- automatically check for plugin updates
-    checker = { enabled = true },
+    checker = { enabled = false },
   }
 
   require('lazy').setup(opts)

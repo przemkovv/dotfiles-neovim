@@ -3,15 +3,18 @@ return {
   {
     'saghen/blink.cmp',
     lazy = false, -- lazy loading handled internally
-    enabled = false,
+    enabled = true,
     -- dependencies = 'rafamadriz/friendly-snippets',
     dependencies = 'L3MON4D3/LuaSnip',
 
     -- version = 'v0.*',
     build = 'cargo build --release',
+    ---@module 'blink.cmp'
+    ---@type blink.cmp.Config
     opts = {
       keymap = {
         preset = 'default',
+        ['<c-space>'] = false,
       },
 
       appearance = {
@@ -24,17 +27,57 @@ return {
           min_width = 30,
           max_height = 15,
           -- winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel",
-          border = 'padded',
+          border = 'single',
+          winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel",
 
+          -- draw = {
+          --   treesitter = {},
+          --   columns = { { "kind_icon", "label", "label_description", gap = 1 }, { "kind" } },
+          -- }
           draw = {
-            treesitter = {},
-            columns = { { "kind_icon", "label", "label_description", gap = 1 }, { "kind" } },
+            components = {
+              kind_icon = {
+                text = function(ctx)
+                  local icon = ctx.kind_icon
+                  if vim.tbl_contains({ "Path" }, ctx.source_name) then
+                    local dev_icon, _ = require("nvim-web-devicons").get_icon(ctx.label)
+                    if dev_icon then
+                      icon = dev_icon
+                    end
+                  else
+                    icon = require("lspkind").symbolic(ctx.kind, {
+                      mode = "symbol",
+                    })
+                  end
+
+                  return icon .. ctx.icon_gap
+                end,
+
+                -- Optionally, use the highlight groups from nvim-web-devicons
+                -- You can also add the same function for `kind.highlight` if you want to
+                -- keep the highlight groups in sync with the icons.
+                highlight = function(ctx)
+                  local hl = ctx.kind_hl
+                  if vim.tbl_contains({ "Path" }, ctx.source_name) then
+                    local dev_icon, dev_hl = require("nvim-web-devicons").get_icon(ctx.label)
+                    if dev_icon then
+                      hl = dev_hl
+                    end
+                  end
+                  return hl
+                end,
+              }
+            }
           }
         },
         documentation = {
           -- Controls whether the documentation window will automatically show when selecting a completion item
           auto_show = true,
           treesitter_highlighting = true,
+          window = {
+            border = 'single',
+            winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel"
+          },
         }
       },
       signature = {
@@ -45,27 +88,52 @@ return {
           -- When true, will show the signature help window when the cursor comes after a trigger character when entering insert mode
           show_on_insert_on_trigger_character = true,
         },
+        window = {
+          border = 'single',
+          winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel"
+        },
+      },
+      cmdline = {
+        enabled = true,
+        completion = { menu = { auto_show = true } },
       },
       snippets = {
-        expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
-        active = function(filter)
-          if filter and filter.direction then
-            return require('luasnip').jumpable(filter.direction)
-          end
-          return require('luasnip').in_snippet()
-        end,
-        jump = function(direction) require('luasnip').jump(direction) end,
+        preset = 'luasnip',
       },
       sources = {
-        default = { 'lsp', 'path', 'luasnip', 'buffer' },
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
+        providers = {
+          path = {
+            opts = {
+              get_cwd = function(_)
+                return vim.fn.getcwd()
+              end,
+            },
+          },
+        },
       },
 
     },
+    config = function(_, opts)
+      local blink_cmp = require('blink.cmp')
+      blink_cmp.setup(opts)
+      vim.keymap.set('i', '<C-x><C-o>', function()
+        require('blink.cmp').show()
+        require('blink.cmp').show_documentation()
+        require('blink.cmp').hide_documentation()
+      end, { silent = false });
+
+      vim.keymap.set('i', '<C-x><C-f>', function()
+        require('blink.cmp').show({ providers = { 'path' } })
+        require('blink.cmp').show_documentation()
+        require('blink.cmp').hide_documentation()
+      end, { silent = false });
+    end,
   },
   {
     'hrsh7th/nvim-cmp',
     lazy = true,
-    enabled = true,
+    enabled = false,
     event = { "InsertEnter", "CmdwinEnter", "CmdlineEnter" },
     dependencies = {
       { 'hrsh7th/cmp-buffer', },

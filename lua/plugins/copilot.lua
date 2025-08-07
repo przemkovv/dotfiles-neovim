@@ -106,8 +106,6 @@ return {
     config = function(_, opts)
       local chat = require("CopilotChat")
       local select = require("CopilotChat.select")
-      local actions = require("CopilotChat.actions")
-      local telescope = require("CopilotChat.integrations.telescope")
 
       chat.setup(opts)
 

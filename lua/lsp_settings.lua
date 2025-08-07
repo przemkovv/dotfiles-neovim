@@ -1,7 +1,7 @@
-local cmp_capabilities = nil
+local cmp_capabilities = {}
 if package.loaded["blink.cmp"] then
   cmp_capabilities = require('blink.cmp').get_lsp_capabilities()
-else
+elseif package.loaded["cmp_nvim_lsp"] then
   cmp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 end
 
@@ -87,6 +87,7 @@ vim.lsp.enable('slangd')
 vim.lsp.enable('cmake')
 vim.lsp.enable('lua_ls')
 vim.lsp.enable('roslyn_ls')
+vim.lsp.enable('lemminx')
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
   .handlers['textDocument/publishDiagnostics'])

@@ -29,6 +29,7 @@ return {
     enabled = false,
     event = "LspAttach",
   },
+  { 'onsails/lspkind.nvim', },
   {
     'nvim-lua/lsp-status.nvim',
     enabled = false,

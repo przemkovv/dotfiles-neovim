@@ -72,7 +72,8 @@ vim.keymap.set('n', '<Space>R', '<cmd>Telescope grep_string<CR>')
 vim.keymap.set('n', '<Space>h', require('telescope.builtin').builtin, { desc = "Built-in" })
 vim.keymap.set('n', '<Space>fh', '<cmd>Telescope help_tags<CR>')
 vim.keymap.set('n', '<Space>fH', '<cmd>Telescope help_tags <CWORD><CR>')
-vim.keymap.set('n', '<Space>fH', function() require('telescope.builtin').help_tags({default_text = vim.fn.expand("<cword>")}) end,
+vim.keymap.set('n', '<Space>fH',
+  function() require('telescope.builtin').help_tags({ default_text = vim.fn.expand("<cword>") }) end,
   { desc = "Help tag" })
 vim.keymap.set('n', '<Space>fd', '<cmd>Telescope find_files<CR>')
 vim.keymap.set('n', '<Space>fD', function()
@@ -137,17 +138,3 @@ vim.keymap.set('n', '<space>mt', function()
     require("overseer").run_template({ name = "Run CTest", params = { working_dir = vim.g.build_dir, } })
   end,
   { noremap = true, silent = true })
-
-if package.loaded["blink.cmp"] then
-  vim.keymap.set('i', '<C-x><C-o>', function()
-    require('blink.cmp').show()
-    require('blink.cmp').show_documentation()
-    require('blink.cmp').hide_documentation()
-  end, { silent = false });
-
-  vim.keymap.set('i', '<C-x><C-f>', function()
-    require('blink.cmp').show({ providers = { 'path' } })
-    require('blink.cmp').show_documentation()
-    require('blink.cmp').hide_documentation()
-  end, { silent = false });
-end
