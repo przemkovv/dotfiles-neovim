@@ -46,6 +46,7 @@ return {
             {
               'diagnostics',
               colored = false,
+              always_visible = false,
               sources = {
                 'nvim_diagnostic',
               }

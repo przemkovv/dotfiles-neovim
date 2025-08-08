@@ -88,6 +88,7 @@ vim.lsp.enable('cmake')
 vim.lsp.enable('lua_ls')
 vim.lsp.enable('roslyn_ls')
 vim.lsp.enable('lemminx')
+vim.lsp.enable('powershell_es')
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
   .handlers['textDocument/publishDiagnostics'])
@@ -174,6 +175,19 @@ vim.api.nvim_create_autocmd("LspDetach", {
 
     vim.cmd("setlocal tagfunc<")
     vim.cmd("set updatetime&")
+  end,
+})
+
+vim.api.nvim_create_autocmd('LspProgress', {
+  callback = function(ev)
+    local value = ev.data.params.value
+    if value.kind == 'begin' then
+      io.stdout:write('\027]9;4;1;0\027\\')
+    elseif value.kind == 'end' then
+      io.stdout:write('\027]9;4;0\027\\')
+    elseif value.kind == 'report' then
+      io.stdout:write(string.format('\027]9;4;1;%d\027\\', value.percentage))
+    end
   end,
 })
 -- " }}}

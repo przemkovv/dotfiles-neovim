@@ -1,6 +1,10 @@
 ---@type LazySpec
 return {
   {
+    "mason-org/mason.nvim",
+    opts = {}
+  },
+  {
     "dstein64/vim-startuptime",
     lazy = true,
     cmd = "StartupTime"
@@ -101,16 +105,13 @@ return {
   },
   {
     "NeogitOrg/neogit",
-    enabled = false,
+    enabled = true,
     -- branch = "nightly",
     -- commit = "fffb448615f45db90b59461a537075d6966e9eda",
     dependencies = {
       "nvim-lua/plenary.nvim",  -- required
       "sindrets/diffview.nvim", -- optional - Diff integration
-
-      -- Only one of these is needed, not both.
       "nvim-telescope/telescope.nvim", -- optional
-      -- "ibhagwan/fzf-lua",              -- optional
     },
     opts = {
       graph_style = "unicode",
