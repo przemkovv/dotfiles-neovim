@@ -35,12 +35,4 @@ return {
       end
     }
   },
-  {
-    'kassio/neoterm',
-    enabled = false,
-    config = function()
-      vim.g.neoterm_default_mod = 'botright horizontal'
-      vim.g.neoterm_autoscroll = 'true'
-    end,
-  },
 }

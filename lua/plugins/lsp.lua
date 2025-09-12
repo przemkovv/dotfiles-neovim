@@ -23,19 +23,7 @@ return {
       vim.keymap.set('v', '<Space>=', conform.format, opts)
     end,
   },
-  {
-    'mrded/nvim-lsp-notify',
-    lazy = true,
-    enabled = false,
-    event = "LspAttach",
-  },
   { 'onsails/lspkind.nvim', },
-  {
-    'nvim-lua/lsp-status.nvim',
-    enabled = false,
-    lazy = true,
-    event = "LspAttach",
-  },
   {
     'neovim/nvim-lspconfig',
     init = function()
@@ -72,12 +60,6 @@ return {
     dependencies = {
       'nvim-tree/nvim-web-devicons'
     }
-  },
-  {
-    'jackguo380/vim-lsp-cxx-highlight',
-    enabled = false,
-    lazy = true,
-    event = "LspAttach",
   },
   {
     -- "Maan2003/lsp_lines.nvim",
@@ -202,23 +184,6 @@ return {
     opts = {},
     lazy = true,
     event = "LspAttach",
-  },
-  {
-    'nvimtools/none-ls.nvim',
-    enabled = false,
-    config = function()
-      local null_ls = require('null-ls')
-      null_ls.setup({
-        notify_format = "",
-        log_level = "off",
-        sources = {
-          null_ls.builtins.code_actions.gitsigns,
-          -- null_ls.builtins.code_actions.refactoring
-        }
-      })
-    end,
-    requires = { "nvim-lua/plenary.nvim" },
-
   },
   {
     "seblyng/roslyn.nvim",

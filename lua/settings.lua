@@ -112,7 +112,7 @@ vim.diagnostic.config({
   }
 })
 
-vim.lsp.set_log_level("ERROR")
+vim.lsp.log.set_level("ERROR")
 
 vim.g.nremap = { ['<p'] = '', ['>p'] = '', ['<P'] = '', ['>P'] = '' }
 

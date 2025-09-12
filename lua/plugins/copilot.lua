@@ -26,6 +26,7 @@ return {
     dependencies = {
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
     },
+    build = "make tiktoken",
     opts = {
       debug = false, -- Enable debugging
       -- prompts = prompts,
