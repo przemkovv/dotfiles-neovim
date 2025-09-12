@@ -136,7 +136,7 @@ return {
   --   -- event = { "BufReadPre", "BufNewFile" },
   -- },
   {
-    'echasnovski/mini.nvim',
+    'nvim-mini/mini.nvim',
     lazy = true,
     event = 'VeryLazy',
     version = false,

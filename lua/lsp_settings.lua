@@ -1,3 +1,4 @@
+---@class lsp.ClientCapabilities
 local cmp_capabilities = {}
 if package.loaded["blink.cmp"] then
   cmp_capabilities = require('blink.cmp').get_lsp_capabilities()
@@ -5,12 +6,19 @@ elseif package.loaded["cmp_nvim_lsp"] then
   cmp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 end
 
+---@class lsp.ClientCapabilities
 local capabilities = vim.tbl_deep_extend("force",
   vim.lsp.protocol.make_client_capabilities(),
   cmp_capabilities
 )
 
+capabilities.textDocument.onTypeFormatting = { dynamicRegistration = false }
 capabilities.offsetEncoding = { "utf-16" }
+capabilities.textDocument.semanticTokens = { multilineTokenSupport = true }
+
+vim.lsp.inline_completion.enable(true)
+vim.lsp.on_type_formatting.enable(true)
+vim.lsp.semantic_tokens.enable(true)
 
 vim.lsp.config('*', {
   capabilities = capabilities,
@@ -84,21 +92,33 @@ vim.lsp.enable('jsonls')
 vim.lsp.enable('esbonio')
 vim.lsp.enable('vimls')
 vim.lsp.enable('slangd')
-vim.lsp.enable('cmake')
+-- vim.lsp.enable('cmake')
 vim.lsp.enable('lua_ls')
 vim.lsp.enable('roslyn_ls')
 vim.lsp.enable('lemminx')
 vim.lsp.enable('powershell_es')
+vim.lsp.enable('copilot')
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
   .handlers['textDocument/publishDiagnostics'])
 
+vim.keymap.set('i', '<Tab>', function()
+  if not vim.lsp.inline_completion.get() then
+    return '<Tab>'
+  end
+end, { expr = true, desc = 'Accept the current inline completion' })
+
+vim.keymap.set('i', '<c-.>', function()
+  vim.lsp.inline_completion.select({ count = 1 })
+end, { expr = true, desc = 'Next suggestion' })
+vim.keymap.set('i', '<c-,>', function()
+  vim.lsp.inline_completion.select({ count = -1 })
+end, { expr = true, desc = 'Prev suggestion' })
 
 -- " nvim-lsp {{{
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     local bufnr = args.buf
-    local bufopt = vim.bo[bufnr]
 
     local opts = { silent = true, buffer = bufnr }
     local opts2 = { silent = true }
@@ -117,11 +137,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
       end
 
       if client:supports_method('textDocument/foldingRange') then
-        vim.wo.foldmethod = 'expr'
-        vim.wo.foldexpr = 'v:lua.vim.lsp.foldexpr()'
-      end
-      if client.server_capabilities.definitionProvider then
-        bufopt.tagfunc = "v:lua.vim.lsp.tagfunc"
+        local win = vim.api.nvim_get_current_win()
+        vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
       end
 
       if client.name == 'clangd' then
@@ -173,7 +190,6 @@ vim.api.nvim_create_autocmd("LspDetach", {
     local signature_help_id = vim.api.nvim_create_augroup("lsp_signature_help", { clear = false })
     vim.api.nvim_clear_autocmds { buffer = bufnr, group = signature_help_id }
 
-    vim.cmd("setlocal tagfunc<")
     vim.cmd("set updatetime&")
   end,
 })

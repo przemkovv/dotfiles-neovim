@@ -118,6 +118,7 @@ vim.keymap.set('n', '<Space>ff', require('telescope.builtin').resume, { desc = "
 vim.keymap.set('n', '<Space>fF', require('telescope.builtin').pickers, { desc = "List all telescope pickers" })
 vim.keymap.set('n', '<Space>j', require('telescope.builtin').jumplist, { desc = "Show jumplist" })
 
+vim.keymap.set('n', '<Space>ul', '<cmd>Lazy update<cr>')
 -- vim.keymap.set("n", "<space>L", require('utils').toggle_diagnostic_text, { desc = "Toggle lsp_lines" })
 vim.keymap.set("n", "<space>dl", require('utils').toggle_diagnostics_current_buffer,
   { desc = "Toggle diagnostics in current buffer" })
