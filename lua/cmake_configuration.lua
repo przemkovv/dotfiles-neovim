@@ -161,7 +161,6 @@ function M.setup_make(configuration)
   if build_configurations ~= nil and build_configurations[configuration] ~= nil then
     vim.opt.makeprg = "cmake --build --preset " .. build_configurations[configuration].name
     vim.g.configureprg = "cmake --preset " .. build_configurations[configuration].configure_preset
-    vim.g.remedy_session_file = "./endorobot.rdbg"
     vim.g.build_dir = build_configurations[configuration].binary_dir
   end
 
@@ -170,12 +169,10 @@ function M.setup_make(configuration)
     if vim.fn.has('windows') then
       vim.opt.makeprg = "cmake --build --preset windows-" .. configuration
       vim.g.configureprg = "cmake --preset windows-msvc-" .. configuration
-      vim.g.remedy_session_file = "./endorobot.rdbg"
       vim.g.build_dir = "out/build/windows-msvc-" .. configuration
     else
       vim.opt.makeprg = "cmake --build --preset linux-clang"
       vim.g.configureprg = "cmake --preset linux-clang"
-      vim.g.remedy_session_file = nil
     end
   end
 
@@ -202,7 +199,10 @@ local switch_cmake_configuration_telescope = function(prompt_bufnr)
   local selection = actions_state.get_selected_entry()
   local actions = require('telescope.actions')
   actions.close(prompt_bufnr)
+  local was_cmake_enabled = vim.lsp.is_enabled('cmake')
+  vim.lsp.enable('cmake', false)
   M.setup_make(selection[1])
+  vim.lsp.enable('cmake', was_cmake_enabled)
   vim.notify("Configuration switched to " .. selection[1])
 end
 
@@ -222,6 +222,65 @@ function M.pick_cmake_configuration()
       return true
     end,
   }):find()
+end
+
+---@class pick_executable.Item
+---@field target_name string
+---@field executable string
+
+---@class pick_executable.Opts
+---@field on_selection fun(item: pick_executable.Item) | nil
+
+---@param opts pick_executable.Opts|nil
+function M.pick_executable(opts)
+  local cwd = vim.g.build_dir .. "/.cmake/api/v1/reply"
+  local pick = require('mini.pick')
+  -- Centered on screen
+  local win_config = function()
+    local height = math.floor(0.618 * vim.o.lines)
+    local width = math.floor(0.618 * vim.o.columns)
+    return {
+      anchor = 'NW',
+      height = height,
+      width = width,
+      row = math.floor(0.5 * (vim.o.lines - height)),
+      col = math.floor(0.5 * (vim.o.columns - width)),
+      border = 'rounded'
+    }
+  end
+  pick.builtin.cli({
+    command =
+    { "fd", "target-.*\\.json",
+      "-X", "jq", "-s",
+      "[.[] | select(.type == \"EXECUTABLE\") | . as $root| { target_name: $root.name, executable: ($root.artifacts[].path |select(endswith($root.nameOnDisk))) }]|select(isempty(.[])==false) " },
+    postprocess = function(data)
+      local json_string = table.concat(data)
+      local items = vim.json.decode(json_string)
+      -- print(vim.inspect(items))
+      return items
+    end,
+    spawn_opts = {
+      cwd = cwd,
+    }
+  }, {
+    window = { config = win_config },
+    source = {
+      name = "Executable selection",
+      ---@param item pick_executable.Item
+      choose = function(item)
+        if opts ~= nil and opts.on_selection ~= nil then
+          opts.on_selection(item)
+        end
+      end,
+      show =
+          function(buf_id, items_arr, _)
+            local lines = vim.tbl_map(function(x)
+              return x.target_name .. '         ->        ' .. x.executable
+            end, items_arr)
+            vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, lines)
+          end
+    }
+  })
 end
 
 function M.compile_current_file()

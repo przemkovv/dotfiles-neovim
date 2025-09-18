@@ -123,7 +123,7 @@ vim.keymap.set('n', '<Space>ul', '<cmd>Lazy update<cr>')
 vim.keymap.set("n", "<space>dl", require('utils').toggle_diagnostics_current_buffer,
   { desc = "Toggle diagnostics in current buffer" })
 
--- vim.keymap.set('n', 'md', require('remedybg').run_debugger, { silent = true })
+vim.keymap.set('n', '<space>md', require('remedybg').run_debugger, { silent = true })
 vim.keymap.set('n', '<space>ds', require('remedybg').stop_debug, { silent = true })
 vim.keymap.set('n', '<space>dr', require('remedybg').start_debug, { silent = true })
 vim.keymap.set('n', '<space>db', require('remedybg').toggle_breakpoint, { silent = true })
@@ -135,6 +135,18 @@ vim.keymap.set('n', '<space>mc', ':CMake build --target clean<CR>', { silent = t
 vim.keymap.set('n', '<space>mC', ':CMake configure<CR>', { silent = true })
 vim.keymap.set('n', '<space>ms', require('cmake_configuration').pick_cmake_configuration,
   { noremap = true, silent = true })
+
+vim.keymap.set('n', '<space>me',
+  function()
+    require('cmake_configuration').pick_executable(
+      {
+        on_selection = function(item)
+          require("remedybg").start_debugging(vim.g.build_dir, item)
+        end
+      })
+  end,
+  { noremap = true, silent = true })
+
 vim.keymap.set('n', '<space>mt', function()
     require("overseer").run_template({ name = "Run CTest", params = { working_dir = vim.g.build_dir, } })
   end,

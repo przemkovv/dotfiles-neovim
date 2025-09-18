@@ -15,7 +15,7 @@ return {
     "dotnet",
     "C:/Users/pwalkowiak/.vscode/extensions/ms-dotnettools.csharp-2.84.19-win32-x64/.roslyn/Microsoft.CodeAnalysis.LanguageServer.dll",
     "--logLevel=Information",
-    "--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.get_log_path()),
+    "--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.log.get_filename()),
     "--stdio",
   },
   on_init = {
