@@ -58,8 +58,6 @@ vim.keymap.set('c', '<c-@>', '<c-f>')
 
 vim.keymap.set('c', '<c-j>', '<down>')
 vim.keymap.set('c', '<c-k>', '<up>')
--- vim.keymap.set('c', '<c-f>', '<left>')
--- vim.keymap.set('c', '<c-g>', '<right>')
 
 vim.keymap.set('c', 'w!!', 'w !sudo tee % >/dev/null')
 
@@ -119,14 +117,9 @@ vim.keymap.set('n', '<Space>fF', require('telescope.builtin').pickers, { desc = 
 vim.keymap.set('n', '<Space>j', require('telescope.builtin').jumplist, { desc = "Show jumplist" })
 
 vim.keymap.set('n', '<Space>ul', '<cmd>Lazy update<cr>')
--- vim.keymap.set("n", "<space>L", require('utils').toggle_diagnostic_text, { desc = "Toggle lsp_lines" })
 vim.keymap.set("n", "<space>dl", require('utils').toggle_diagnostics_current_buffer,
   { desc = "Toggle diagnostics in current buffer" })
 
-vim.keymap.set('n', '<space>md', require('remedybg').run_debugger, { silent = true })
-vim.keymap.set('n', '<space>ds', require('remedybg').stop_debug, { silent = true })
-vim.keymap.set('n', '<space>dr', require('remedybg').start_debug, { silent = true })
-vim.keymap.set('n', '<space>db', require('remedybg').toggle_breakpoint, { silent = true })
 
 vim.keymap.set('n', '<space>ma', require('cmake_configuration').compile_current_file,
   { silent = true, desc = "Compile current file" })
@@ -136,7 +129,11 @@ vim.keymap.set('n', '<space>mC', ':CMake configure<CR>', { silent = true })
 vim.keymap.set('n', '<space>ms', require('cmake_configuration').pick_cmake_configuration,
   { noremap = true, silent = true })
 
-vim.keymap.set('n', '<space>me',
+vim.keymap.set('n', '<space>ds', require('remedybg').stop_debug, { silent = true })
+vim.keymap.set('n', '<space>dr', require('remedybg').start_debug, { silent = true })
+vim.keymap.set('n', '<space>db', require('remedybg').toggle_breakpoint, { silent = true })
+vim.keymap.set('n', '<space>dR', require('remedybg').run_debugger, { silent = true })
+vim.keymap.set('n', '<space>de',
   function()
     require('cmake_configuration').pick_executable(
       {
@@ -147,7 +144,7 @@ vim.keymap.set('n', '<space>me',
   end,
   { noremap = true, silent = true })
 
-vim.keymap.set('n', '<space>mt', function()
+vim.keymap.set('n', '<space>dt', function()
     require("overseer").run_template({ name = "Run CTest", params = { working_dir = vim.g.build_dir, } })
   end,
   { noremap = true, silent = true })

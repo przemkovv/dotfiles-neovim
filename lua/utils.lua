@@ -33,21 +33,12 @@ function M.lsp_status()
   return vim.lsp.get_clients({ bufno = buf })
 end
 
-function M.toggle_diagnostic_text()
-  local lines_enabled = vim.diagnostic.config().virtual_text
-  vim.diagnostic.config({
-    virtual_text = not lines_enabled,
-    virtual_lines = lines_enabled
-  })
-end
-
 function M.toggle_inlay_hints()
-  local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
-  vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 end
 
 function M.toggle_diagnostics_current_buffer()
-  vim.diagnostic.enable(not vim.diagnostic.is_enabled({ bufnr = 0 }), { bufnr = 0 })
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end
 
 return M

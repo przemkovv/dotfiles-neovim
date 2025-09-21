@@ -43,6 +43,7 @@ function M.get_cmake_preset_build_configurations()
     return nil
   end
   local presets = vim.json.decode(file:read("*a"))
+  file:close()
 
   local binary_dir_template = nil
   local install_dir_template = nil

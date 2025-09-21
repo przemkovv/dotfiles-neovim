@@ -1,5 +1,3 @@
-vim.opt.termguicolors = true
-
 vim.g.loaded = 1
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
@@ -34,7 +32,7 @@ vim.opt.wildmode = { "longest", "full" }
 vim.opt.title = true
 vim.opt.undofile = true
 vim.opt.scrolloff = 10
-vim.opt.shortmess = "aOstT"
+-- vim.opt.shortmess = "aOstT"
 vim.opt.sidescrolloff = 5
 vim.opt.report = 0
 vim.opt.shiftround = true
@@ -84,8 +82,6 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "both"
 vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
 
-
-vim.opt.switchbuf = "uselast"
 
 vim.opt.grepprg = "rg --vimgrep -S"
 
@@ -143,4 +139,7 @@ if vim.fn.has('win32') == 1 and vim.fn.hostname() == 'ARAGORN' then
   vim.opt.rtp:prepend(pythonpath)
 end
 
-require('vim._extui').enable({})
+require('vim._extui').enable({
+  enable = true,
+  msg = { target = 'cmd' }
+})

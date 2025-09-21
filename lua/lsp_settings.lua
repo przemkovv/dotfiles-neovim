@@ -25,64 +25,6 @@ vim.lsp.config('*', {
   root_markers = { '.git' },
 })
 
---
-require('lspconfig').rust_analyzer.setup {
-  capabilities = capabilities,
-  settings = {
-    ["rust-analyzer"] = {
-      imports = {
-        granularity = {
-          group = "module",
-        },
-        prefix = "self",
-      },
-      cargo = {
-        buildScripts = {
-          enable = true,
-        },
-        features = "all",
-      },
-      check = {
-        command = "clippy",
-        -- features = "all",
-        -- extraArgs = {  "--all-features", "--all-targets", },
-      },
-      checkOnSave = true,
-      completion = {
-        postfix = {
-          enable = true,
-        },
-        autoimport = {
-          enable = true
-        },
-      },
-      diagnostics = {
-        enable = true,
-        enableExperimental = true,
-      },
-      procMacro = {
-        enable = true
-      },
-      assist = {
-        emitMustUse = true
-      },
-      inlayHints = {
-        chainingHints = true,
-        parameterHints = true,
-        typeHints = true,
-      },
-      workspace = {
-        symbol = {
-          search = {
-            kind = "all_symbols"
-          }
-        }
-      }
-    }
-  }
-}
-
-
 
 vim.lsp.enable('marksman')
 vim.lsp.enable('glslls')
@@ -98,6 +40,7 @@ vim.lsp.enable('roslyn_ls')
 vim.lsp.enable('lemminx')
 vim.lsp.enable('powershell_es')
 vim.lsp.enable('copilot')
+vim.lsp.enable('rust_analyzer')
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
   .handlers['textDocument/publishDiagnostics'])

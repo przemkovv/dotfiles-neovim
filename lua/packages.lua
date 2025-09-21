@@ -37,6 +37,11 @@ function M.install()
     checker = { enabled = false },
   }
 
+  vim.cmd([[
+    packadd cfilter
+    packadd justify
+    ]])
+
   require('lazy').setup(opts)
 end
 
