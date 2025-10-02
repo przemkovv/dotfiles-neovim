@@ -8,6 +8,7 @@ local set_relativenumbers = function()
       or vim.bo.filetype == 'help'
       or vim.bo.filetype == 'neo-tree'
       or vim.bo.filetype == 'DressingInput'
+      or vim.bo.filetype == 'sidekick_terminal'
   then
     vim.opt.relativenumber = false
   else
