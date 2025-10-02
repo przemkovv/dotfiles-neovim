@@ -36,11 +36,13 @@ vim.lsp.enable('vimls')
 vim.lsp.enable('slangd')
 -- vim.lsp.enable('cmake')
 vim.lsp.enable('lua_ls')
-vim.lsp.enable('roslyn_ls')
+vim.lsp.enable('roslyn')
+-- vim.lsp.enable('roslyn_ls')
 vim.lsp.enable('lemminx')
 vim.lsp.enable('powershell_es')
 vim.lsp.enable('copilot')
 vim.lsp.enable('rust_analyzer')
+vim.lsp.enable('dockerls')
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
   .handlers['textDocument/publishDiagnostics'])
@@ -140,6 +142,9 @@ vim.api.nvim_create_autocmd("LspDetach", {
 vim.api.nvim_create_autocmd('LspProgress', {
   callback = function(ev)
     local value = ev.data.params.value
+    if value == nil then
+      return
+    end
     if value.kind == 'begin' then
       io.stdout:write('\027]9;4;1;0\027\\')
     elseif value.kind == 'end' then

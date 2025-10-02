@@ -1,10 +1,6 @@
 ---@type LazySpec
 return {
   {
-    "mason-org/mason.nvim",
-    opts = {}
-  },
-  {
     "dstein64/vim-startuptime",
     lazy = true,
     cmd = "StartupTime"
@@ -109,8 +105,8 @@ return {
     -- branch = "nightly",
     -- commit = "fffb448615f45db90b59461a537075d6966e9eda",
     dependencies = {
-      "nvim-lua/plenary.nvim",  -- required
-      "sindrets/diffview.nvim", -- optional - Diff integration
+      "nvim-lua/plenary.nvim",         -- required
+      "sindrets/diffview.nvim",        -- optional - Diff integration
       "nvim-telescope/telescope.nvim", -- optional
     },
     opts = {
@@ -212,7 +208,7 @@ return {
   { 'bitc/vim-hdevtools',            ft = { 'haskell' } },
   -- " }}}
   -- " Rust {{{
-  { 'rust-lang/rust.vim', ft = { 'rust' } },
+  { 'rust-lang/rust.vim',            ft = { 'rust' } },
   {
     'saecki/crates.nvim',
     event = { "BufRead Cargo.toml" },
@@ -235,6 +231,16 @@ return {
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
     build = "cd app && npm install && git restore .",
+  },
+  {
+    "OXY2DEV/markview.nvim",
+    lazy = false,
+
+    -- For blink.cmp's completion
+    -- source
+    -- dependencies = {
+    --     "saghen/blink.cmp"
+    -- },
   },
   {
     'willothy/wezterm.nvim',

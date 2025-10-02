@@ -62,6 +62,10 @@ return {
             'query',
             'rst',
             'xml',
+            'html',
+            'latex',
+            'typst',
+            'yaml'
           },
           -- Install parsers synchronously (only applied to `ensure_installed`)
           sync_install = false,
