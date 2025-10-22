@@ -37,12 +37,15 @@ function M.install()
     checker = { enabled = false },
   }
 
+
+  require('lazy').setup(opts)
+
   vim.cmd([[
     packadd cfilter
     packadd justify
+    packadd nvim.undotree
+    packadd nvim.difftool
     ]])
-
-  require('lazy').setup(opts)
 end
 
 return M
