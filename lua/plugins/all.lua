@@ -101,7 +101,11 @@ return {
   },
   {
     "NeogitOrg/neogit",
+    lazy = true,
+    event = 'VeryLazy',
+    cmd = {'Neogit', 'NeogitCommit'},
     enabled = true,
+
     -- branch = "nightly",
     -- commit = "fffb448615f45db90b59461a537075d6966e9eda",
     dependencies = {

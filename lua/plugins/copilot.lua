@@ -26,7 +26,7 @@ return {
     dependencies = {
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
     },
-    build = "make tiktoken",
+    -- build = "make tiktoken",
     opts = {
       model = 'gpt-5',
       debug = false, -- Enable debugging
@@ -103,6 +103,7 @@ return {
   },
   {
     "folke/sidekick.nvim",
+    enabled = false,
     opts = {
       -- add any options here
       cli = {

@@ -6,7 +6,7 @@ return {
     -- event = { "InsertEnter", "CmdwinEnter", "CmdlineEnter" },
     enabled = true,
     -- dependencies = 'rafamadriz/friendly-snippets',
-    dependencies = 'L3MON4D3/LuaSnip',
+    -- dependencies = 'L3MON4D3/LuaSnip',
 
     -- version = 'v0.*',
     build = 'cargo build --release',
@@ -18,9 +18,9 @@ return {
         ['<c-space>'] = false,
         ["<Tab>"] = {
           "snippet_forward",
-          function() -- sidekick next edit suggestion
-            return require("sidekick").nes_jump_or_apply()
-          end,
+          -- function() -- sidekick next edit suggestion
+          --   return require("sidekick").nes_jump_or_apply()
+          -- end,
           function() -- if you are using Neovim's native inline completions
             return vim.lsp.inline_completion.get()
           end,
@@ -108,15 +108,17 @@ return {
         enabled = false,
         completion = { menu = { auto_show = true } },
       },
-      snippets = {
-        preset = 'luasnip',
-      },
       sources = {
         default = { 'lsp', 'path', 'snippets', 'buffer' },
         -- per_filetype = {
         --   lua = { inherit_defaults = true, 'lazydev' }
         -- },
         providers = {
+          snippets = {
+            opts = {
+              friendly_snippets = true,
+            },
+          },
           path = {
             opts = {
               get_cwd = function(_)
