@@ -6,7 +6,9 @@ return {
     -- event = { "InsertEnter", "CmdwinEnter", "CmdlineEnter" },
     enabled = true,
     -- dependencies = 'rafamadriz/friendly-snippets',
-    -- dependencies = 'L3MON4D3/LuaSnip',
+    dependencies = {
+      "joelazar/blink-calc"
+    },
 
     -- version = 'v0.*',
     build = 'cargo build --release',
@@ -109,7 +111,7 @@ return {
         completion = { menu = { auto_show = true } },
       },
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'calc' },
         -- per_filetype = {
         --   lua = { inherit_defaults = true, 'lazydev' }
         -- },
@@ -126,9 +128,12 @@ return {
               end,
             },
           },
+          calc = {
+            name = 'Calc',
+            module = 'blink-calc',
+          },
         },
       },
-
     },
     config = function(_, opts)
       local blink_cmp = require('blink.cmp')

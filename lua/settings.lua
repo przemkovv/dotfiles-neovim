@@ -40,6 +40,12 @@ vim.opt.list = true
 vim.opt.listchars = { trail = "•", tab = "»·" }
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+local arrows = {
+  right = '',
+  left = '',
+  up = '',
+  down = '',
+}
 vim.opt.fillchars = {
   horiz = '━',
   horizup = '┻',
@@ -48,6 +54,11 @@ vim.opt.fillchars = {
   vertleft = '┫',
   vertright = '┣',
   verthoriz = '╋',
+  fold = ' ',
+  foldclose = arrows.right,
+  foldopen = arrows.down,
+  foldsep = ' ',
+  foldinner = ' '
 }
 
 vim.opt.breakindent = true
@@ -55,6 +66,8 @@ vim.opt.breakindentopt:append { "sbr" }
 
 vim.opt.tags:append { "tags", "./tags", "~/.vimtags" }
 vim.opt.completeopt = { "menu", "preview", "noselect", "menuone" }
+
+vim.g.sidekick_nes = false
 
 
 
@@ -82,6 +95,7 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "both"
 vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
 
+vim.opt.pumborder = "rounded"
 
 vim.opt.grepprg = "rg --vimgrep -S"
 
@@ -93,6 +107,7 @@ vim.keymap.set('n', 'zO', 'zCzO', { silent = false })
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldtext = ""
+vim.opt.foldcolumn = '1'
 -- " }}}
 
 vim.o.exrc = true

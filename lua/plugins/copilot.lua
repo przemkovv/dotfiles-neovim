@@ -28,7 +28,7 @@ return {
     },
     -- build = "make tiktoken",
     opts = {
-      model = 'gpt-5',
+      -- model = 'gpt-5',
       debug = false, -- Enable debugging
       -- prompts = prompts,
       mappings = {
@@ -133,9 +133,11 @@ return {
       -- },
       {
         "<space>as",
-        function() require("sidekick.cli").select() end,
+        function()
+          -- require("sidekick.cli").select()
+          require("sidekick.cli").select({ filter = { installed = true } })
+        end,
         -- Or to select only installed tools:
-        -- require("sidekick.cli").select({ filter = { installed = true } })
         desc = "Sidekick Select CLI",
       },
       {
