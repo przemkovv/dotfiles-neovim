@@ -1,7 +1,7 @@
 vim.keymap.set('n', '<space>cd', ':cd %:p:h<CR>:pwd<CR>', { desc = "Change working directory to the current file" })
 
-vim.keymap.set('n', '<space>ss', ':mksession! .session.vim<CR>', { desc = "Save Current Session" })
-vim.keymap.set('n', '<space>sl', ':source .session.vim<CR>', { desc = "Load Session" })
+vim.keymap.set('n', '<space>ss', ':mksession! .local_user/session.vim<CR>', { desc = "Save Current Session" })
+vim.keymap.set('n', '<space>sl', ':source .local_user/session.vim<CR>', { desc = "Load Session" })
 
 vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr><c-l>',
   { silent = true })
