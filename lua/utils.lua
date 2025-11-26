@@ -41,4 +41,24 @@ function M.toggle_diagnostics_current_buffer()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end
 
+function M.save_session()
+  if vim.fn.filereadable('.session.nvim') == 1 then
+    vim.cmd('mksession! .session.nvim')
+  elseif vim.fn.filereadable('.local_user/session.nvim') == 1 then
+    vim.cmd('mksession! .local_user/session.nvim')
+  elseif vim.fn.isdirectory('.local_user') == 1 then
+    vim.cmd('mksession! .local_user/session.nvim')
+  else
+    vim.cmd('mksession! .session.nvim')
+  end
+end
+
+function M.load_session()
+  if vim.fn.filereadable('.session.nvim') == 1 then
+    vim.cmd('source .session.nvim')
+  elseif vim.fn.filereadable('.local_user/session.nvim') == 1 then
+    vim.cmd('source .local_user/session.nvim')
+  end
+end
+
 return M

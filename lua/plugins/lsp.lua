@@ -109,7 +109,6 @@ return {
   },
 
   {
-    enabled = true,
     'nvimdev/lspsaga.nvim',
     lazy = true,
     enabled = true,

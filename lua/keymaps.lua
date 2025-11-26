@@ -1,7 +1,7 @@
 vim.keymap.set('n', '<space>cd', ':cd %:p:h<CR>:pwd<CR>', { desc = "Change working directory to the current file" })
 
-vim.keymap.set('n', '<space>ss', ':mksession! .local_user/session.vim<CR>', { desc = "Save Current Session" })
-vim.keymap.set('n', '<space>sl', ':source .local_user/session.vim<CR>', { desc = "Load Session" })
+vim.keymap.set('n', '<space>ss', require('utils').save_session, { desc = "Save Current Session" })
+vim.keymap.set('n', '<space>sl', require('utils').load_session, { desc = "Load Session" })
 
 vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr><c-l>',
   { silent = true })
@@ -18,9 +18,9 @@ vim.keymap.set('n', '<Space>z', 'zMzvzz', { silent = false })
 vim.keymap.set('n', '<Space>8', ':let @/=\'\\<<C-R>=expand("<cword>")<CR>\\>\'<CR>:set hls<CR>', { silent = true })
 
 -- " copy & paste {{{
-vim.keymap.set('v', '<space>y', '"+y', { remap = true })
-vim.keymap.set({ 'n', 'v' }, '<space>p', '"+p', { remap = true })
-vim.keymap.set({ 'n', 'v' }, '<space>P', '"+P', { remap = true })
+-- vim.keymap.set('v', '<space>y', '"+y', { remap = true })
+-- vim.keymap.set({ 'n', 'v' }, '<space>p', '"+p', { remap = true })
+-- vim.keymap.set({ 'n', 'v' }, '<space>P', '"+P', { remap = true })
 -- " }}}
 
 vim.keymap.set('n', 'n', 'nzzzv', { silent = false })
