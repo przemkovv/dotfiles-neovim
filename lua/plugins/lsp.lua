@@ -112,6 +112,7 @@ return {
     enabled = true,
     'nvimdev/lspsaga.nvim',
     lazy = true,
+    enabled = true,
     event = "LspAttach",
     opts = {
       breadcrumbs = {
@@ -271,6 +272,7 @@ return {
   {
     'oribarilan/lensline.nvim',
     branch = 'release/2.x', -- or: branch = 'release/2.x' for latest non-breaking updates
+    enabled = false,
     event = 'LspAttach',
     config = function()
       require("lensline").setup()
