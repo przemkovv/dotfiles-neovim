@@ -89,7 +89,7 @@ return {
 
   -- Completion {{{
 
-  'Shougo/context_filetype.vim',
+  -- 'Shougo/context_filetype.vim',
 
   -- }}}
 
