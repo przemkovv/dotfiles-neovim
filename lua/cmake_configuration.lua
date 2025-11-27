@@ -225,6 +225,51 @@ function M.pick_cmake_configuration()
   }):find()
 end
 
+local find_all_executable_cmake_targets = function(cwd)
+  local Job = require('plenary.job')
+
+  local jq_transform = Job:new({
+    command = "fd",
+    args =
+    { "target-.*\\.json",
+      "-X", "jq", "-s",
+      "[.[] | select(.type == \"EXECUTABLE\") | . as $root| { target_name: $root.name, executable: ($root.artifacts[].path |select(endswith($root.nameOnDisk))) }]|select(isempty(.[])==false) " },
+    cwd = cwd,
+    enable_recording = true,
+  })
+  local j = Job:new({
+    command = "jq",
+    enable_recording = true,
+    args = { "-s", ". | flatten" },
+    cwd = cwd,
+    writer = jq_transform
+  })
+  j:sync()
+
+  local res = j:result()
+  if (res == nil or #res == 0) then
+    vim.print("No executables found in build directory")
+    return nil
+  end
+
+  local items = vim.json.decode(table.concat(res))
+  return items
+end
+
+local picker_on_selection = function(opts)
+  return function(prompt_bufnr)
+    local actions_state = require('telescope.actions.state')
+    local selection = actions_state.get_selected_entry()
+    local actions = require('telescope.actions')
+    actions.close(prompt_bufnr)
+    if opts == nil or opts.on_selection == nil then
+      return
+    end
+    opts.on_selection(selection.value)
+  end
+end
+
+
 ---@class pick_executable.Item
 ---@field target_name string
 ---@field executable string
@@ -234,54 +279,52 @@ end
 
 ---@param opts pick_executable.Opts|nil
 function M.pick_executable(opts)
+  local sorters = require('telescope.sorters')
+  local pickers = require('telescope.pickers')
+  local finders = require('telescope.finders')
+  local make_entry = require('telescope.make_entry')
+  local entry_display = require('telescope.pickers.entry_display')
   local cwd = vim.g.build_dir .. "/.cmake/api/v1/reply"
-  local pick = require('mini.pick')
-  -- Centered on screen
-  local win_config = function()
-    local height = math.floor(0.618 * vim.o.lines)
-    local width = math.floor(0.618 * vim.o.columns)
-    return {
-      anchor = 'NW',
-      height = height,
-      width = width,
-      row = math.floor(0.5 * (vim.o.lines - height)),
-      col = math.floor(0.5 * (vim.o.columns - width)),
-      border = 'rounded'
+  local displayer = entry_display.create {
+    separator = " ",
+    items = {
+      { width = 40 },
+      -- { width = 4 },
+      { remaining = true },
+    },
+  }
+  local make_display = function(entry)
+    return displayer {
+      { entry.value.target_name, "TelescopeResultsIdentifier" },
+      -- "",
+      entry.value.executable,
     }
   end
-  pick.builtin.cli({
-    command =
-    { "fd", "target-.*\\.json",
-      "-X", "jq", "-s",
-      "[.[] | select(.type == \"EXECUTABLE\") | . as $root| { target_name: $root.name, executable: ($root.artifacts[].path |select(endswith($root.nameOnDisk))) }]|select(isempty(.[])==false) " },
-    postprocess = function(data)
-      local json_string = table.concat(data)
-      local items = vim.json.decode(json_string)
-      -- print(vim.inspect(items))
-      return items
-    end,
-    spawn_opts = {
-      cwd = cwd,
-    }
-  }, {
-    window = { config = win_config },
-    source = {
-      name = "Executable selection",
-      ---@param item pick_executable.Item
-      choose = function(item)
-        if opts ~= nil and opts.on_selection ~= nil then
-          opts.on_selection(item)
-        end
+  pickers.new({}, {
+    prompt_title = "Executable selection",
+    finder = finders.new_table {
+      static = true,
+      results = find_all_executable_cmake_targets(cwd),
+
+      entry_maker = function(entry)
+        return make_entry.set_default_entry_mt({
+          value = entry,
+          display = make_display,
+          text = entry.target_name,
+          ordinal = entry.target_name
+        }, opts)
       end,
-      show =
-          function(buf_id, items_arr, _)
-            local lines = vim.tbl_map(function(x)
-              return x.target_name .. '         ->        ' .. x.executable
-            end, items_arr)
-            vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, lines)
-          end
-    }
-  })
+    },
+    sorter = sorters.get_generic_fuzzy_sorter(),
+    attach_mappings = function(_, map)
+      if opts == nil or opts.on_selection == nil then
+        return false
+      end
+      map("n", "<cr>", picker_on_selection(opts))
+      map("i", "<cr>", picker_on_selection(opts))
+      return true
+    end,
+  }):find()
 end
 
 function M.compile_current_file()
@@ -317,7 +360,7 @@ function M.compile_current_file()
   end
 
   -- Run the command
-  require("overseer").run_template(
+  require("overseer").run_task(
     {
       name = "Command runner",
       params = {
@@ -350,7 +393,7 @@ function M.setup()
       end
       vim.notify("Starting " .. cmd)
 
-      require("overseer").run_template(
+      require("overseer").run_task(
         {
           name = "Command runner",
           params = {

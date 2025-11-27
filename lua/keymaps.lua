@@ -138,13 +138,17 @@ vim.keymap.set('n', '<space>de',
     require('cmake_configuration').pick_executable(
       {
         on_selection = function(item)
-          require("remedybg").start_debugging(vim.g.build_dir, item)
+          require("remedybg").start_debugging(vim.g.build_dir,
+            {
+              executable = item.executable,
+              target_name = item.target_name
+            })
         end
       })
   end,
   { noremap = true, silent = true })
 
 vim.keymap.set('n', '<space>dt', function()
-    require("overseer").run_template({ name = "Run CTest", params = { working_dir = vim.g.build_dir, } })
+    require("overseer").run_task({ name = "Run CTest", params = { working_dir = vim.g.build_dir, } })
   end,
   { noremap = true, silent = true })
