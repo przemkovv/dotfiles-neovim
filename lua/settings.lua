@@ -112,6 +112,11 @@ vim.opt.foldcolumn = '1'
 
 vim.o.exrc = true
 
+vim.o.winborder = 'rounded'
+vim.wo.signcolumn = 'yes'
+vim.o.pumheight = 15
+vim.o.pumborder = 'rounded'
+
 
 vim.diagnostic.config({
   signs = false,

@@ -41,7 +41,7 @@ return {
           min_width = 30,
           max_height = 15,
           -- winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel",
-          border = 'single',
+          border = 'rounded',
           winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel",
 
           -- draw = {

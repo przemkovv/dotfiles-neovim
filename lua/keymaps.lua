@@ -24,30 +24,19 @@ vim.keymap.set('', '<space><space><bs>', ':bdelete!<CR>', { silent = true })
 vim.keymap.set('n', '<Space>z', 'zMzvzz', { silent = false })
 vim.keymap.set('n', '<Space>8', ':let @/=\'\\<<C-R>=expand("<cword>")<CR>\\>\'<CR>:set hls<CR>', { silent = true })
 
--- " copy & paste {{{
--- vim.keymap.set('v', '<space>y', '"+y', { remap = true })
--- vim.keymap.set({ 'n', 'v' }, '<space>p', '"+p', { remap = true })
--- vim.keymap.set({ 'n', 'v' }, '<space>P', '"+P', { remap = true })
--- " }}}
 
 vim.keymap.set('n', 'n', 'nzzzv', { silent = false })
 vim.keymap.set('n', 'N', 'Nzzzv', { silent = false })
 
 vim.keymap.set('n', '<Space>q', ':cclose<bar>lclose<cr>', { silent = false })
 vim.keymap.set('n', '<Space>Q', ':copen<cr>', { silent = false })
-vim.keymap.set("n", "<space>x", "<cmd>.lua<CR>")
-vim.keymap.set("v", "<space>x", "<cmd>lua<CR>")
-vim.keymap.set("n", "<space>X", "<cmd>Redir2Reg .lua<CR>")
-vim.keymap.set("v", "<space>X", "<cmd>Redir2Reg lua<CR><esc>")
+-- vim.keymap.set("n", "<space>x", "<cmd>.lua<CR>")
+-- vim.keymap.set("v", "<space>x", "<cmd>lua<CR>")
+-- vim.keymap.set("n", "<space>X", "<cmd>Redir2Reg .lua<CR>")
+-- vim.keymap.set("v", "<space>X", "<cmd>Redir2Reg lua<CR><esc>")
 
 vim.keymap.set('n', '<space>1', ':Neotree toggle<CR>', { silent = true })
 vim.keymap.set('n', '-', ':Oil<CR>', { silent = false })
-
-
--- fallback if LSP does not support {{{
-vim.keymap.set('n', '<space>sf', ':FSHere<CR>')
--- vim.keymap.set('n', '<space>=', ':keepjumps normal mzgg=Gg`zzz<CR>')
--- }}}
 
 
 -- Command-line mappings {{{
