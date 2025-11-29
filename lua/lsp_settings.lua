@@ -45,6 +45,7 @@ vim.lsp.enable('rust_analyzer')
 vim.lsp.enable('dockerls')
 vim.lsp.enable('jqls')
 vim.lsp.enable('ts_ls')
+vim.lsp.enable('kulala_ls')
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
   .handlers['textDocument/publishDiagnostics'])

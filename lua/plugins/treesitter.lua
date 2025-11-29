@@ -37,7 +37,8 @@ return {
         'html',
         'latex',
         'typst',
-        'yaml'
+        'yaml',
+        'kulala_http'
 
       })
       -- vim.treesitter.language.register('neorg', { 'norg' })

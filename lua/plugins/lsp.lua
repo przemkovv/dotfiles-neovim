@@ -190,8 +190,9 @@ return {
   {
     'oribarilan/lensline.nvim',
     branch = 'release/2.x', -- or: branch = 'release/2.x' for latest non-breaking updates
-    enabled = false,
-    event = 'LspAttach',
+    enabled = true,
+    -- event = 'LspAttach',
+    cmd = { 'LenslineEnable', 'LenslineShow', 'LenslineToggle' },
     config = function()
       require("lensline").setup()
     end,
