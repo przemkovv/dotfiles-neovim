@@ -1,146 +1,186 @@
----@class lsp.ClientCapabilities
-local cmp_capabilities = {}
-if package.loaded["blink.cmp"] then
-  cmp_capabilities = require('blink.cmp').get_lsp_capabilities()
-elseif package.loaded["cmp_nvim_lsp"] then
-  cmp_capabilities = require('cmp_nvim_lsp').default_capabilities()
-end
+local M = {}
 
----@class lsp.ClientCapabilities
-local capabilities = vim.tbl_deep_extend("force",
-  vim.lsp.protocol.make_client_capabilities(),
-  cmp_capabilities
-)
+-- Disable inlay hints initially (and enable if needed with my ToggleInlayHints command).
+vim.g.inlay_hints = false
 
-capabilities.textDocument.onTypeFormatting = { dynamicRegistration = false }
-capabilities.offsetEncoding = { "utf-16" }
-capabilities.textDocument.semanticTokens = { multilineTokenSupport = true }
 
-vim.lsp.inline_completion.enable(true)
+M.enable_lsp_severs = {
+  'marksman',
+  'glslls',
+  'clangd',
+  'pylsp',
+  'jsonls',
+  'esbonio',
+  'vimls',
+  'slangd',
+  'lua_ls',
+  'roslyn',
+  'lemminx',
+  'powershell_es',
+  'copilot',
+  'rust_analyzer',
+  'dockerls',
+  'jqls',
+  'ts_ls',
+  'kulala_ls',
+}
+
 vim.lsp.on_type_formatting.enable(true)
 vim.lsp.semantic_tokens.enable(true)
 
-vim.lsp.config('*', {
-  capabilities = capabilities,
-  root_markers = { '.git' },
-})
 
-
-vim.lsp.enable('marksman')
-vim.lsp.enable('glslls')
-vim.lsp.enable('clangd')
-vim.lsp.enable('pylsp')
-vim.lsp.enable('jsonls')
-vim.lsp.enable('esbonio')
-vim.lsp.enable('vimls')
-vim.lsp.enable('slangd')
--- vim.lsp.enable('cmake')
-vim.lsp.enable('lua_ls')
-vim.lsp.enable('roslyn')
--- vim.lsp.enable('roslyn_ls')
-vim.lsp.enable('lemminx')
-vim.lsp.enable('powershell_es')
-vim.lsp.enable('copilot')
-vim.lsp.enable('rust_analyzer')
-vim.lsp.enable('dockerls')
-vim.lsp.enable('jqls')
-vim.lsp.enable('ts_ls')
-vim.lsp.enable('kulala_ls')
-
-vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
-  .handlers['textDocument/publishDiagnostics'])
-
-vim.keymap.set('i', '<Tab>', function()
-  if not vim.lsp.inline_completion.get() then
-    return '<Tab>'
+--- Sets up LSP keymaps and autocommands for the given buffer.
+---@param client vim.lsp.Client
+---@param bufnr integer
+local function on_attach(client, bufnr)
+  ---@param lhs string
+  ---@param rhs string|function
+  ---@param opts string|vim.keymap.set.Opts
+  ---@param mode? string|string[]
+  local function keymap(lhs, rhs, opts, mode)
+    mode = mode or 'n'
+    ---@cast opts vim.keymap.set.Opts
+    opts = type(opts) == 'string' and { desc = opts } or opts
+    opts.buffer = bufnr
+    vim.keymap.set(mode, lhs, rhs, opts)
   end
-end, { expr = true, desc = 'Accept the current inline completion' })
 
-vim.keymap.set('i', '<c-.>', function()
-  vim.lsp.inline_completion.select({ count = 1 })
-end, { expr = true, desc = 'Next suggestion' })
-vim.keymap.set('i', '<c-,>', function()
-  vim.lsp.inline_completion.select({ count = -1 })
-end, { expr = true, desc = 'Prev suggestion' })
+  if client.server_capabilities.completionProvider then
+    vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = false })
+  end
+  if client.server_capabilities.documentRangeFormattingProvider or client.server_capabilities.documentFormattingProvider then
+    vim.bo[bufnr].formatexpr = 'v:lua.vim.lsp.formatexpr(#{timeout_ms:250})'
+  end
 
--- " nvim-lsp {{{
-vim.api.nvim_create_autocmd("LspAttach", {
-  callback = function(args)
-    local bufnr = args.buf
+  if client.server_capabilities.inlayHintProvider then
+    if client:supports_method 'textDocument/inlayHint' then
+      local inlay_hints_group = vim.api.nvim_create_augroup('przemkovv/toggle_inlay_hints', { clear = false })
 
-    local opts = { silent = true, buffer = bufnr }
-    local opts2 = { silent = true }
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client ~= nil then
-      if client.server_capabilities.completionProvider then
-        -- bufopt.omnifunc = "v:lua.vim.lsp.omnifunc"
-        vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = false })
-      end
-      if client.server_capabilities.documentRangeFormattingProvider or client.server_capabilities.documentFormattingProvider then
-        vim.keymap.set('v', '<Space>gf', vim.lsp.formatexpr, opts)
+      if vim.g.inlay_hints then
+        -- Initial inlay hint display.
+        -- Idk why but without the delay inlay hints aren't displayed at the very start.
+        vim.defer_fn(function()
+          local mode = vim.api.nvim_get_mode().mode
+          vim.lsp.inlay_hint.enable(mode == 'n' or mode == 'v', { bufnr = bufnr })
+        end, 500)
       end
 
-      if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint.enable(false)
-      end
+      vim.api.nvim_create_autocmd('InsertEnter', {
+        group = inlay_hints_group,
+        desc = 'Enable inlay hints',
+        buffer = bufnr,
+        callback = function()
+          if vim.g.inlay_hints then
+            vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
+          end
+        end,
+      })
 
-      if client:supports_method('textDocument/foldingRange') then
-        local win = vim.api.nvim_get_current_win()
-        vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
-      end
-
-      if client.name == 'clangd' then
-        vim.keymap.set('n', '<space>sf', ':ClangdSwitchSourceHeader<CR>')
-        vim.keymap.set('n', '<space>sF', ':ClangdSwitchSourceHeaderVSplit<CR>')
-      end
-
-      if client.server_capabilities.hoverProvider then
-        vim.keymap.set('n', 'K', require('lsp_utils').hover, opts)
-      end
-      if client.server_capabilities.inlayHintProvider then
-        vim.keymap.set('n', '<space>l', require('utils').toggle_inlay_hints, opts)
-      end
+      vim.api.nvim_create_autocmd('InsertLeave', {
+        group = inlay_hints_group,
+        desc = 'Disable inlay hints',
+        buffer = bufnr,
+        callback = function()
+          if vim.g.inlay_hints then
+            vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+          end
+        end,
+      })
     end
-    vim.keymap.set('n', '<Space>gd', vim.lsp.buf.declaration, opts)
-    vim.keymap.set('n', 'gd', require('lsp_utils').definition, opts)
-    vim.keymap.set('n', 'gD', function() require "telescope.builtin".lsp_definitions({ jump_type = "vsplit" }) end,
-      opts)
-    vim.keymap.set('n', '<C-k>', require('lsp_utils').signature_help, opts)
-    vim.keymap.set('i', '<C-k>', require('lsp_utils').signature_help, opts)
-    vim.keymap.set('n', '<Space>gt', require('telescope.builtin').lsp_type_definitions, opts)
-    vim.keymap.set('n', '<Space>gr', require('telescope.builtin').lsp_references, opts)
-    vim.keymap.set('n', '<Space>gs', "<cmd>Lspsaga outline<cr>", opts)
-    vim.keymap.set('n', '<Space>gp', "<cmd>Lspsaga peek_definition<cr>", opts)
-    vim.keymap.set('n', '<Space>T', require('telescope.builtin').lsp_document_symbols, opts)
-    -- vim.keymap.set('n', '<Space>t', require('telescope.builtin').lsp_dynamic_workspace_symbols, opts2)
-    vim.keymap.set('n', '<Space>t', require('telescope.builtin').lsp_workspace_symbols, opts2)
-    vim.keymap.set('n', '<space>ic', require('telescope.builtin').lsp_incoming_calls, opts)
-    vim.keymap.set("n", "<space>dd", vim.diagnostic.setqflist, opts)
-    vim.keymap.set('n', '\\wa', vim.lsp.buf.add_workspace_folder, opts)
-    vim.keymap.set('n', '\\wr', vim.lsp.buf.remove_workspace_folder, opts)
-    vim.keymap.set('n', '\\wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, opts)
-  end,
-})
+  end
 
-vim.api.nvim_create_autocmd("LspDetach", {
-  ---@diagnostic disable-next-line: unused-local
-  callback = function(args)
-    local bufnr = args.buf
-    local opts = { silent = true, buffer = bufnr }
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client ~= nil then
-      if client.server_capabilities.documentRangeFormattingProvider or client.server_capabilities.documentFormattingProvider then
-        vim.keymap.del('v', '<Space>gf', opts)
+  if client:supports_method('textDocument/foldingRange') then
+    local win = vim.api.nvim_get_current_win()
+    vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
+  end
+
+  if client.name == 'clangd' then
+    keymap('<space>sf', ':ClangdSwitchSourceHeader<CR>', 'Switch source header', 'n')
+    keymap('<space>sF', ':ClangdSwitchSourceHeaderVSplit<CR>', 'Switch source header in split', 'n')
+  end
+
+  if client:supports_method 'textDocument/documentHighlight' then
+    local under_cursor_highlights_group =
+        vim.api.nvim_create_augroup('przemkovv/cursor_highlights', { clear = false })
+    vim.api.nvim_create_autocmd({ 'CursorHold', 'InsertLeave' }, {
+      group = under_cursor_highlights_group,
+      desc = 'Highlight references under the cursor',
+      buffer = bufnr,
+      callback = vim.lsp.buf.document_highlight,
+    })
+    vim.api.nvim_create_autocmd({ 'CursorMoved', 'InsertEnter', 'BufLeave' }, {
+      group = under_cursor_highlights_group,
+      desc = 'Clear highlight references',
+      buffer = bufnr,
+      callback = vim.lsp.buf.clear_references,
+    })
+  end
+
+  if client:supports_method('textDocument/inlayHint') then
+    keymap('<space>l', '<cmd>ToggleInlayHints<CR>', 'Toggle inlay hints', 'n')
+  end
+
+  if client:supports_method('textDocument/definition') then
+    keymap('gd', vim.lsp.buf.definition, 'Go to definition (with mark)', 'n')
+    keymap('gD', function()
+      vim.cmd.vsplit()
+      vim.lsp.buf.definition()
+    end, 'Go to definition (vsplit)', 'n')
+    keymap('<space>gp', "<cmd>Lspsaga peek_definition<cr>", 'Peek definition', 'n')
+  end
+
+  if client.server_capabilities.hoverProvider then
+    keymap('<C-k>', vim.lsp.buf.signature_help, 'Signature help', { 'n', 'i' })
+  end
+
+  if client:supports_method('textDocument/typeDefinition') then
+    keymap('<space>gt', require('telescope.builtin').lsp_type_definitions, 'Type definitions', 'n')
+  end
+
+  if client:supports_method('textDocument/references') then
+    keymap('<space>gr', require('telescope.builtin').lsp_references, 'References', 'n')
+  end
+
+  if client:supports_method('textDocument/documentSymbol') then
+    keymap('<space>T', require('telescope.builtin').lsp_document_symbols, 'Document symbols', 'n')
+    keymap('<space>gs', "<cmd>Lspsaga outline<cr>", 'Outline', 'n')
+  end
+
+  if client:supports_method('workspace/symbol') then
+    keymap('<space>t', require('telescope.builtin').lsp_workspace_symbols, 'Workspace symbols', 'n')
+  end
+
+  if client:supports_method('callHierarchy/incomingCalls') then
+    keymap('<space>ic', require('telescope.builtin').lsp_incoming_calls, 'Incoming calls', 'n')
+  end
+
+  if client:supports_method('textDocument/inlineCompletion') then
+    vim.lsp.inline_completion.enable(true)
+    vim.keymap.set('i', '<Tab>', function()
+      if not vim.lsp.inline_completion.get() then
+        return '<Tab>'
       end
-    end
-    local lsp_document_highlight_id = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = false })
-    vim.api.nvim_clear_autocmds { buffer = bufnr, group = lsp_document_highlight_id }
-    local signature_help_id = vim.api.nvim_create_augroup("lsp_signature_help", { clear = false })
-    vim.api.nvim_clear_autocmds { buffer = bufnr, group = signature_help_id }
+    end, { expr = true, desc = 'Accept the current inline completion' })
+    vim.keymap.set('i', '<c-.>', function() vim.lsp.inline_completion.select({ count = 1 }) end,
+      { expr = true, desc = 'Next suggestion' })
+    vim.keymap.set('i', '<c-,>', function() vim.lsp.inline_completion.select({ count = -1 }) end,
+      { expr = true, desc = 'Prev suggestion' })
+  end
 
-    vim.cmd("set updatetime&")
-  end,
-})
+
+  vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
+    .handlers['textDocument/publishDiagnostics'])
+
+  keymap('\\wa', vim.lsp.buf.add_workspace_folder, 'Add workspace folder', 'n')
+  keymap('\\wr', vim.lsp.buf.remove_workspace_folder, 'Remove workspace folder', 'n')
+  keymap('\\wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, 'List workspace folders', 'n')
+end
+
+---@param client vim.lsp.Client
+---@param bufnr integer
+local function on_dettach(client, bufnr)
+
+end
 
 vim.api.nvim_create_autocmd('LspProgress', {
   callback = function(ev)
@@ -157,4 +197,119 @@ vim.api.nvim_create_autocmd('LspProgress', {
     end
   end,
 })
--- " }}}
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  desc = 'Configure LSP keymaps',
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    -- I don't think this can happen but it's a wild world out there.
+    if not client then
+      return
+    end
+
+    on_attach(client, args.buf)
+  end,
+})
+vim.api.nvim_create_autocmd('LspDetach', {
+  desc = 'Deconfigure LSP keymaps',
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+    -- I don't think this can happen but it's a wild world out there.
+    if not client then
+      return
+    end
+
+    on_dettach(client, args.buf)
+  end,
+})
+
+
+-- Override the virtual text diagnostic handler so that the most severe diagnostic is shown first.
+local show_handler = assert(vim.diagnostic.handlers.virtual_text.show)
+local hide_handler = vim.diagnostic.handlers.virtual_text.hide
+vim.diagnostic.handlers.virtual_text = {
+  show = function(ns, bufnr, diagnostics, opts)
+    table.sort(diagnostics, function(diag1, diag2)
+      return diag1.severity > diag2.severity
+    end)
+    return show_handler(ns, bufnr, diagnostics, opts)
+  end,
+  hide = hide_handler,
+}
+
+local win_opts = {
+  border = "rounded",
+  max_height = math.floor(vim.o.lines * 0.5),
+  max_width = math.floor(vim.o.columns * 0.4),
+}
+
+local hover = vim.lsp.buf.hover
+---@diagnostic disable-next-line: duplicate-set-field
+vim.lsp.buf.hover =
+    function()
+      hover(win_opts)
+    end
+
+local signature_help = vim.lsp.buf.signature_help
+---@diagnostic disable-next-line: duplicate-set-field
+vim.lsp.buf.signature_help =
+    function()
+      signature_help(win_opts)
+    end
+
+local definition = vim.lsp.buf.definition
+---@diagnostic disable-next-line: duplicate-set-field
+vim.lsp.buf.definition =
+    function()
+      local pos = vim.api.nvim_win_get_cursor(0)
+      if pos ~= nil then
+        vim.api.nvim_buf_set_mark(0, 'A', pos[1], pos[2], {})
+      end
+      definition()
+    end
+
+
+-- Update mappings when registering dynamic capabilities.
+local register_capability = vim.lsp.handlers['client/registerCapability']
+vim.lsp.handlers['client/registerCapability'] = function(err, res, ctx)
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+  if not client then
+    return
+  end
+  vim.print('Registering new capability for ' .. client.name)
+
+  on_attach(client, vim.api.nvim_get_current_buf())
+
+  return register_capability(err, res, ctx)
+end
+
+-- Set up LSP servers.
+vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
+  once = true,
+  callback = function()
+    -- Extend neovim's client capabilities with the completion ones.
+    local cmp_capabilities = require('blink.cmp').get_lsp_capabilities(nil, true);
+    local capabilities = vim.tbl_deep_extend("force",
+      vim.lsp.protocol.make_client_capabilities(),
+      cmp_capabilities
+    )
+    capabilities.textDocument.onTypeFormatting = { dynamicRegistration = false }
+    capabilities.textDocument.semanticTokens = { multilineTokenSupport = true }
+    vim.lsp.config('*', {
+      capabilities = capabilities,
+      root_markers = { '.git' },
+    })
+
+    vim.lsp.enable(M.enable_lsp_severs)
+  end,
+})
+
+-- HACK: Override buf_request to ignore notifications from LSP servers that don't implement a method.
+local buf_request = vim.lsp.buf_request
+---@diagnostic disable-next-line: duplicate-set-field
+vim.lsp.buf_request = function(bufnr, method, params, handler)
+  return buf_request(bufnr, method, params, handler, function() end)
+end
+
+return M

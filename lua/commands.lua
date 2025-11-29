@@ -1,28 +1,41 @@
--- " Number line settings {{{
-local number_lines_id = vim.api.nvim_create_augroup("NumberLines", { clear = true })
-local set_norelativenumbers = function()
-  vim.opt.relativenumber = false
-end
-local set_relativenumbers = function()
-  if vim.bo.filetype == 'NvimTree'
-      or vim.bo.filetype == 'help'
-      or vim.bo.filetype == 'neo-tree'
-      or vim.bo.filetype == 'DressingInput'
-      or vim.bo.filetype == 'sidekick_terminal'
-  then
-    vim.opt.relativenumber = false
-  else
-    vim.opt.relativenumber = true
-  end
-end
-vim.api.nvim_create_autocmd({ "FocusLost", "WinLeave", "InsertEnter" },
-  {
-    group = number_lines_id, pattern = "*", callback = set_norelativenumbers
-  })
-vim.api.nvim_create_autocmd({ "FocusGained", "WinEnter", "InsertLeave" },
-  {
-    group = number_lines_id, pattern = "*", callback = set_relativenumbers
-  })
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('przemkovv/big_file', { clear = true }),
+  desc = 'Disable features in big files',
+  pattern = 'bigfile',
+  callback = function(args)
+    vim.schedule(function()
+      vim.treesitter.stop(args.buf)
+      vim.bo[args.buf].syntax = vim.filetype.match { buf = args.buf } or ''
+    end)
+  end,
+})
+
+local line_numbers_group = vim.api.nvim_create_augroup('przemkovv/toggle_line_numbers', {})
+vim.api.nvim_create_autocmd({ 'BufEnter', 'FocusGained', 'InsertLeave', 'CmdlineLeave', 'WinEnter' }, {
+  group = line_numbers_group,
+  desc = 'Toggle relative line numbers on',
+  callback = function()
+    if vim.wo.nu and not vim.startswith(vim.api.nvim_get_mode().mode, 'i') then
+      vim.wo.relativenumber = true
+    end
+  end,
+})
+vim.api.nvim_create_autocmd({ 'BufLeave', 'FocusLost', 'InsertEnter', 'CmdlineEnter', 'WinLeave' }, {
+  group = line_numbers_group,
+  desc = 'Toggle relative line numbers off',
+  callback = function(args)
+    if vim.wo.nu then
+      vim.wo.relativenumber = false
+    end
+
+    -- Redraw here to avoid having to first write something for the line numbers to update.
+    if args.event == 'CmdlineEnter' then
+      if not vim.tbl_contains({ '@', '-' }, vim.v.event.cmdtype) then
+        vim.cmd.redraw()
+      end
+    end
+  end,
+})
 -- " }}}
 
 -- When switching buffers, preserve window view. {{{
@@ -40,9 +53,9 @@ vim.api.nvim_create_autocmd("BufEnter", {
 
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
+  group = vim.api.nvim_create_augroup('przemkovv//highlight-yank', { clear = true }),
   callback = function()
-    vim.hl.on_yank()
+    vim.hl.on_yank({ higroup = 'Visual' })
   end,
 })
 -- }}}
@@ -63,21 +76,17 @@ vim.api.nvim_create_autocmd({ "BufWritePre", "FileWritePre" },
   })
 -- }}}
 
--- go to last position when opening file {{{
-local go_to_last_position_group_id = vim.api.nvim_create_augroup("GoToLastPosition", { clear = true })
-vim.api.nvim_create_autocmd({ 'BufRead', 'BufReadPost' }, {
-  group = go_to_last_position_group_id,
-  pattern = "*",
-  callback = function()
-    local row, column = unpack(vim.api.nvim_buf_get_mark(0, '"'))
-    local buf_line_count = vim.api.nvim_buf_line_count(0)
-
-    if row >= 1 and row <= buf_line_count then
-      vim.api.nvim_win_set_cursor(0, { row, column })
+vim.api.nvim_create_autocmd('BufReadPost', {
+  group = vim.api.nvim_create_augroup('przemkovv/last_location', { clear = true }),
+  desc = 'Go to the last location when opening a buffer',
+  callback = function(args)
+    local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
+    local line_count = vim.api.nvim_buf_line_count(args.buf)
+    if mark[1] > 0 and mark[1] <= line_count then
+      vim.cmd 'normal! g`"zz'
     end
   end,
 })
--- }}}
 --
 local ft_quickfix_id = vim.api.nvim_create_augroup("ft_quickfix", { clear = true })
 vim.api.nvim_create_autocmd("FileType",
@@ -152,3 +161,43 @@ vim.api.nvim_create_user_command('Redir2Reg', function(ctx)
   local lines = vim.split(vim.api.nvim_exec2(cmd, { output = true }).output, '\n', { plain = true })
   vim.fn.setreg("", lines, "l")
 end, { nargs = '+', complete = 'command', force = true, range = true })
+
+
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('przemkovv/close_with_q', { clear = true }),
+  desc = 'Close with <q>',
+  pattern = {
+    'git',
+    'help',
+    'man',
+    'qf',
+    'scratch',
+  },
+  callback = function(args)
+    if args.match ~= 'help' or not vim.bo[args.buf].modifiable then
+      vim.keymap.set('n', 'q', '<cmd>quit<cr>', { buffer = args.buf })
+    end
+  end,
+})
+
+vim.api.nvim_create_user_command('Scratch', function()
+  vim.cmd 'bel 10new'
+  local buf = vim.api.nvim_get_current_buf()
+  for name, value in pairs {
+    filetype = 'scratch',
+    buftype = 'nofile',
+    bufhidden = 'wipe',
+    swapfile = false,
+    modifiable = true,
+  } do
+    vim.api.nvim_set_option_value(name, value, { buf = buf })
+  end
+end, { desc = 'Open a scratch buffer', nargs = 0 })
+
+vim.api.nvim_create_user_command('ToggleInlayHints', function()
+  vim.g.inlay_hints = not vim.g.inlay_hints
+  vim.notify(string.format('%s inlay hints...', vim.g.inlay_hints and 'Enabling' or 'Disabling'), vim.log.levels.INFO)
+
+  local mode = vim.api.nvim_get_mode().mode
+  vim.lsp.inlay_hint.enable(vim.g.inlay_hints and (mode == 'n' or mode == 'v'))
+end, { desc = 'Toggle inlay hints', nargs = 0 })

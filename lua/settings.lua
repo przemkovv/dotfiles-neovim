@@ -115,11 +115,20 @@ vim.o.exrc = true
 
 vim.diagnostic.config({
   signs = false,
-  virtual_text = true,
+  virtual_text = {
+    prefix = '',
+    spacing = 2,
+  },
   virtual_lines = false,
   float = {
     border = "single",
-    source = true
+    source = 'if_many',
+    -- Show severity icons as prefixes.
+    prefix = function(diag)
+      local level = vim.diagnostic.severity[diag.severity]
+      local prefix = string.format(' %s ', require('icons').diagnostics[level])
+      return prefix, 'Diagnostic' .. level:gsub('^%l', string.upper)
+    end,
   }
 })
 

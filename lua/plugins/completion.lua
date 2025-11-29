@@ -112,7 +112,7 @@ return {
         completion = { menu = { auto_show = true } },
       },
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer', 'calc' },
+        default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer', 'calc' },
         -- per_filetype = {
         --   lua = { inherit_defaults = true, 'lazydev' }
         -- },
@@ -132,6 +132,12 @@ return {
           calc = {
             name = 'Calc',
             module = 'blink-calc',
+          },
+          lazydev = {
+            name = "LazyDev",
+            module = "lazydev.integrations.blink",
+            -- make lazydev completions top priority (see `:h blink.cmp`)
+            score_offset = 100,
           },
         },
       },

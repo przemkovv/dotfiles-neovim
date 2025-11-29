@@ -41,7 +41,14 @@ return {
         'kulala_http'
 
       })
-      -- vim.treesitter.language.register('neorg', { 'norg' })
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function(args)
+          local language = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
+          if language and vim.treesitter.language.add(language) then
+            vim.treesitter.start()
+          end
+        end,
+      })
     end,
     --   if treesitter_parsers_path ~= nil then
     --     vim.opt.rtp:prepend(treesitter_parsers_path)

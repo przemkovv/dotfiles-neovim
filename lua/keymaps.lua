@@ -8,8 +8,15 @@ vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromsta
 vim.keymap.set({ 'n', 'i' }, '<C-PageDown>', '<cmd>cnext<cr>', { silent = true })
 vim.keymap.set({ 'n', 'i' }, '<C-PageUp>', '<cmd>cprevious<cr>', { silent = true })
 
+-- Quickly go to the end of the line while in insert mode.
+vim.keymap.set({ 'i', 'c' }, '<C-l>', '<C-o>A', { desc = 'Go to the end of the line' })
+
 vim.keymap.set('n', 'j', "v:count ? 'j' : 'gj'", { expr = true })
 vim.keymap.set('n', 'k', "v:count ? 'k' : 'gk'", { expr = true })
+
+-- Indent while remaining in visual mode.
+vim.keymap.set('v', '<', '<gv')
+vim.keymap.set('v', '>', '>gv')
 
 vim.keymap.set('', '<space><bs>', ':bprevious|bdelete #<CR>', { silent = true })
 vim.keymap.set('', '<space><space><bs>', ':bdelete!<CR>', { silent = true })
@@ -88,6 +95,8 @@ vim.keymap.set('n', '<Space>mn', function() require('telescope.builtin').keymaps
   { desc = "Keymaps N" })
 vim.keymap.set('n', '<Space>mx', function() require('telescope.builtin').keymaps { modes = { 'x' } } end,
   { desc = "Keymaps X" })
+vim.keymap.set('n', '<Space>mv', function() require('telescope.builtin').keymaps { modes = { 'v' } } end,
+  { desc = "Keymaps V" })
 vim.keymap.set('n', '<Space>mi', function() require('telescope.builtin').keymaps { modes = { 'i' } } end,
   { desc = "Keymaps I" })
 vim.keymap.set('n', '<Space>mo', function() require('telescope.builtin').keymaps { modes = { 'o' } } end,
@@ -152,3 +161,5 @@ vim.keymap.set('n', '<space>dt', function()
     require("overseer").run_task({ name = "Run CTest", params = { working_dir = vim.g.build_dir, } })
   end,
   { noremap = true, silent = true })
+
+vim.keymap.set('n', '<space>dd', vim.diagnostic.setqflist, { silent = true, desc = 'Send diagnostics to quickfix list' })

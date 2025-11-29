@@ -9,14 +9,15 @@ return {
           cmake = {
             "gersemi",
             lsp_format = "never",
-          }
+          },
         },
         default_format_opts = {
           lsp_format = "prefer",
 
-        }
+        },
+        -- log_level = vim.log.levels.DEBUG,
       })
-      vim.o.formatexpr = 'v:lua.require("conform").formatexpr()'
+      -- vim.o.formatexpr = 'v:lua.require("conform").formatexpr()'
       local opts = { silent = true }
       local conform = require('conform')
       vim.keymap.set('n', '<Space>=', conform.format, opts)
@@ -196,5 +197,35 @@ return {
     config = function()
       require("lensline").setup()
     end,
-  }
+  },
+  {
+    "folke/lazydev.nvim",
+    ft = "lua",   -- only load on lua files
+    opts = {
+      library = { -- Or relative, which means they will be resolved from the plugin dir.
+        "lazy.nvim",
+        -- It can also be a table with trigger words / mods
+        -- Only load luvit types when the `vim.uv` word is found
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+        -- always load the LazyVim library
+        "LazyVim",
+        -- Only load the lazyvim library when the `LazyVim` global is found
+        { path = "LazyVim",            words = { "LazyVim" } },
+        -- Load the wezterm types when the `wezterm` module is required
+        -- Needs `DrKJeff16/wezterm-types` to be installed
+        { path = "wezterm-types",      mods = { "wezterm" } },
+      },
+      -- disable when a .luarc.json file is found
+      enabled = function(root_dir)
+        return not vim.uv.fs_stat(root_dir .. "/.luarc.json")
+      end,
+    },
+    dependencies = {
+      {
+        'DrKJeff16/wezterm-types',
+        lazy = true,
+        version = false, -- Get the latest version
+      },
+    },
+  },
 }

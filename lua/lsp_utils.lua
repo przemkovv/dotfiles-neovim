@@ -52,48 +52,6 @@ function M.switch_source_header_splitcmd(bufnr, splitcmd)
   end
 end
 
-local Signature_help_window_opened = false
-local Signature_help_forced = false
-function M.My_signature_help_handler(handler)
-  return function(...)
-    if Signature_help_forced and Signature_help_window_opened then
-      Signature_help_forced = false
-      return handler(...)
-    end
-    if Signature_help_window_opened then
-      return
-    end
-    local fbuf, fwin = handler(...)
-    if fwin ~= nil then
-      Signature_help_window_opened = true
-      vim.api.nvim_exec2("autocmd WinClosed " .. fwin .. " lua _G.signature_help_window_opened=false", { output = false })
-    end
-    return fbuf, fwin
-  end
-end
-
-function M.Force_signature_help()
-  Signature_help_forced = true
-  vim.lsp.buf.signature_help()
-end
-
-local win_opts = { border = "rounded" }
-function M.signature_help()
-  vim.lsp.buf.signature_help(win_opts)
-end
-
-function M.hover()
-  vim.lsp.buf.hover(win_opts)
-end
-
-function M.definition()
-  local pos = vim.api.nvim_win_get_cursor(0)
-  if pos ~= nil then
-    vim.api.nvim_buf_set_mark(0, 'A', pos[1], pos[2], {})
-  end
-  vim.lsp.buf.definition()
-end
-
 function M.workspace_diagnostics()
   local clients = vim.lsp.get_clients()
   for _, client in ipairs(clients) do
