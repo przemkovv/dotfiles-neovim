@@ -214,17 +214,27 @@ local function on_dettach(client, bufnr)
 end
 
 vim.api.nvim_create_autocmd('LspProgress', {
-  callback = function(ev)
+  callback = function(ev --[[ lsp.ProgressParams ]])
     local value = ev.data.params.value
     if value == nil then
       return
     end
+    local progress = {
+      kind = 'progress',
+      status = 'running',
+      percent = 10,
+      title = 'term',
+    }
+    local server_name = vim.lsp.get_client_by_id(ev.data.client_id).name
     if value.kind == 'begin' then
-      io.stdout:write('\027]9;4;1;0\027\\')
+      progress.id = vim.api.nvim_echo({ { 'LSP [' .. server_name .. '] initializing...' } }, true, progress)
     elseif value.kind == 'end' then
-      io.stdout:write('\027]9;4;0\027\\')
+      progress.status = 'success'
+      progress.percent = 100
+      vim.api.nvim_echo({ { 'LSP [' .. server_name .. '] initialization complete' } }, true, progress)
     elseif value.kind == 'report' then
-      io.stdout:write(string.format('\027]9;4;1;%d\027\\', value.percentage))
+      progress.percent = value.percentage
+      vim.api.nvim_echo({ { 'LSP [' .. server_name .. '] initializing...' } }, true, progress)
     end
   end,
 })
