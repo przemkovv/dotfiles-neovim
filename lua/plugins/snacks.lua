@@ -55,6 +55,25 @@ return {
         },
       },
       image = {
+        formats = {
+          "mmd",
+          "png",
+          "jpg",
+          "jpeg",
+          "gif",
+          "bmp",
+          "webp",
+          "tiff",
+          "heic",
+          "avif",
+          "mp4",
+          "mov",
+          "avi",
+          "mkv",
+          "webm",
+          "pdf",
+          "icns",
+        },
         resolve = function(path, src)
           if require("obsidian.api").path_is_note(path) then
             return require("obsidian.api").resolve_image_path(src)

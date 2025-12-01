@@ -104,19 +104,21 @@ return {
     "NeogitOrg/neogit",
     lazy = true,
     event = 'VeryLazy',
-    cmd = {'Neogit', 'NeogitCommit'},
+    cmd = { 'Neogit', 'NeogitCommit' },
     enabled = true,
 
     dependencies = {
-      "nvim-lua/plenary.nvim",         -- required
-      "sindrets/diffview.nvim",        -- optional - Diff integration
-      "nvim-telescope/telescope.nvim", -- optional
+      "nvim-lua/plenary.nvim",  -- required
+      "sindrets/diffview.nvim", -- optional - Diff integration
     },
     opts = {
       graph_style = "unicode",
       kind = "replace",
       integrations = {
-        fzf_lua = nil,
+        fzf_lua = false,
+        telescope = false,
+        mini_pick = false,
+        snacks = false,
       }
     },
     config = function(_, opts)

@@ -20,6 +20,8 @@ return {
         'cpp',
         'c',
         'c_sharp',
+        'latex',
+        'regex',
         'rust',
         'python',
         'ninja',
