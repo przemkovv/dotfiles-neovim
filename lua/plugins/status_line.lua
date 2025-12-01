@@ -3,6 +3,7 @@ return {
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
+    enabled = false,
     opts = {
       options = {
         icons_enabled = true,
@@ -96,5 +97,17 @@ return {
       end
       require('lualine').setup(opts)
     end
+  },
+  {
+    'nvim-mini/mini.statusline',
+    version = false,
+    enabled = true,
+    dependencies = { "nvim-mini/mini.icons" },
+
+    opts = {
+      use_icons = true,
+
+
+    },
   },
 }

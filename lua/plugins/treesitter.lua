@@ -46,6 +46,8 @@ return {
           local language = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
           if language and vim.treesitter.language.add(language) then
             vim.treesitter.start()
+            vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+            vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
           end
         end,
       })
@@ -160,25 +162,48 @@ return {
     --     })
     -- end,
     dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
       'nvim-treesitter/nvim-treesitter-context',
       "lukas-reineke/indent-blankline.nvim",
     }
   },
-  -- {
-  --   'nvim-treesitter/nvim-treesitter-textobjects',
-  --   lazy = false,
-  --   -- event = { "BufReadPre", "BufNewFile" },
-  -- },
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    branch = "main",
+    lazy = false,
+    opts = {
+      select = {
+        -- Automatically jump forward to textobj, similar to targets.vim
+        lookahead = true,
+        -- You can choose the select mode (default is charwise 'v')
+        --
+        -- Can also be a function which gets passed a table with the keys
+        -- * query_string: eg '@function.inner'
+        -- * method: eg 'v' or 'o'
+        -- and should return the mode ('v', 'V', or '<c-v>') or a table
+        -- mapping query_strings to modes.
+        selection_modes = {
+          ['@parameter.outer'] = 'v', -- charwise
+          ['@function.outer'] = 'V',  -- linewise
+          ['@class.outer'] = '<c-v>', -- blockwise
+        },
+        -- If you set this to `true` (default is `false`) then any textobject is
+        -- extended to include preceding or succeeding whitespace. Succeeding
+        -- whitespace has priority in order to act similarly to eg the built-in
+        -- `ap`.
+        --
+        -- Can also be a function which gets passed a table with the keys
+        -- * query_string: eg '@function.inner'
+        -- * selection_mode: eg 'v'
+        -- and should return true of false
+        include_surrounding_whitespace = false,
+      },
+    }
+  },
   {
     'nvim-mini/mini.nvim',
     lazy = true,
     event = 'VeryLazy',
     version = false,
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-treesitter/nvim-treesitter-textobjects'
-    },
     config = function()
       local spec_treesitter = require('mini.ai').gen_spec.treesitter
       require('mini.ai').setup({
@@ -201,6 +226,7 @@ return {
           inside_next = 'in',
           around_last = 'al',
           inside_last = 'il',
+
 
           -- Move cursor to corresponding edge of `a` textobject
           goto_left = 'g[',
@@ -245,11 +271,6 @@ return {
       -- }
       -- vim.notify = require('mini.notify').make_notify(notify_opts)
     end,
-  },
-  {
-    'nvim-treesitter/nvim-treesitter-textobjects',
-    lazy = true,
-    branch = "main",
   },
   {
     'nvim-treesitter/nvim-treesitter-context',

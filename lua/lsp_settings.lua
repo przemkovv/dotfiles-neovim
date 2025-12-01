@@ -121,12 +121,12 @@ local function on_attach(client, bufnr)
   end
 
   if client:supports_method('textDocument/definition') then
-    keymap('gd', vim.lsp.buf.definition, 'Go to definition (with mark)', 'n')
-    keymap('gD', function()
-      vim.cmd.vsplit()
-      vim.lsp.buf.definition()
-    end, 'Go to definition (vsplit)', 'n')
+    keymap("gd", function() Snacks.picker.lsp_definitions() end, "Goto Definition")
     keymap('<space>gp', "<cmd>Lspsaga peek_definition<cr>", 'Peek definition', 'n')
+  end
+
+  if client:supports_method('textDocument/declaration') then
+    keymap("gD", function() Snacks.picker.lsp_declarations() end, "Goto Declarations")
   end
 
   if client.server_capabilities.hoverProvider then
@@ -134,24 +134,29 @@ local function on_attach(client, bufnr)
   end
 
   if client:supports_method('textDocument/typeDefinition') then
-    keymap('<space>gt', require('telescope.builtin').lsp_type_definitions, 'Type definitions', 'n')
+    keymap('grt', function() Snacks.picker.lsp_type_definitions() end, 'Type definitions', 'n')
   end
 
   if client:supports_method('textDocument/references') then
-    keymap('<space>gr', require('telescope.builtin').lsp_references, 'References', 'n')
+    keymap('grr', function() Snacks.picker.lsp_references() end, 'References', 'n')
   end
 
   if client:supports_method('textDocument/documentSymbol') then
-    keymap('<space>T', require('telescope.builtin').lsp_document_symbols, 'Document symbols', 'n')
+    keymap('gO', function() Snacks.picker.lsp_symbols() end, 'Document symbols', 'n')
     keymap('<space>gs', "<cmd>Lspsaga outline<cr>", 'Outline', 'n')
   end
 
   if client:supports_method('workspace/symbol') then
-    keymap('<space>t', require('telescope.builtin').lsp_workspace_symbols, 'Workspace symbols', 'n')
+    keymap('<space>t', function() Snacks.picker.lsp_workspace_symbols() end, 'Workspace symbols', 'n')
+  end
+
+  if client:supports_method('textDocument/implementation') then
+    keymap('gI', function() Snacks.picker.lsp_implementations() end, 'Implementation', 'n')
   end
 
   if client:supports_method('callHierarchy/incomingCalls') then
-    keymap('<space>ic', require('telescope.builtin').lsp_incoming_calls, 'Incoming calls', 'n')
+    keymap('gai', function() Snacks.picker.lsp_incoming_calls() end, 'Incoming calls', 'n')
+    keymap('gao', function() Snacks.picker.lsp_outgoing_calls() end, 'Outgoing calls', 'n')
   end
 
   if client:supports_method('textDocument/inlineCompletion') then

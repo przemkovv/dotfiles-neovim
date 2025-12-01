@@ -1,4 +1,7 @@
 local M = {}
+
+local local_settings_dir = ".local_settings"
+
 function M.win_get_var(win_id, var_name)
   local ok, result = pcall(function()
     return vim.api.nvim_win_get_var(win_id, var_name)
@@ -43,21 +46,25 @@ end
 
 function M.save_session()
   if vim.fn.filereadable('.session.nvim') == 1 then
-    vim.cmd('mksession! .session.nvim')
-  elseif vim.fn.filereadable('.local_user/session.nvim') == 1 then
-    vim.cmd('mksession! .local_user/session.nvim')
+    vim.cmd.mksession({ args = { '.session.nvim' }, bang = true })
+    -- vim.cmd('mksession! .session.nvim')
+  elseif vim.fn.filereadable(local_settings_dir .. '/session.nvim') == 1 then
+    vim.cmd.mksession({ args = { local_settings_dir .. '/session.nvim' }, bang = true })
+    -- vim.cmd('mksession! .local_user/session.nvim')
   elseif vim.fn.isdirectory('.local_user') == 1 then
-    vim.cmd('mksession! .local_user/session.nvim')
+    vim.cmd.mksession({ args = { local_settings_dir .. '/session.nvim' }, bang = true })
   else
-    vim.cmd('mksession! .session.nvim')
+    vim.cmd.mksession({ args = { '.session.nvim' }, bang = true })
   end
 end
 
 function M.load_session()
   if vim.fn.filereadable('.session.nvim') == 1 then
-    vim.cmd('source .session.nvim')
-  elseif vim.fn.filereadable('.local_user/session.nvim') == 1 then
-    vim.cmd('source .local_user/session.nvim')
+    vim.cmd.source('.session.nvim')
+    -- vim.cmd('source .session.nvim')
+  elseif vim.fn.filereadable(local_settings_dir .. '/session.nvim') == 1 then
+    vim.cmd.source(local_settings_dir .. '/session.nvim')
+    -- vim.cmd('source .local_user/session.nvim')
   end
 end
 

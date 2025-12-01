@@ -1,8 +1,26 @@
 local M = {}
 
+local local_settings_dir = ".local_settings"
+local configuration_file = local_settings_dir .. "/cmake.json"
+
+
+---@class pick_executable.Item
+---@field target_name string
+---@field executable string
+---
+---@class pick_executable.Opts
+---@field on_selection fun(item: pick_executable.Item) | nil
+
+
+---@class pick_cmake_configuration.Configuration
+---@field name string
+---@field build_dir string
+
+
+---@class pick_cmake_configuration.Opts
+---@field force_pick boolean | nil
+
 local parse_cmake_preset = function(vars, text)
-  -- str = "${sourceDir}/out/build/${presetName}"
-  -- str = "$env{RTT_BUILD_ROOT}/out/build/${presetName}"
   return text:gsub("%$env{(.-)}", function(key)
     return vim.env[key] or key
   end):gsub("%${(.-)}", function(key)
@@ -34,12 +52,12 @@ end
 function M.get_cmake_preset_build_configurations()
   local presets_file = "CMakePresets.json"
   if not file_exists(presets_file) then
-    vim.notify("Could not find CMakePresets.json")
+    vim.print("Could not find CMakePresets.json")
     return nil
   end
   local file = io.open(presets_file, "r")
   if not file then
-    vim.notify("Could not open file CMakePresets.json")
+    vim.print("Could not open file CMakePresets.json")
     return nil
   end
   local presets = vim.json.decode(file:read("*a"))
@@ -121,6 +139,7 @@ function M.get_cmake_preset_build_configurations()
   return build_presets
 end
 
+---@return string[]
 function M.get_cmake_preset_build_configurations_names()
   local build_presets = M.get_cmake_preset_build_configurations()
   if build_presets == nil then
@@ -133,54 +152,21 @@ function M.get_cmake_preset_build_configurations_names()
   return names
 end
 
-function M.select_cmake_configuration()
-  local build_configurations = M.get_cmake_preset_build_configurations()
-  local all_configurations = {}
-  if build_configurations ~= nil then
-    all_configurations = vim.fn.keys(build_configurations)
-  end
-  vim.ui.select(all_configurations, {
-    prompt = "Select CMake configuration",
-  }, function(choice)
-    vim.print("Selected configuration: " .. choice)
-    M.setup_make(choice)
-  end)
-end
-
-function M.setup_make(configuration)
-  local build_configurations = M.get_cmake_preset_build_configurations()
-  local fallback = false
-  if build_configurations == nil then
-    vim.notify("Could not find CMakePresets.json")
-    fallback = true
-  end
-
-  if build_configurations ~= nil and build_configurations[configuration] == nil then
-    vim.notify("Could not find build configuration " .. configuration)
-    fallback = true
-  end
-  if build_configurations ~= nil and build_configurations[configuration] ~= nil then
-    vim.opt.makeprg = "cmake --build --preset " .. build_configurations[configuration].name
-    vim.g.configureprg = "cmake --preset " .. build_configurations[configuration].configure_preset
-    vim.g.build_dir = build_configurations[configuration].binary_dir
-  end
-
-  if fallback == true then
-    vim.notify("Fallback")
-    if vim.fn.has('windows') then
-      vim.opt.makeprg = "cmake --build --preset windows-" .. configuration
-      vim.g.configureprg = "cmake --preset windows-msvc-" .. configuration
-      vim.g.build_dir = "out/build/windows-msvc-" .. configuration
-    else
-      vim.opt.makeprg = "cmake --build --preset linux-clang"
-      vim.g.configureprg = "cmake --preset linux-clang"
+---@param build_dir string
+function M.setup_cmake_lsp(build_dir)
+  vim.lsp.config('cmake', {
+    init_options = {
+      buildDirectory = build_dir,
+    }
+  })
+  if not vim.lsp.is_enabled('cmake') then
+    vim.lsp.enable('cmake')
+  else
+    for _, client in ipairs(vim.lsp.get_clients({ name = "cmake" })) do
+      client:notify('workspace/didChangeConfiguration',
+        {
+          settings = { initialization_options = { buildDirectory = build_dir } } })
     end
-  end
-
-  for _, client in ipairs(vim.lsp.get_clients({ name = "cmake" })) do
-    client:notify('workspace/didChangeConfiguration',
-      {
-        settings = { initialization_options = { buildDirectory = vim.g.build_dir } } })
   end
 
   vim.api.nvim_create_autocmd("LspAttach", {
@@ -189,42 +175,50 @@ function M.setup_make(configuration)
       local client = vim.lsp.get_client_by_id(args.data.client_id)
       if client ~= nil and client.name == "cmake" then
         client:notify("workspace/didChangeConfiguration", {
-          settings = { initialization_options = { buildDirectory = vim.g.build_dir } } })
+          settings = { initialization_options = { buildDirectory = build_dir } } })
       end
     end,
   })
 end
 
-local switch_cmake_configuration_telescope = function(prompt_bufnr)
-  local actions_state = require('telescope.actions.state')
-  local selection = actions_state.get_selected_entry()
-  local actions = require('telescope.actions')
-  actions.close(prompt_bufnr)
-  local was_cmake_enabled = vim.lsp.is_enabled('cmake')
-  vim.lsp.enable('cmake', false)
-  M.setup_make(selection[1])
-  vim.lsp.enable('cmake', was_cmake_enabled)
-  vim.notify("Configuration switched to " .. selection[1])
+---@param configuration string
+---@return string "missing_presets_file"|"missing_configuration"|"success"
+function M.setup_cmake(configuration)
+  local build_configurations = M.get_cmake_preset_build_configurations()
+  if build_configurations == nil then
+    vim.print("Could not find CMakePresets.json")
+    return "missing_presets_file"
+  end
+
+  if build_configurations ~= nil and build_configurations[configuration] == nil then
+    vim.print("Could not find build configuration " .. configuration)
+    return "missing_configuration"
+  end
+
+  vim.opt.makeprg = "cmake --build --preset " .. build_configurations[configuration].name
+  vim.g.configureprg = "cmake --preset " .. build_configurations[configuration].configure_preset
+  vim.g.build_dir = build_configurations[configuration].binary_dir
+  return "success"
 end
 
-function M.pick_cmake_configuration()
-  local sorters = require('telescope.sorters')
-  local pickers = require('telescope.pickers')
-  local finders = require('telescope.finders')
-  pickers.new({}, {
-    prompt_title = "CMake configuration",
-    finder = finders.new_table {
-      results = M.get_cmake_preset_build_configurations_names(),
-    },
-    sorter = sorters.get_generic_fuzzy_sorter(),
-    attach_mappings = function(_, map)
-      map("n", "<cr>", switch_cmake_configuration_telescope)
-      map("i", "<cr>", switch_cmake_configuration_telescope)
-      return true
-    end,
-  }):find()
+---@param choice string|nil
+function M.switch_cmake_configuration(choice)
+  if choice == nil then
+    return
+  end
+  local result = M.setup_cmake(choice)
+  if result == "success" then
+    M.setup_cmake_lsp(vim.g.build_dir)
+    vim.print("Configuration switched to " .. choice)
+  end
+  if result == "missing_configuration" then
+    M.pick_cmake_configuration({ force_pick = true })
+  end
 end
 
+--- Find all executable cmake targets in the given directory
+---@param cwd string
+---@return pick_executable.Item[]
 local find_all_executable_cmake_targets = function(cwd)
   local Job = require('plenary.job')
 
@@ -249,83 +243,13 @@ local find_all_executable_cmake_targets = function(cwd)
   local res = j:result()
   if (res == nil or #res == 0) then
     vim.print("No executables found in build directory")
-    return nil
+    return {}
   end
 
   local items = vim.json.decode(table.concat(res))
   return items
 end
 
-local picker_on_selection = function(opts)
-  return function(prompt_bufnr)
-    local actions_state = require('telescope.actions.state')
-    local selection = actions_state.get_selected_entry()
-    local actions = require('telescope.actions')
-    actions.close(prompt_bufnr)
-    if opts == nil or opts.on_selection == nil then
-      return
-    end
-    opts.on_selection(selection.value)
-  end
-end
-
-
----@class pick_executable.Item
----@field target_name string
----@field executable string
-
----@class pick_executable.Opts
----@field on_selection fun(item: pick_executable.Item) | nil
-
----@param opts pick_executable.Opts|nil
-function M.pick_executable(opts)
-  local sorters = require('telescope.sorters')
-  local pickers = require('telescope.pickers')
-  local finders = require('telescope.finders')
-  local make_entry = require('telescope.make_entry')
-  local entry_display = require('telescope.pickers.entry_display')
-  local cwd = vim.g.build_dir .. "/.cmake/api/v1/reply"
-  local displayer = entry_display.create {
-    separator = " ",
-    items = {
-      { width = 40 },
-      -- { width = 4 },
-      { remaining = true },
-    },
-  }
-  local make_display = function(entry)
-    return displayer {
-      { entry.value.target_name, "TelescopeResultsIdentifier" },
-      -- "",
-      entry.value.executable,
-    }
-  end
-  pickers.new({}, {
-    prompt_title = "Executable selection",
-    finder = finders.new_table {
-      static = true,
-      results = find_all_executable_cmake_targets(cwd),
-
-      entry_maker = function(entry)
-        return make_entry.set_default_entry_mt({
-          value = entry,
-          display = make_display,
-          text = entry.target_name,
-          ordinal = entry.target_name
-        }, opts)
-      end,
-    },
-    sorter = sorters.get_generic_fuzzy_sorter(),
-    attach_mappings = function(_, map)
-      if opts == nil or opts.on_selection == nil then
-        return false
-      end
-      map("n", "<cr>", picker_on_selection(opts))
-      map("i", "<cr>", picker_on_selection(opts))
-      return true
-    end,
-  }):find()
-end
 
 function M.compile_current_file()
   -- Get the current file path
@@ -413,7 +337,6 @@ function M.setup()
 
 
   if vim.fn.has('win32') then
-    -- vim.g.msvcpath = vim.fn.shellescape(vim.fn.expand("${VCToolsInstallDir}")) .. "include/.*"
     local msvcpath = vim.fn.getenv("VCToolsInstallDir")
     if msvcpath ~= vim.NIL then
       msvcpath = msvcpath:gsub("\\", "/"):gsub(" ", "\\ ")
@@ -427,6 +350,84 @@ function M.setup()
         end
       })
     end
+  end
+end
+
+---@param opts pick_executable.Opts|nil
+function M.pick_executable(opts)
+  local cwd = vim.g.build_dir .. "/.cmake/api/v1/reply"
+  if cwd == nil then
+    vim.print("Build directory is not set")
+    return
+  end
+  local items = find_all_executable_cmake_targets(cwd)
+  ---@diagnostic disable-next-line: deprecated
+  local max_length = math.max(40, unpack(vim.tbl_map(function(item) return #item.target_name end, items))) + 2
+  vim.ui.select(
+    find_all_executable_cmake_targets(cwd),
+    {
+      prompt = "Select executable",
+      format_item = function(item)
+        return item.target_name .. (" "):rep(max_length - #item.target_name) .. item.executable
+      end,
+    },
+    function(item)
+      if item == nil or opts == nil or opts.on_selection == nil then
+        return
+      end
+      opts.on_selection(item)
+    end)
+end
+
+function M.save_configuration(configuration)
+  if vim.fn.isdirectory(local_settings_dir) == 0 then
+    vim.fn.mkdir(local_settings_dir)
+  end
+  local file = io.open(configuration_file, "w")
+  if file then
+    local content = vim.json.encode({ configuration = configuration })
+    file:write(content)
+    file:close()
+  end
+end
+
+function M.load_configuration()
+  if vim.fn.filereadable(configuration_file) == 1 then
+    local file = io.open(configuration_file, "r")
+    if file then
+      local content = file:read("*a")
+      file:close()
+      local config = vim.json.decode(content)
+      if config ~= nil and config.configuration ~= nil then
+        return config.configuration
+      end
+    end
+  end
+  return nil
+end
+
+---@param opts pick_cmake_configuration.Opts|nil
+function M.pick_cmake_configuration(opts)
+  local check_local_settings = opts ~= nil and opts.force_pick ~= true
+  local saved_configuration = nil
+  if check_local_settings then
+    saved_configuration = M.load_configuration()
+  end
+
+  if saved_configuration == nil then
+    vim.print("Please select a CMake configuration")
+    vim.ui.select(
+      M.get_cmake_preset_build_configurations_names(),
+      {
+        prompt = "Select CMake configuration",
+      },
+      function(choice)
+        M.switch_cmake_configuration(choice)
+        M.save_configuration(choice)
+      end)
+  else
+    vim.print("Using saved CMake configuration: " .. saved_configuration)
+    M.switch_cmake_configuration(saved_configuration)
   end
 end
 

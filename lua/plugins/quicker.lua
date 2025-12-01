@@ -1,6 +1,7 @@
 return {
   {
     'stevearc/quicker.nvim',
+    enabled = true,
     event = 'VeryLazy',
     opts = {
       borders = {
@@ -42,6 +43,7 @@ return {
           require('quicker').expand { before = 2, after = 2, add_to_existing = true }
         end,
         desc = 'Expand context',
+        ft = { 'qf' },
       },
       {
         '<',
@@ -49,6 +51,7 @@ return {
           require('quicker').collapse()
         end,
         desc = 'Collapse context',
+        ft = { 'qf' },
       },
     },
   },

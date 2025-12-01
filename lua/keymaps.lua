@@ -3,6 +3,12 @@ vim.keymap.set('n', '<space>cd', ':cd %:p:h<CR>:pwd<CR>', { desc = "Change worki
 vim.keymap.set('n', '<space>ss', require('utils').save_session, { desc = "Save Current Session" })
 vim.keymap.set('n', '<space>sl', require('utils').load_session, { desc = "Load Session" })
 
+vim.keymap.set('n', '\\q',
+  function()
+    require('utils').save_session()
+    vim.cmd.restart({ args = { "lua", "require('utils').load_session()" } })
+  end, { desc = 'Restart Neovim with session' })
+
 vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr><c-l>',
   { silent = true })
 vim.keymap.set({ 'n', 'i' }, '<C-PageDown>', '<cmd>cnext<cr>', { silent = true })
@@ -61,58 +67,42 @@ vim.keymap.set('c', 'w!!', 'w !sudo tee % >/dev/null')
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
-vim.keymap.set('n', '<Space>r', '<cmd>Telescope live_grep<CR>')
-vim.keymap.set('n', '<Space>R', '<cmd>Telescope grep_string<CR>')
-vim.keymap.set('n', '<Space>h', require('telescope.builtin').builtin, { desc = "Built-in" })
-vim.keymap.set('n', '<Space>fh', '<cmd>Telescope help_tags<CR>')
-vim.keymap.set('n', '<Space>fH', '<cmd>Telescope help_tags <CWORD><CR>')
+vim.keymap.set('n', '<Space>r', function() Snacks.picker.grep() end, { desc = "Grep" })
+vim.keymap.set({ 'n', 'x' }, '<Space>R', function() Snacks.picker.grep_word() end, { desc = "Grep word" })
+vim.keymap.set('n', '<Space>h', function() Snacks.picker() end, { desc = "Built-in" })
+vim.keymap.set('n', '<Space>fh', function() Snacks.picker.help() end, { desc = "Help tags" })
 vim.keymap.set('n', '<Space>fH',
-  function() require('telescope.builtin').help_tags({ default_text = vim.fn.expand("<cword>") }) end,
-  { desc = "Help tag" })
-vim.keymap.set('n', '<Space>fd', '<cmd>Telescope find_files<CR>')
-vim.keymap.set('n', '<Space>fD', function()
-    require('telescope.builtin').find_files({
-      cwd = vim.g.build_dir,
-      find_command = { "rg", "-u", "--files", "--hidden", "--follow", "--glob", "!.git/*" },
-    })
+  function()
+    Snacks.picker.help({ search = function(picker) return picker:word() end, })
   end,
-  { desc = "Find files in the build directory" })
-vim.keymap.set('n', '<Space>fg', '<cmd>Telescope git_files<CR>')
-vim.keymap.set('n', '<Space><c-F>', '<cmd>Telescope git_status<CR>')
-vim.keymap.set('n', '<Space>fr', '<cmd>Telescope oldfiles<CR>')
-vim.keymap.set('n', '<Space>mn', function() require('telescope.builtin').keymaps { modes = { 'n' } } end,
-  { desc = "Keymaps N" })
-vim.keymap.set('n', '<Space>mx', function() require('telescope.builtin').keymaps { modes = { 'x' } } end,
-  { desc = "Keymaps X" })
-vim.keymap.set('n', '<Space>mv', function() require('telescope.builtin').keymaps { modes = { 'v' } } end,
-  { desc = "Keymaps V" })
-vim.keymap.set('n', '<Space>mi', function() require('telescope.builtin').keymaps { modes = { 'i' } } end,
-  { desc = "Keymaps I" })
-vim.keymap.set('n', '<Space>mo', function() require('telescope.builtin').keymaps { modes = { 'o' } } end,
-  { desc = "Keymaps O" })
-vim.keymap.set('n', '<Space>mt', function() require('telescope.builtin').keymaps { modes = { 't' } } end,
-  { desc = "Keymaps T" })
-vim.keymap.set('n', '<Space>en', function()
-    require('telescope.builtin').find_files({ cwd = vim.fn.stdpath('config') })
-  end,
-  { desc = "Edit neovim config" })
-vim.keymap.set('n', '<Space>ep', function()
-    require('telescope.builtin').find_files({ cwd = vim.fs.joinpath(vim.fn.stdpath('data'), "lazy") })
-  end,
-  { desc = "Edit neovim plugin" })
-vim.keymap.set('n', '<Space>fb', '<cmd>Telescope buffers<CR>')
-vim.keymap.set('n', '<Space>fp', '<cmd>Telescope projects<CR>')
+  { desc = "Help tags (current)" })
+vim.keymap.set('n', '<Space>fd', function() Snacks.picker.files() end, { desc = "Find files" })
+vim.keymap.set('n', '<Space>fD', function() Snacks.picker.files({ dirs = { vim.g.build_dir } }) end,
+  { desc = "Find files in build directory" })
+vim.keymap.set('n', '<Space>en', function() Snacks.picker.files({ dirs = { vim.fn.stdpath('config') } }) end,
+  { desc = "Find files in the config directory" })
+vim.keymap.set('n', '<Space>ep',
+  function() Snacks.picker.files({ dirs = { vim.fs.joinpath(vim.fn.stdpath('data'), "lazy") } }) end,
+  { desc = "Find files in the plugin directory" })
+vim.keymap.set('n', '<Space>fg', function() Snacks.picker.git_files() end, { desc = "Find git files" })
+vim.keymap.set('n', '<Space>fr', function() Snacks.picker.recent() end, { desc = "Find recent files" })
+vim.keymap.set('n', '<Space>mn', function() Snacks.picker.keymaps({ modes = { 'n' } }) end, { desc = "Keymaps N" })
+vim.keymap.set('n', '<Space>mx', function() Snacks.picker.keymaps({ modes = { 'x' } }) end, { desc = "Keymaps X" })
+vim.keymap.set('n', '<Space>mv', function() Snacks.picker.keymaps({ modes = { 'v' } }) end, { desc = "Keymaps V" })
+vim.keymap.set('n', '<Space>mi', function() Snacks.picker.keymaps({ modes = { 'i' } }) end, { desc = "Keymaps I" })
+vim.keymap.set('n', '<Space>mo', function() Snacks.picker.keymaps({ modes = { 'o' } }) end, { desc = "Keymaps O" })
+vim.keymap.set('n', '<Space>mt', function() Snacks.picker.keymaps({ modes = { 't' } }) end, { desc = "Keymaps T" })
+vim.keymap.set('n', '<Space>fb', function() Snacks.picker.buffers() end, { desc = "Find buffers" })
+vim.keymap.set('n', '<Space>fB', function() Snacks.picker.grep_buffers() end, { desc = "Grep buffers" })
+vim.keymap.set('n', '<Space>ff', function() Snacks.picker.resume() end, { desc = "Resume last picker" })
+vim.keymap.set('n', '<Space>j', function() Snacks.picker.jumps() end, { desc = "Show jumplist" })
+vim.keymap.set('n', '\\c', function() Snacks.picker.colorschemes() end, { desc = "Colorschemes" })
 vim.keymap.set('n', '<Space>o', '<cmd>OverseerToggle<CR>')
 vim.keymap.set('n', '<Space>O', '<cmd>OverseerQuickAction open float<CR>')
--- vim.keymap.set('n', '<Space>a', '<cmd>ToggleTerm<CR>')
 vim.keymap.set('n', '<Space>A', '<cmd>TermSelect<CR>')
-vim.keymap.set('n', '\\c', '<cmd>Telescope colorscheme<CR>')
 vim.keymap.set('n', 'ga.', '<cmd>Telescope textcase<CR>')
 vim.keymap.set('v', 'ga.', "<cmd>Telescope textcase<CR>")
 
-vim.keymap.set('n', '<Space>ff', require('telescope.builtin').resume, { desc = "Resume last telescope" })
-vim.keymap.set('n', '<Space>fF', require('telescope.builtin').pickers, { desc = "List all telescope pickers" })
-vim.keymap.set('n', '<Space>j', require('telescope.builtin').jumplist, { desc = "Show jumplist" })
 
 vim.keymap.set('n', '<Space>ul', '<cmd>Lazy update<cr>')
 vim.keymap.set("n", "<space>dl", require('utils').toggle_diagnostics_current_buffer,
