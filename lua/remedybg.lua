@@ -29,17 +29,17 @@ local function send_command(command, args)
   if stdout == nil or stderr == nil then
     return
   end
-  handle = vim.uv.spawn(M.rdbg_ctl, {
+  Handle = vim.uv.spawn(M.rdbg_ctl, {
       args = cmd_args,
       stdio = { nil, stdout, stderr }
     },
     function()
-      handle:close()
+      Handle:close()
     end
   )
   vim.uv.read_start(stdout, on_read)
   vim.uv.read_start(stderr, on_read)
-  vim.uv.close(handle)
+  vim.uv.close(Handle)
 end
 
 function M.run_debugger()
@@ -75,11 +75,11 @@ function M.toggle_breakpoint()
   local placed = vim.fn.sign_getplaced(bufname, { group = 'RemedyBreakpoint', lnum = linenr })
   if #placed[1].signs == 0 then
     vim.notify("Adding breakpoint");
-    send_command("add-breakpoint-at-filename-line", { "--file", path, "--line-num", linenr })
+    send_command("add-breakpoint-at-filename-line", { "--file", path, "--line-num", tostring(linenr) })
     vim.fn.sign_place(0, "RemedyBreakpoint", "RemedyBreakpoint", path, { lnum = linenr, priority = 10 })
   else
     vim.notify("Removing breakpoint");
-    send_command("delete-breakpoint-at-filename-line", { "--file", path, "--line-num", linenr })
+    send_command("delete-breakpoint-at-filename-line", { "--file", path, "--line-num", tostring(linenr) })
     vim.fn.sign_unplace("RemedyBreakpoint", { buffer = bufname, lnum = linenr })
   end
 end

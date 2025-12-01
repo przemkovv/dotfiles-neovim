@@ -7,7 +7,6 @@ return {
     cmd = "Telescope",
     dependencies = {
       'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope-ui-select.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
       "johmsalas/text-case.nvim",
       'nvim-telescope/telescope-symbols.nvim'
@@ -133,6 +132,7 @@ return {
   },
   {
     'nvim-telescope/telescope-ui-select.nvim',
+    enabled = false,
     lazy = true,
   },
   {

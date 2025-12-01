@@ -370,6 +370,9 @@ function M.pick_executable(opts)
       format_item = function(item)
         return item.target_name .. (" "):rep(max_length - #item.target_name) .. item.executable
       end,
+      snacks = {
+        layout = "custom_select",
+      },
     },
     function(item)
       if item == nil or opts == nil or opts.on_selection == nil then
@@ -420,6 +423,9 @@ function M.pick_cmake_configuration(opts)
       M.get_cmake_preset_build_configurations_names(),
       {
         prompt = "Select CMake configuration",
+        snacks = {
+          layout = "custom_select",
+        },
       },
       function(choice)
         M.switch_cmake_configuration(choice)

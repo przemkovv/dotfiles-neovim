@@ -116,6 +116,14 @@ local function on_attach(client, bufnr)
     })
   end
 
+  -- if client:supports_method('workspace/diagnostic') then
+  keymap("<space>2", function() Snacks.picker.diagnostics() end, "Show workspace diagnostics")
+  -- end
+
+  -- if client:supports_method('textDocument/diagnostic') then
+  keymap("<space>3", function() Snacks.picker.diagnostics_buffer() end, "Show buffer diagnostics")
+  -- end
+
   if client:supports_method('textDocument/inlayHint') then
     keymap('<space>l', '<cmd>ToggleInlayHints<CR>', 'Toggle inlay hints', 'n')
   end
@@ -179,10 +187,28 @@ local function on_attach(client, bufnr)
   keymap('\\wa', vim.lsp.buf.add_workspace_folder, 'Add workspace folder', 'n')
   keymap('\\wr', vim.lsp.buf.remove_workspace_folder, 'Remove workspace folder', 'n')
   keymap('\\wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, 'List workspace folders', 'n')
+
+  if client.name == 'lua_ls' then
+    vim.defer_fn(function()
+      vim.api.nvim_create_autocmd({ 'User' }, {
+        group = vim.api.nvim_create_augroup('przemkovv/lua_ls_lazy_load', { clear = true }),
+        pattern = 'LazyLoad',
+        callback = function(_)
+          for _, lua_client in ipairs(vim.lsp.get_clients({ name = "lua_ls" })) do
+            lua_client:stop()
+          end
+          vim.schedule(function()
+            vim.lsp.enable("lua_ls", true)
+          end)
+        end,
+      })
+    end, 2000)
+  end
 end
 
 ---@param client vim.lsp.Client
 ---@param bufnr integer
+---@diagnostic disable-next-line: unused-local
 local function on_dettach(client, bufnr)
 
 end
@@ -277,6 +303,8 @@ vim.lsp.buf.definition =
 
 -- Update mappings when registering dynamic capabilities.
 local register_capability = vim.lsp.handlers['client/registerCapability']
+
+---@diagnostic disable-next-line: duplicate-set-field
 vim.lsp.handlers['client/registerCapability'] = function(err, res, ctx)
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   if not client then
@@ -299,8 +327,8 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
       vim.lsp.protocol.make_client_capabilities(),
       cmp_capabilities
     )
-    capabilities.textDocument.onTypeFormatting = { dynamicRegistration = false }
-    capabilities.textDocument.semanticTokens = { multilineTokenSupport = true }
+    capabilities.textDocument.onTypeFormatting.dynamicRegistration = false
+    capabilities.textDocument.semanticTokens.multilineTokenSupport = true
     vim.lsp.config('*', {
       capabilities = capabilities,
       root_markers = { '.git' },
@@ -316,5 +344,8 @@ local buf_request = vim.lsp.buf_request
 vim.lsp.buf_request = function(bufnr, method, params, handler)
   return buf_request(bufnr, method, params, handler, function() end)
 end
+
+
+
 
 return M
