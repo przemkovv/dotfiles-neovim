@@ -100,8 +100,8 @@ vim.opt.pumborder = "rounded"
 vim.opt.grepprg = "rg --vimgrep -S"
 
 -- " Folding ----------------------------------------------------------------- {{{
-vim.opt.foldlevelstart = 2
-vim.opt.foldlevel = 2
+-- vim.opt.foldlevelstart = 2
+-- vim.opt.foldlevel = 2
 -- " Make zO recursively open whatever top level fold we're in, no matter where the
 -- " cursor happens to be.
 vim.keymap.set('n', 'zO', 'zCzO', { silent = false })

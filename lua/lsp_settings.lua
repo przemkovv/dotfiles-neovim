@@ -21,7 +21,11 @@ M.enable_lsp_severs = {
   'rust_analyzer',
   'dockerls',
   'jqls',
-  'ts_ls',
+  -- 'ts_ls',
+  -- 'tsgo',
+  'vtsls',
+  'eslint',
+  'stylelint_lsp',
   'kulala_ls',
 }
 

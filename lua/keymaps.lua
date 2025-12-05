@@ -9,6 +9,11 @@ vim.keymap.set('n', '\\q',
     vim.cmd.restart({ args = { "lua", "require('utils').load_session()" } })
   end, { desc = 'Restart Neovim with session' })
 
+vim.keymap.set('n', '\\Q',
+  function()
+    vim.cmd.restart()
+  end, { desc = 'Restart Neovim without session' })
+
 vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr><c-l>',
   { silent = true })
 vim.keymap.set({ 'n', 'i' }, '<C-PageDown>', '<cmd>cnext<cr>', { silent = true })
