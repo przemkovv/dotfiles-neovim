@@ -7,6 +7,13 @@ return {
       picker = {
         enabled = true,
         ui_select = true,
+        win = {
+          input = {
+            keys = {
+            ["<c-r>r"] = { "toggle_regex", mode = { "i", "n" } },
+            }
+          }
+        },
         layout = {
           preset = "custom",
           cycle = true,

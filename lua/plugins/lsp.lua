@@ -6,6 +6,14 @@ return {
       require('conform').setup({
 
         formatters_by_ft = {
+          javascript = {
+            'prettierd',
+            lsp_format = "never",
+          },
+          typescript = {
+            'prettierd',
+            lsp_format = "never",
+          },
           cmake = {
             "gersemi",
             lsp_format = "never",
