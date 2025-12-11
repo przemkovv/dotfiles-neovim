@@ -87,6 +87,11 @@ vim.keymap.set('n', '<Space>ep',
   function() Snacks.picker.files({ dirs = { vim.fs.joinpath(vim.fn.stdpath('data'), "lazy") } }) end,
   { desc = "Find files in the plugin directory" })
 vim.keymap.set('n', '<Space>fg', function() Snacks.picker.git_files() end, { desc = "Find git files" })
+vim.keymap.set('n', '<Space>gb', function() Snacks.picker.git_branches() end, { desc = "Switch git branch" })
+vim.keymap.set('n', '<Space>gll', function() Snacks.picker.git_log() end, { desc = "Show git log" })
+vim.keymap.set('n', '<Space>glf', function() Snacks.picker.git_log_file() end, { desc = "Show git log of the file" })
+vim.keymap.set('n', '<Space>gst', function() Snacks.picker.git_status() end, { desc = "Show git status" })
+vim.keymap.set('n', '<Space>4', function() Snacks.picker.todo_comments() end, { desc = "Show todo comments" })
 vim.keymap.set('n', '<Space>fr', function() Snacks.picker.recent() end, { desc = "Find recent files" })
 vim.keymap.set('n', '<Space>mn', function() Snacks.picker.keymaps({ modes = { 'n' } }) end, { desc = "Keymaps N" })
 vim.keymap.set('n', '<Space>mx', function() Snacks.picker.keymaps({ modes = { 'x' } }) end, { desc = "Keymaps X" })
@@ -144,3 +149,8 @@ vim.keymap.set('n', '<space>dt', function()
   { noremap = true, silent = true })
 
 vim.keymap.set('n', '<space>dd', vim.diagnostic.setqflist, { silent = true, desc = 'Send diagnostics to quickfix list' })
+
+
+vim.keymap.set('n', '<space>J', function()
+  require('treesj').toggle({ split = { recursive = true, desc = "Join lines" } })
+end)

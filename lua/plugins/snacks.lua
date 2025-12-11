@@ -10,7 +10,7 @@ return {
         win = {
           input = {
             keys = {
-            ["<c-r>r"] = { "toggle_regex", mode = { "i", "n" } },
+              ["<c-r>r"] = { "toggle_regex", mode = { "i", "n" } },
             }
           }
         },
@@ -86,6 +86,16 @@ return {
             return require("obsidian.api").resolve_image_path(src)
           end
         end,
+      },
+      notifier = {
+      },
+      statuscolumn = {
+        left = { "mark", "sign" },  -- priority of signs on the left (high to low)
+        right = { "git", "fold", }, -- priority of signs on the right (high to low)
+        folds = {
+          open = true,
+          git_hl = true, -- use Git Signs hl for fold icons
+        }
       },
     },
   },

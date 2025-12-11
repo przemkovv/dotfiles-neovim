@@ -3,8 +3,6 @@ vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
-vim.api.nvim_command('filetype on')
-
 vim.g.mapleader      = "<Space>"
 vim.g.maplocalleader = "\\"
 
@@ -32,7 +30,6 @@ vim.opt.wildmode = { "longest", "full" }
 vim.opt.title = true
 vim.opt.undofile = true
 vim.opt.scrolloff = 10
--- vim.opt.shortmess = "aOstT"
 vim.opt.sidescrolloff = 5
 vim.opt.report = 0
 vim.opt.shiftround = true
@@ -95,7 +92,6 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "both"
 vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
 
-vim.opt.pumborder = "rounded"
 
 vim.opt.grepprg = "rg --vimgrep -S"
 
@@ -118,6 +114,8 @@ vim.o.winborder = 'rounded'
 vim.wo.signcolumn = 'yes'
 vim.o.pumheight = 15
 vim.o.pumborder = 'rounded'
+vim.opt.cmdheight = 1
+vim.opt.cmdwinheight = 15
 
 
 vim.diagnostic.config({
@@ -154,6 +152,7 @@ vim.filetype.add({
     fxh = 'hlsl',
   }
 })
+
 if vim.fn.has('win32') == 1 and vim.fn.hostname() == 'MA-605' then
   vim.opt.shell = "pwsh"
   vim.opt.shellcmdflag =

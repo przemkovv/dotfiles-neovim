@@ -14,11 +14,11 @@ M.enable_lsp_severs = {
   'vimls',
   'slangd',
   'lua_ls',
-  'roslyn',
+  'roslyn_ls',
   'lemminx',
   'powershell_es',
   'copilot',
-  'rust_analyzer',
+  -- 'rust_analyzer',
   'dockerls',
   'jqls',
   -- 'ts_ls',
@@ -31,6 +31,7 @@ M.enable_lsp_severs = {
 
 vim.lsp.on_type_formatting.enable(true)
 vim.lsp.semantic_tokens.enable(true)
+vim.lsp.inline_completion.enable(true)
 
 
 --- Sets up LSP keymaps and autocommands for the given buffer.
@@ -172,7 +173,6 @@ local function on_attach(client, bufnr)
   end
 
   if client:supports_method('textDocument/inlineCompletion') then
-    vim.lsp.inline_completion.enable(true)
     vim.keymap.set('i', '<Tab>', function()
       if not vim.lsp.inline_completion.get() then
         return '<Tab>'
@@ -185,29 +185,12 @@ local function on_attach(client, bufnr)
   end
 
 
-  vim.lsp.handlers['textDocument/publishDiagnostics'] = require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp
-    .handlers['textDocument/publishDiagnostics'])
+  vim.lsp.handlers['textDocument/publishDiagnostics'] =
+      require('lsp_utils').on_publish_diagnostics_with_related(vim.lsp.handlers['textDocument/publishDiagnostics'])
 
   keymap('\\wa', vim.lsp.buf.add_workspace_folder, 'Add workspace folder', 'n')
   keymap('\\wr', vim.lsp.buf.remove_workspace_folder, 'Remove workspace folder', 'n')
   keymap('\\wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, 'List workspace folders', 'n')
-
-  if client.name == 'lua_ls' then
-    vim.defer_fn(function()
-      vim.api.nvim_create_autocmd({ 'User' }, {
-        group = vim.api.nvim_create_augroup('przemkovv/lua_ls_lazy_load', { clear = true }),
-        pattern = 'LazyLoad',
-        callback = function(_)
-          for _, lua_client in ipairs(vim.lsp.get_clients({ name = "lua_ls" })) do
-            lua_client:stop()
-          end
-          vim.schedule(function()
-            vim.lsp.enable("lua_ls", true)
-          end)
-        end,
-      })
-    end, 2000)
-  end
 end
 
 ---@param client vim.lsp.Client
@@ -217,29 +200,50 @@ local function on_dettach(client, bufnr)
 
 end
 
-vim.api.nvim_create_autocmd('LspProgress', {
-  callback = function(ev --[[ lsp.ProgressParams ]])
-    local value = ev.data.params.value
-    if value == nil then
+---@type table<number, {token:lsp.ProgressToken, msg:string, done:boolean, server_name: string}[]>
+local progress = vim.defaulttable()
+vim.api.nvim_create_autocmd("LspProgress", {
+  ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    local value = ev.data.params
+        .value --[[@as {percentage?: number, title?: string, message?: string, kind: "begin" | "report" | "end"}]]
+    if not client or type(value) ~= "table" then
       return
     end
-    local progress = {
-      kind = 'progress',
-      status = 'running',
-      percent = 10,
-      title = 'term',
-    }
-    local server_name = vim.lsp.get_client_by_id(ev.data.client_id).name
-    if value.kind == 'begin' then
-      progress.id = vim.api.nvim_echo({ { 'LSP [' .. server_name .. '] initializing...' } }, true, progress)
-    elseif value.kind == 'end' then
-      progress.status = 'success'
-      progress.percent = 100
-      vim.api.nvim_echo({ { 'LSP [' .. server_name .. '] initialization complete' } }, true, progress)
-    elseif value.kind == 'report' then
-      progress.percent = value.percentage
-      vim.api.nvim_echo({ { 'LSP [' .. server_name .. '] initializing...' } }, true, progress)
+    local p = progress[client.id]
+    p.server_name = vim.lsp.get_client_by_id(ev.data.client_id).name
+
+    for i = 1, #p + 1 do
+      if i == #p + 1 or p[i].token == ev.data.params.token then
+        p[i] = {
+          token = ev.data.params.token,
+          msg = ("[%3d%%] %s %s%s"):format(
+            value.kind == "end" and 100 or value.percentage or 100,
+            p.server_name,
+            value.title or "",
+            value.message and (" **%s**"):format(value.message) or ""
+          ),
+          done = value.kind == "end",
+        }
+        break
+      end
     end
+
+    local msg = {} ---@type string[]
+    progress[client.id] = vim.tbl_filter(function(v)
+      return table.insert(msg, v.msg) or not v.done
+    end, p)
+
+    local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+    vim.notify(table.concat(msg, "\n"), "info", {
+      id = "lsp_progress",
+      title = client.name,
+      opts = function(notif)
+        notif.icon = #progress[client.id] == 0 and " "
+            or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+      end,
+    })
   end,
 })
 
@@ -268,6 +272,21 @@ vim.api.nvim_create_autocmd('LspDetach', {
     on_dettach(client, args.buf)
   end,
 })
+
+vim.lsp.handlers['client/registerCapability'] = (function(overridden)
+  return function(err, res, ctx)
+    local result = overridden(err, res, ctx)
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    if not client then
+      return
+    end
+    vim.print('Registering new capability for ' .. client.name)
+
+    on_attach(client, vim.api.nvim_get_current_buf())
+
+    return result
+  end
+end)(vim.lsp.handlers['client/registerCapability'])
 
 
 -- Override the virtual text diagnostic handler so that the most severe diagnostic is shown first.
@@ -313,23 +332,6 @@ vim.lsp.buf.definition =
       end
       definition()
     end
-
-
--- Update mappings when registering dynamic capabilities.
-local register_capability = vim.lsp.handlers['client/registerCapability']
-
----@diagnostic disable-next-line: duplicate-set-field
-vim.lsp.handlers['client/registerCapability'] = function(err, res, ctx)
-  local client = vim.lsp.get_client_by_id(ctx.client_id)
-  if not client then
-    return
-  end
-  vim.print('Registering new capability for ' .. client.name)
-
-  on_attach(client, vim.api.nvim_get_current_buf())
-
-  return register_capability(err, res, ctx)
-end
 
 -- Set up LSP servers.
 vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {

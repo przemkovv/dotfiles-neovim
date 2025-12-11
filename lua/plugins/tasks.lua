@@ -29,6 +29,12 @@ return {
     }
   },
   {
+    'mrcjkb/rustaceanvim',
+    -- version = '^6', -- Recommended
+    lazy = false, -- This plugin is already lazy
+    enabled = true,
+  },
+  {
     "nvim-neotest/neotest",
     dependencies = {
       "nvim-neotest/nvim-nio",
@@ -44,22 +50,23 @@ return {
           open = "botright vsplit | vertical resize 90"
         },
         adapters = {
-          require("neotest-vitest") {
-            vitestCommand = "pnpm exec vitest",
-            filter_dir = function(name, rel_path, root)
-              local full_path = root .. "/" .. rel_path
-
-              if root:match("projects/pocketecg-nextgen") then
-                if full_path:match("^__tests__") then
-                  return true
-                else
-                  return false
-                end
-              else
-                return name ~= "node_modules"
-              end
-            end,
-          },
+          require('rustaceanvim.neotest') {},
+          -- require("neotest-vitest") {
+          --   vitestCommand = "pnpm exec vitest",
+          --   filter_dir = function(name, rel_path, root)
+          --     local full_path = root .. "/" .. rel_path
+          --
+          --     if root:match("projects/pocketecg-nextgen") then
+          --       if full_path:match("^__tests__") then
+          --         return true
+          --       else
+          --         return false
+          --       end
+          --     else
+          --       return name ~= "node_modules"
+          --     end
+          --   end,
+          -- },
           -- require("neotest-vstest"),
         },
       })

@@ -18,8 +18,8 @@ return {
     -- LEFTOFF(PW): This is where I left off.
     --
     'folke/todo-comments.nvim',
-    lazy = true,
-    event = 'VimEnter',
+    lazy = false,
+    -- event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = {
       signs = true,
@@ -45,20 +45,30 @@ return {
     enabled = true,
     event = { "BufReadPre", "BufNewFile" },
     opts = {
-      signs     = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
+      signs        = {
+        add          = { text = '+' },
+        change       = { text = '~' },
+        delete       = { text = '_' },
+        topdelete    = { text = '‾' },
         changedelete = { text = '~' },
+        untracked    = { text = '┆' },
       },
-      numhl     = true,  -- Toggle with `:Gitsigns toggle_numhl`
-      linehl    = false, -- Toggle with `:Gitsigns toggle_linehl`
-      on_attach = function(bufnr)
+      signs_staged = {
+        add          = { text = '+' },
+        change       = { text = '~' },
+        delete       = { text = '_' },
+        topdelete    = { text = '‾' },
+        changedelete = { text = '~' },
+        untracked    = { text = '┆' },
+      },
+      numhl        = true,  -- Toggle with `:Gitsigns toggle_numhl`
+      linehl       = false, -- Toggle with `:Gitsigns toggle_linehl`
+      on_attach    = function(bufnr)
         vim.keymap.set('n', ']c', function() require("gitsigns").nav_hunk('next', { wrap = true, }) end,
           { buffer = bufnr, desc = "Next Git Hunk" })
         vim.keymap.set('n', '[c', function() require("gitsigns").nav_hunk('prev', { wrap = true, }) end,
           { buffer = bufnr, desc = "Previous Git Hunk" })
+        vim.keymap.set('n', '<space>gss', '<cmd>Gitsigns<CR>', { buffer = bufnr, desc = "Gitsigns" })
       end
     },
   },
@@ -96,7 +106,7 @@ return {
   -- " Dev Tools {{{
   {
     'tpope/vim-fugitive',
-    enabled = true,
+    enabled = false,
     lazy = false,
     -- cmd = { "Git" }
   },
@@ -121,13 +131,6 @@ return {
         snacks = false,
       }
     },
-    config = function(_, opts)
-      local neogit = require('neogit')
-      neogit.setup(opts)
-      vim.keymap.set('n', '<space>gg', function() neogit.open({ kind = "replace" }) end, { desc = "Neogit Replace" })
-      vim.keymap.set('n', '<space>gG', function() neogit.open({ kind = "auto" }) end, { desc = "Neogit auto split" })
-    end
-
   },
 
 
@@ -164,12 +167,9 @@ return {
       "<space>J",
     },
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    config = function()
-      require('treesj').setup({ use_default_keymaps = false })
-      vim.keymap.set('n', '<space>J', function()
-        require('treesj').toggle({ split = { recursive = true } })
-      end)
-    end,
+    opts = {
+      use_default_keymaps = false
+    },
   },
 
   -- " Filetype specific {{{

@@ -1,5 +1,3 @@
---- @type string | nil
-
 return {
   {
     'nvim-treesitter/nvim-treesitter',
@@ -54,115 +52,6 @@ return {
         end,
       })
     end,
-    --   if treesitter_parsers_path ~= nil then
-    --     vim.opt.rtp:prepend(treesitter_parsers_path)
-    --   end
-    --   require('nvim-treesitter.install').compilers = { "clang" }
-    --   require('nvim-treesitter.install').prefer_git = false
-    --   require("nvim-treesitter.configs").setup(
-    --     {
-    --       parser_install_dir = treesitter_parsers_path,
-    --       modules = {},
-    --
-    --       highlight = {
-    --         enable = true,
-    --         disable = function(lang, bufnr) -- Disable in large buffers
-    --           return vim.api.nvim_buf_line_count(bufnr) > 50000
-    --         end,
-    --         -- disable = { "lua", "cpp", "c" },
-    --       },
-    --       ensure_installed = {
-    --         'javascript',
-    --         'bash',
-    --         'diff',
-    --         'typescript',
-    --         'tsx',
-    --         'css',
-    --         'json',
-    --         'lua',
-    --         'cpp',
-    --         'c',
-    --         'c_sharp',
-    --         'rust',
-    --         'python',
-    --         'ninja',
-    --         'cmake',
-    --         'toml',
-    --         'markdown',
-    --         'markdown_inline',
-    --         'vim',
-    --         'glsl',
-    --         'hlsl',
-    --         'vimdoc',
-    --         'query',
-    --         'rst',
-    --         'xml',
-    --         'html',
-    --         'latex',
-    --         'typst',
-    --         'yaml'
-    --       },
-    --       -- Install parsers synchronously (only applied to `ensure_installed`)
-    --       sync_install = false,
-    --
-    --       -- Automatically install missing parsers when entering buffer
-    --       auto_install = true,
-    --
-    --       -- List of parsers to ignore installing (for "all")
-    --       ignore_install = {},
-    --
-    --       indent = {
-    --         enable = true
-    --       },
-    --       textobjects = {
-    --         select = {
-    --           enable = false,
-    --
-    --           -- Automatically jump forward to textobj, similar to targets.vim
-    --           lookahead = true,
-    --
-    --           -- keymaps = {
-    --           --   -- You can use the capture groups defined in textobjects.scm
-    --           --   ["af"] = "@function.outer",
-    --           --   ["if"] = "@function.inner",
-    --           --   ["ac"] = "@class.outer",
-    --           --   ["aC"] = "@comment.outer",
-    --           --   ["iC"] = "@comment.inner",
-    --           --   ["ia"] = "@parameter.inner",
-    --           --   ["aa"] = "@parameter.outer",
-    --           --   ["ii"] = "@block.inner",
-    --           --   ["ai"] = "@block.outer",
-    --           --   -- you can optionally set descriptions to the mappings (used in the desc parameter of nvim_buf_set_keymap
-    --           --   ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-    --           -- },
-    --           -- -- You can choose the select mode (default is charwise 'v')
-    --           -- selection_modes = {
-    --           --   ['@parameter.outer'] = 'v', -- charwise
-    --           --   ['@function.outer'] = 'V',  -- linewise
-    --           --   ['@block.inner'] = 'V',     -- linewise
-    --           --   ['@block.outer'] = 'V',     -- linewise
-    --           --   ['@class.outer'] = '<c-v>', -- blockwise
-    --           -- },
-    --           -- If you set this to `true` (default is `false`) then any textobject is
-    --           -- extended to include preceding xor succeeding whitespace. Succeeding
-    --           -- whitespace has priority in order to act similarly to eg the built-in
-    --           -- `ap`.
-    --           include_surrounding_whitespace = function(a)
-    --             if a.query_string == "@block.inner" then
-    --               return false
-    --             else
-    --               return true
-    --             end
-    --           end
-    --         },
-    --         swap = {
-    --           enable = false,
-    --         },
-    --
-    --       },
-    --
-    --     })
-    -- end,
     dependencies = {
       'nvim-treesitter/nvim-treesitter-context',
       "lukas-reineke/indent-blankline.nvim",
@@ -202,10 +91,9 @@ return {
     }
   },
   {
-    'nvim-mini/mini.nvim',
-    lazy = true,
-    event = 'VeryLazy',
+    'nvim-mini/mini.ai',
     version = false,
+    event = 'VeryLazy',
     config = function()
       local spec_treesitter = require('mini.ai').gen_spec.treesitter
       require('mini.ai').setup({
@@ -235,44 +123,35 @@ return {
           goto_right = 'g]',
         },
       })
-      require 'mini.surround'.setup({
-        n_lines = 1000,
-      })
-      require 'mini.move'.setup({
-        mappings = {
-          left       = '<S-left>',
-          right      = '<S-right>',
-          down       = '<S-down>',
-          up         = '<S-up>',
-
-          line_left  = '<S-left>',
-          line_right = '<S-right>',
-          line_down  = '<S-down>',
-          line_up    = '<S-up>',
-        }
-      })
-      -- require 'mini.notify'.setup(
-      --   {
-      --     window = {
-      --       config = {
-      --         width = 70,
-      --         anchor = "SW",
-      --       },
-      --     },
-      --   })
-      -- local notify_opts = {
-      --   INFO = {
-      --     duration = 2000,
-      --   },
-      --   WARN = {
-      --     duration = 2000,
-      --   },
-      --   ERROR = {
-      --     duration = 2000,
-      --   },
-      -- }
-      -- vim.notify = require('mini.notify').make_notify(notify_opts)
     end,
+  },
+  {
+    'nvim-mini/mini.surround',
+    lazy = true,
+    event = 'VeryLazy',
+    version = false,
+    opts = {
+      n_lines = 1000,
+    }
+  },
+  {
+    'nvim-mini/mini.move',
+    lazy = true,
+    event = 'VeryLazy',
+    version = false,
+    opts = {
+      mappings = {
+        left       = '<S-left>',
+        right      = '<S-right>',
+        down       = '<S-down>',
+        up         = '<S-up>',
+
+        line_left  = '<S-left>',
+        line_right = '<S-right>',
+        line_down  = '<S-down>',
+        line_up    = '<S-up>',
+      }
+    }
   },
   {
     'nvim-treesitter/nvim-treesitter-context',

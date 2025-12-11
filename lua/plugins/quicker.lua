@@ -1,7 +1,7 @@
 return {
   {
     'stevearc/quicker.nvim',
-    enabled = true,
+    enabled = false,
     event = 'VeryLazy',
     opts = {
       borders = {

@@ -1,8 +1,8 @@
 local libraries = vim.list.unique(vim.iter({
-  vim.fn.expand('$VIMRUNTIME/lua'),
-  vim.fn.expand('$VIMRUNTIME/lua/vim/lsp'),
-  '${3rd}/luv/library',
-  '${3rd}/busted/library',
+  -- vim.fn.expand('$VIMRUNTIME/lua'),
+  -- vim.fn.expand('$VIMRUNTIME/lua/vim/lsp'),
+  -- '${3rd}/luv/library',
+  -- '${3rd}/busted/library',
   vim.api.nvim_get_runtime_file("lua", true),
 }):flatten():totable())
 
@@ -33,6 +33,8 @@ return {
       telemetry = {
         enable = false,
       },
+      codeLens = { enable = true },
+      hint = { enable = true, semicolon = 'Disable' },
     }
   }
 }
