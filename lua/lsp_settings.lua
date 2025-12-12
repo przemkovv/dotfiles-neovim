@@ -156,7 +156,7 @@ local function on_attach(client, bufnr)
 
   if client:supports_method('textDocument/documentSymbol') then
     keymap('gO', function() Snacks.picker.lsp_symbols() end, 'Document symbols', 'n')
-    keymap('<space>gs', "<cmd>Lspsaga outline<cr>", 'Outline', 'n')
+    keymap('<space>gso', "<cmd>Lspsaga outline<cr>", 'Outline', 'n')
   end
 
   if client:supports_method('workspace/symbol') then
