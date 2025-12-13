@@ -1,3 +1,52 @@
+local get_icon         = function()
+  return (require('nvim-web-devicons').get_icon(vim.fn.expand('%:t'), nil, { default = true }))
+end
+local section_fileinfo = function(args)
+  local filetype = vim.bo.filetype
+
+  -- Add filetype icon
+  if get_icon ~= nil and filetype ~= '' then filetype = string.format('%s ', get_icon()) end
+
+  -- Construct output string if truncated or buffer is not normal
+  if MiniStatusline.is_truncated(args.trunc_width) or vim.bo.buftype ~= '' then return filetype end
+
+  -- Construct output string with extra file info
+  local encoding = vim.bo.fileencoding or vim.bo.encoding
+  local symbols = {
+    unix = '', -- e712
+    dos = '', -- e70f
+    mac = '', -- e711
+  }
+
+  local format = symbols[vim.bo.fileformat]
+
+  return string.format('%s%s%s %s', filetype, filetype == '' and '' or ' ', encoding, format)
+end
+
+local section_diff     = function(args)
+  if MiniStatusline.is_truncated(args.trunc_width) then return '' end
+
+  local summary = vim.b.minidiff_summary_string or vim.b.gitsigns_status
+  if summary == nil or summary == '' then return '' end
+
+  local icon = ''
+  return icon .. ' ' .. (summary == '' and '-' or summary)
+end
+
+local section_filename = function(args)
+  if vim.bo.buftype == 'terminal' then
+    return '%t'
+  else
+    local file_dir = vim.fs.normalize(vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.:h'))
+    local file_name = vim.fn.fnamemodify(vim.fn.expand('%'), ':t')
+    if vim.fn.hlexists('User' .. args.style) then
+      return string.format("%s/%%%d*%s%%*%%m%%r", file_dir, args.style, file_name)
+    else
+      return string.format("%s/%%s%%m%%r", file_dir, file_name)
+    end
+  end
+end
+
 ---@type LazySpec
 return {
   {
@@ -109,14 +158,15 @@ return {
       content = {
         active   = function()
           local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 2000 })
-          -- local git           = MiniStatusline.section_git({ trunc_width = 40 })
-          local diff          = MiniStatusline.section_diff({ trunc_width = 75 })
+          -- local git           = MiniStatusline.section_git()
+          local diff          = section_diff({ trunc_width = 40 })
           local diagnostics   = MiniStatusline.section_diagnostics({ trunc_width = 75 })
           local lsp           = MiniStatusline.section_lsp({ trunc_width = 75 })
-          local filename      = MiniStatusline.section_filename({ trunc_width = 140 })
-          local fileinfo      = MiniStatusline.section_fileinfo({ trunc_width = 120 })
+          local filename      = section_filename({ trunc_width = 140, style = 1 })
+          local fileinfo      = section_fileinfo({ trunc_width = 120 })
           local location      = MiniStatusline.section_location({ trunc_width = 75 })
           local search        = MiniStatusline.section_searchcount({ trunc_width = 75 })
+          local buffer_id     = string.format('%s', vim.api.nvim_get_current_buf())
 
           return MiniStatusline.combine_groups({
             { hl = mode_hl,                 strings = { mode } },
@@ -126,9 +176,24 @@ return {
             '%=', -- End left alignment
             { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
             { hl = mode_hl,                  strings = { search, location } },
+            { hl = 'MiniStatuslineFileinfo', strings = { buffer_id } },
           })
         end,
-        inactive = function() return '%#MiniStatuslineInactive#%t%=' end
+        -- inactive = function() return '%#MiniStatuslineInactive#%t%=' end
+        inactive = function()
+          local filename    = section_filename({ trunc_width = 140, style = 2 })
+          local buffer_id   = string.format('%s', vim.api.nvim_get_current_buf())
+          local diff        = section_diff({ trunc_width = 40 })
+          local diagnostics = MiniStatusline.section_diagnostics({ trunc_width = 75 })
+          local lsp         = MiniStatusline.section_lsp({ trunc_width = 75 })
+          return MiniStatusline.combine_groups({
+            '%<', -- Mark general truncate point
+            { hl = 'MiniStatuslineDevinfo',  strings = { diff, diagnostics, lsp } },
+            { hl = 'MiniStatuslineInactive', strings = { filename } },
+            '%=', -- End left alignment
+            { hl = 'MiniStatuslineFileinfo', strings = { buffer_id } },
+          })
+        end
 
       }
 
