@@ -1,5 +1,6 @@
 vim.loader.enable()
 
+require('colors').setup_colors()
 require('settings')
 require('commands') -- TODO: make it lazy
 
@@ -21,7 +22,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('packages').install()
-require('colors').setup_colors()
 require('cmake_configuration').setup()
 require('keymaps')
 require('lsp_settings')

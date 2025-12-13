@@ -6,14 +6,13 @@ function M.setup_colors()
     group = user_colors_id,
     pattern = "*",
     callback = function()
-      vim.api.nvim_set_hl(0, "User1",
-        {
-          ctermfg = 14,
-          fg = "#e1a3ee",
-          ctermbg = 1,
-          bg = "#202020",
-          bold = true,
-        })
+      vim.api.nvim_set_hl(0, "IncSearch", { bg = "#99663c" })
+      local u1 = vim.api.nvim_get_hl(0, { name = "MiniStatuslineFilename" })
+      local u2 = vim.api.nvim_get_hl(0, { name = "MiniStatuslineInactive" })
+      u1.bold = true
+      u2.bold = true
+      vim.api.nvim_set_hl(0, "User1", u1)
+      vim.api.nvim_set_hl(0, "User2", u2)
     end
   })
 
@@ -25,7 +24,6 @@ function M.setup_colors()
   --silent! colorscheme base16-chalk
   --silent! colorscheme moonfly
   --]]
-
 end
 
 return M
