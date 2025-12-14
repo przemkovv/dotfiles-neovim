@@ -1,6 +1,5 @@
 ---@type LazySpec
 return {
-  'tpope/vim-dispatch',
   {
     'stevearc/overseer.nvim',
     lazy = true,
@@ -31,8 +30,9 @@ return {
   {
     'mrcjkb/rustaceanvim',
     -- version = '^6', -- Recommended
-    lazy = false, -- This plugin is already lazy
+    -- lazy = false, -- This plugin is already lazy
     enabled = true,
+    ft = { 'rust', 'toml' },
   },
   {
     "nvim-neotest/neotest",
@@ -51,23 +51,23 @@ return {
         },
         adapters = {
           require('rustaceanvim.neotest') {},
-          -- require("neotest-vitest") {
-          --   vitestCommand = "pnpm exec vitest",
-          --   filter_dir = function(name, rel_path, root)
-          --     local full_path = root .. "/" .. rel_path
-          --
-          --     if root:match("projects/pocketecg-nextgen") then
-          --       if full_path:match("^__tests__") then
-          --         return true
-          --       else
-          --         return false
-          --       end
-          --     else
-          --       return name ~= "node_modules"
-          --     end
-          --   end,
-          -- },
-          -- require("neotest-vstest"),
+          require("neotest-vitest") {
+            vitestCommand = "pnpm exec vitest",
+            filter_dir = function(name, rel_path, root)
+              local full_path = root .. "/" .. rel_path
+
+              if root:match("projects/pocketecg-nextgen") then
+                if full_path:match("^__tests__") then
+                  return true
+                else
+                  return false
+                end
+              else
+                return name ~= "node_modules"
+              end
+            end,
+          },
+          require("neotest-vstest"),
         },
       })
     end,

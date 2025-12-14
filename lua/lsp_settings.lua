@@ -20,6 +20,7 @@ M.enable_lsp_severs = {
   'copilot',
   -- 'rust_analyzer',
   'dockerls',
+  'remark_ls',
   'jqls',
   -- 'ts_ls',
   -- 'tsgo',
@@ -201,49 +202,63 @@ local function on_dettach(client, bufnr)
 end
 
 ---@type table<number, {token:lsp.ProgressToken, msg:string, done:boolean, server_name: string}[]>
-local progress = vim.defaulttable()
-vim.api.nvim_create_autocmd("LspProgress", {
-  ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
+-- local progress = vim.defaulttable()
+-- vim.api.nvim_create_autocmd("LspProgress", {
+--   ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
+--   callback = function(ev)
+--     local client = vim.lsp.get_client_by_id(ev.data.client_id)
+--     local value = ev.data.params
+--         .value --[[@as {percentage?: number, title?: string, message?: string, kind: "begin" | "report" | "end"}]]
+--     if not client or type(value) ~= "table" then
+--       return
+--     end
+--     local p = progress[client.id]
+--     p.server_name = vim.lsp.get_client_by_id(ev.data.client_id).name
+--
+--     for i = 1, #p + 1 do
+--       if i == #p + 1 or p[i].token == ev.data.params.token then
+--         p[i] = {
+--           token = ev.data.params.token,
+--           msg = ("[%3d%%] %s %s%s"):format(
+--             value.kind == "end" and 100 or value.percentage or 100,
+--             p.server_name,
+--             value.title or "",
+--             value.message and (" **%s**"):format(value.message) or ""
+--           ),
+--           done = value.kind == "end",
+--         }
+--         break
+--       end
+--     end
+--
+--     local msg = {} ---@type string[]
+--     progress[client.id] = vim.tbl_filter(function(v)
+--       return table.insert(msg, v.msg) or not v.done
+--     end, p)
+--
+--     local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+--     vim.notify(table.concat(msg, "\n"), "info", {
+--       id = "lsp_progress",
+--       title = client.name,
+--       opts = function(notif)
+--         notif.icon = #progress[client.id] == 0 and " "
+--             or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+--       end,
+--     })
+--   end,
+-- })
+--
+
+vim.api.nvim_create_autocmd('LspProgress', {
   callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    local value = ev.data.params
-        .value --[[@as {percentage?: number, title?: string, message?: string, kind: "begin" | "report" | "end"}]]
-    if not client or type(value) ~= "table" then
-      return
+    local value = ev.data.params.value
+    if value.kind == 'begin' then
+      vim.api.nvim_ui_send('\027]9;4;1;0\027\\')
+    elseif value.kind == 'end' then
+      vim.api.nvim_ui_send('\027]9;4;0\027\\')
+    elseif value.kind == 'report' then
+      vim.api.nvim_ui_send(string.format('\027]9;4;1;%d\027\\', value.percentage or 0))
     end
-    local p = progress[client.id]
-    p.server_name = vim.lsp.get_client_by_id(ev.data.client_id).name
-
-    for i = 1, #p + 1 do
-      if i == #p + 1 or p[i].token == ev.data.params.token then
-        p[i] = {
-          token = ev.data.params.token,
-          msg = ("[%3d%%] %s %s%s"):format(
-            value.kind == "end" and 100 or value.percentage or 100,
-            p.server_name,
-            value.title or "",
-            value.message and (" **%s**"):format(value.message) or ""
-          ),
-          done = value.kind == "end",
-        }
-        break
-      end
-    end
-
-    local msg = {} ---@type string[]
-    progress[client.id] = vim.tbl_filter(function(v)
-      return table.insert(msg, v.msg) or not v.done
-    end, p)
-
-    local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
-    vim.notify(table.concat(msg, "\n"), "info", {
-      id = "lsp_progress",
-      title = client.name,
-      opts = function(notif)
-        notif.icon = #progress[client.id] == 0 and " "
-            or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
-      end,
-    })
   end,
 })
 
@@ -338,7 +353,10 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
   once = true,
   callback = function()
     -- Extend neovim's client capabilities with the completion ones.
-    local cmp_capabilities = require('blink.cmp').get_lsp_capabilities(nil, true);
+    local cmp_capabilities = {}
+    if package.loaded["blink.cmp"] ~= nil then
+      cmp_capabilities = require('blink.cmp').get_lsp_capabilities(nil, true);
+    end
     local capabilities = vim.tbl_deep_extend("force",
       vim.lsp.protocol.make_client_capabilities(),
       cmp_capabilities

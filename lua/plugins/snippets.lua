@@ -7,9 +7,9 @@ return {
     -- opts = {},
     dependencies = {
       'rafamadriz/friendly-snippets',
-      "benfowler/telescope-luasnip.nvim",
-      { 'hrsh7th/vim-vsnip', },
-      { 'hrsh7th/vim-vsnip-integ', },
+      -- "benfowler/telescope-luasnip.nvim",
+      -- { 'hrsh7th/vim-vsnip', },
+      -- { 'hrsh7th/vim-vsnip-integ', },
     },
     config = function(_, opts)
       if opts then require("luasnip").config.setup(opts) end

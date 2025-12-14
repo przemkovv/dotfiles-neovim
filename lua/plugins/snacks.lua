@@ -2,6 +2,7 @@ return {
   {
     "folke/snacks.nvim",
     lazy = false,
+    priority = 1000,
     ---@type snacks.Config
     opts = {
       picker = {
@@ -97,6 +98,28 @@ return {
           git_hl = true, -- use Git Signs hl for fold icons
         }
       },
+      indent = {
+        enabled = true,
+        indent = {
+          enabled = true,
+          only_scope = false,
+          only_current = false,
+          hl = "IndentBlankLineChar",
+
+        },
+        animate = {
+          enabled = false,
+        },
+        scope = {
+          enabled = true,
+          underline = true, -- underline the start of the scope
+          hl = "IndentBlankLineContextChar",
+        },
+        chunk = {
+          enabled = false,
+        }
+      },
     },
+
   },
 }

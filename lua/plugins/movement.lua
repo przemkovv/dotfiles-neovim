@@ -1,5 +1,15 @@
 return {
-  'tpope/vim-unimpaired',
+  {
+    'tpope/vim-unimpaired',
+    enabled = false,
+  },
+  {
+    'tummetott/unimpaired.nvim',
+    event = 'VeryLazy',
+    opts = {
+      -- add options here if you wish to override the default settings
+    },
+  },
   {
     "folke/flash.nvim",
     event = "VeryLazy",
@@ -24,6 +34,9 @@ return {
   },
   'tpope/vim-repeat',
   { 'jeetsukumaran/vim-pythonsense', ft = { 'python' } },
-  'junegunn/vim-easy-align',
+  {
+    'junegunn/vim-easy-align',
+    cmd = { 'EasyAlign', },
+  },
 
 }

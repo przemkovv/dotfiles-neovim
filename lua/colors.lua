@@ -13,17 +13,18 @@ function M.setup_colors()
       u2.bold = true
       vim.api.nvim_set_hl(0, "User1", u1)
       vim.api.nvim_set_hl(0, "User2", u2)
+
+      local url_hl = vim.api.nvim_get_hl(0, { name = "@string.special.url" })
+      url_hl.undercurl = false
+      url_hl.cterm.undercurl = false
+      url_hl.underline = true
+      url_hl.cterm.underline = true
+      vim.api.nvim_set_hl(0, "@string.special.url", url_hl)
     end
   })
 
   vim.g.moonflyNormalFloat = true
   vim.g.moonflyWinSeparator = 2
-
-  --vim.cmd [[
-  --silent! colorscheme evening
-  --silent! colorscheme base16-chalk
-  --silent! colorscheme moonfly
-  --]]
 end
 
 return M

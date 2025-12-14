@@ -1,5 +1,4 @@
 return {
-
   {
     'saghen/blink.cmp',
     lazy = false, -- lazy loading handled internally
@@ -112,7 +111,7 @@ return {
         completion = { menu = { auto_show = true } },
       },
       sources = {
-        default = {  'lsp', 'path', 'snippets', 'buffer', 'calc' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'calc' },
         -- per_filetype = {
         --   lua = { inherit_defaults = true, 'lazydev' }
         -- },

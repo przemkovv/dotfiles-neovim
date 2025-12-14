@@ -7,24 +7,6 @@ return {
     cmd = { "FSHere" },
   },
   {
-    "ahmedkhalf/project.nvim",
-    main = "project_nvim",
-    enabled = true,
-    opts =
-    {
-      manual_mode = true,
-      exclude_dirs = { '~/Downloads' },
-      detection_methods = { "lsp" },
-      ignore_lsp = { "cmake" },
-      -- detection_methods = { "lsp", "pattern" },
-      patterns = {},
-      -- patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile" },
-    },
-    config = function(_, opts)
-      require("project_nvim").setup(opts)
-    end
-  },
-  {
     "stevearc/oil.nvim",
     lazy = true,
     cmd = "Oil",
@@ -79,29 +61,15 @@ return {
     }
   },
   {
-    's1n7ax/nvim-window-picker',
-    event = 'VeryLazy',
-    version = '2.*',
-    config = function()
-      require 'window-picker'.setup({
-        filter_rules = {
-          include_current_win = false,
-          autoselect_one = true,
-          -- filter using buffer options
-          bo = {
-            -- if the file type is one of following, the window will be ignored
-            filetype = { 'neo-tree', "neo-tree-popup", "notify" },
-            -- if the buffer type is one of following, the window will be ignored
-            buftype = { 'terminal', "quickfix" },
-          },
-        },
-      })
-    end,
-  },
-  {
     "folke/which-key.nvim",
-    event = "VeryLazy",
+    enabled = true,
+    priority = 100,
+    lazy = false,
     opts = {
+      preset = "modern",
+      triggers = {
+        { "<auto>", mode = "nixsotc" },
+      }
       -- your configuration comes here
       -- or leave it empty to use the default settings
       -- refer to the configuration section below

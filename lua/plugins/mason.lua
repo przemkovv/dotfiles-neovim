@@ -22,6 +22,7 @@ return {
         "powershell-editor-services",
         "copilot-language-server",
         "rust-analyzer",
+        'remark-language-server',
         "cmake-language-server",
         "cmakelang",
         "cmakelint",

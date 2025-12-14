@@ -47,20 +47,18 @@ return {
           if language and vim.treesitter.language.add(language) then
             vim.treesitter.start()
             vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+            vim.wo.foldmethod = 'expr'
             vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
           end
         end,
       })
     end,
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-context',
-      "lukas-reineke/indent-blankline.nvim",
-    }
   },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
     branch = "main",
     lazy = false,
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
     opts = {
       select = {
         -- Automatically jump forward to textobj, similar to targets.vim
@@ -155,7 +153,9 @@ return {
   },
   {
     'nvim-treesitter/nvim-treesitter-context',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
     lazy = true,
+    enabled = true,
     event = { "BufReadPre", "BufNewFile" },
     opts = {
       enable = true,           -- Enable this plugin (Can be enabled/disabled later via commands)
@@ -177,9 +177,11 @@ return {
   {
     "lukas-reineke/indent-blankline.nvim",
     main = "ibl",
+    enabled = false,
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
     opts = {
       enabled = true,
-      debounce = 200,
+      debounce = 1000,
       scope = {},
       indent = { char = '▏' },
     }

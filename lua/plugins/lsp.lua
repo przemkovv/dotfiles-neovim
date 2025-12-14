@@ -43,6 +43,8 @@ return {
     opts = {
       -- your configuration comes here; leave empty for default settings
     },
+
+    ft = { "cs" },
   },
 
   {
@@ -52,8 +54,8 @@ return {
     event = "LspAttach",
     opts = {
       breadcrumbs = {
-        enable = true,
-        delay = 1000,
+        enable = false,
+        delay = 3000,
       },
       lightbulb = {
         sign = false,
@@ -73,18 +75,9 @@ return {
     }
   },
   {
-    -- "Maan2003/lsp_lines.nvim",
-    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
-    lazy = true,
-    event = "LspAttach",
-    enabled = true,
-    opts = {},
-    config = function()
-      require("lsp_lines").setup()
-    end,
-  },
-  {
     'p00f/clangd_extensions.nvim',
+    enabled = true,
+    ft = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
     lazy = true,
     event = "LspAttach",
     opts = {
@@ -191,7 +184,7 @@ return {
   },
   {
     'm-demare/hlargs.nvim',
-    enable = false,
+    enabled = false,
     opts = {},
     lazy = true,
     event = "LspAttach",

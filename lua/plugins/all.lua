@@ -95,19 +95,17 @@ return {
     lazy = false,
   },
 
-  'chrisbra/unicode.vim',
-
-  -- Completion {{{
-
-  -- 'Shougo/context_filetype.vim',
-
-  -- }}}
-
-  -- " Dev Tools {{{
+  {
+    'chrisbra/unicode.vim',
+    enabled = false,
+  },
   {
     'tpope/vim-fugitive',
     enabled = false,
     lazy = false,
+    dependencies = {
+      'tpope/vim-dispatch',
+    }
     -- cmd = { "Git" }
   },
   {
@@ -145,7 +143,10 @@ return {
       vim.g.gist_open_browser_after_post = 1
     end
   },
-  'mattn/webapi-vim',
+  {
+    'mattn/webapi-vim',
+    enabled = false,
+  },
   {
     'Shougo/vinarise.vim',
     lazy = true,
@@ -155,6 +156,7 @@ return {
   { 'vim-scripts/DoxygenToolkit.vim', cmd = { 'Dox', 'DoxAuthor', 'DoxBlock', 'DoxLic', 'DoxUndoc' } },
   {
     'norcalli/nvim-colorizer.lua',
+    enabled = false,
     lazy = true,
     event = { "BufReadPre", "BufNewFile" },
     opts = {}
@@ -172,18 +174,6 @@ return {
     },
   },
 
-  -- " Filetype specific {{{
-  {
-    'sbdchd/neoformat',
-    config = function()
-      vim.g.neoformat_markdown_remark = {
-        exe = "npx",
-        args = { 'remark', '--no-color', '--silent', '--config' },
-        stdin = 1,
-        try_node_exe = 1,
-      }
-    end,
-  },
   {
     'stsewd/sphinx.nvim',
     -- build = ":UpdateRemotePlugins",
@@ -201,12 +191,6 @@ return {
   },
   { 'gennaro-tedesco/nvim-jqx',      ft = { 'json', 'yaml' } },
 
-  -- " HTML/CSS/Javascript/Typescript {{{
-  { 'tpope/vim-ragtag',              ft = { 'html' } },
-  { 'othree/html5.vim',              ft = { 'html' } },
-
-  { 'leafgarland/typescript-vim',    ft = { 'typescript' } },
-  -- " }}}
   -- " Haskell {{{
   { 'neovimhaskell/haskell-vim',     ft = { 'haskell' } },
   { 'enomsg/vim-haskellConcealPlus', ft = { 'haskell' } },
@@ -239,20 +223,13 @@ return {
   },
   {
     "OXY2DEV/markview.nvim",
-    lazy = false,
+    ft = { "markdown" },
 
     -- For blink.cmp's completion
     -- source
     -- dependencies = {
     --     "saghen/blink.cmp"
     -- },
-  },
-  {
-    'willothy/wezterm.nvim',
-    enabled = function() if vim.fn.has('win32') == 1 then return true else return false end end,
-    config = true,
-    lazy = true,
-    event = 'VeryLazy'
   },
   -- " }}}
   -- " }}}

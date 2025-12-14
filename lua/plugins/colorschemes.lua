@@ -1,11 +1,5 @@
 return {
   {
-    'romainl/Apprentice',
-    enabled = false,
-    lazy = false,
-    priority = 1000,
-  },
-  {
     'chriskempson/base16-vim',
     enabled = false,
     lazy = false,
@@ -13,7 +7,7 @@ return {
   },
   {
     'ellisonleao/gruvbox.nvim',
-    enabled = true,
+    enabled = false,
     lazy = false,
     priority = 1000,
     opts = {},
@@ -24,7 +18,7 @@ return {
   },
   {
     'bluz71/vim-moonfly-colors',
-    enabled = true,
+    enabled = false,
     lazy = false,
     priority = 1000,
   },
