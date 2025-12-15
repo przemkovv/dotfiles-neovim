@@ -116,11 +116,6 @@ return {
     end,
   },
   {
-    'nvim-telescope/telescope-ui-select.nvim',
-    enabled = false,
-    lazy = true,
-  },
-  {
     'nvim-telescope/telescope-fzf-native.nvim',
     lazy = true,
     build =

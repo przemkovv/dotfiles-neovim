@@ -1,17 +1,34 @@
-local libraries =
-    vim.tbl_map(vim.fs.normalize,
-      vim.list.unique(vim.iter({
-        -- vim.fn.expand('$VIMRUNTIME/lua'),
-        -- vim.fn.expand('$VIMRUNTIME/lua/vim/lsp'),
-        -- '${3rd}/luv/library',
-        -- '${3rd}/busted/library',
-        vim.api.nvim_get_runtime_file("", true),
-      }):flatten():totable()))
+local get_nvim_libraries = function()
+  local nvim_libraries =
+      vim.tbl_map(vim.fs.normalize,
+        vim.list.unique(vim.iter({
+          -- vim.fn.expand('$VIMRUNTIME/lua'),
+          -- vim.fn.expand('$VIMRUNTIME/lua/vim/lsp'),
+          -- '${3rd}/luv/library',
+          -- '${3rd}/busted/library',
+          vim.api.nvim_get_runtime_file("", true),
+        }):flatten():totable()))
 
-local config_dir = vim.fs.normalize(vim.fn.stdpath('config'))
-libraries = vim.tbl_filter(function(path)
-  return path ~= config_dir
-end, libraries)
+  local config_dir = vim.fs.normalize(vim.fn.stdpath('config'))
+  nvim_libraries = vim.tbl_filter(function(path)
+    return path ~= config_dir
+  end, nvim_libraries)
+end
+
+local get_wezterm_libraries = function()
+  return vim.api.nvim_get_runtime_file("lua/wezterm/types", true)
+end
+
+local get_libraries = function(root_dir)
+  vim.print("Getting libraries for root dir: " .. root_dir)
+  if root_dir == vim.fn.stdpath('config') then
+    return get_nvim_libraries()
+  end
+  if root_dir:find('wezterm') then
+    return get_wezterm_libraries()
+  end
+  return {}
+end
 
 
 ---@type vim.lsp.Config
@@ -23,7 +40,6 @@ return {
         return
       end
     end
-
     client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
       runtime = {
         -- Tell the language server which version of Lua you're using
@@ -37,7 +53,7 @@ return {
       -- Make the server aware of Neovim runtime files
       workspace = {
         checkThirdParty = false,
-        library = libraries,
+        library = get_libraries(client.workspace_folders[1].name),
       }
     })
   end,

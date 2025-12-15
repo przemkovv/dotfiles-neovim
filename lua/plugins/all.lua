@@ -106,7 +106,6 @@ return {
     dependencies = {
       'tpope/vim-dispatch',
     }
-    -- cmd = { "Git" }
   },
   {
     "NeogitOrg/neogit",
@@ -130,8 +129,6 @@ return {
       }
     },
   },
-
-
   {
     'mattn/gist-vim',
     lazy = true,
@@ -144,24 +141,18 @@ return {
     end
   },
   {
-    'mattn/webapi-vim',
-    enabled = false,
-  },
-  {
     'Shougo/vinarise.vim',
     lazy = true,
     cmd = "Vinarise"
   },
-  { 'diepm/vim-rest-console',         ft = { 'rest' } },
   { 'vim-scripts/DoxygenToolkit.vim', cmd = { 'Dox', 'DoxAuthor', 'DoxBlock', 'DoxLic', 'DoxUndoc' } },
   {
     'norcalli/nvim-colorizer.lua',
-    enabled = false,
+    enabled = true,
     lazy = true,
     event = { "BufReadPre", "BufNewFile" },
     opts = {}
   },
-  -- " }}}
   {
     'Wansmer/treesj',
     lazy = true,
@@ -173,15 +164,14 @@ return {
       use_default_keymaps = false
     },
   },
-
   {
     'stsewd/sphinx.nvim',
     -- build = ":UpdateRemotePlugins",
     ft = 'rst'
   },
-  { 'lervag/vimtex',                 ft = { 'tex' } },
-  { 'KeitaNakamura/tex-conceal.vim', ft = { 'tex' } },
-  { 'wannesm/wmgraphviz.vim',        ft = { 'dot' } },
+  { 'lervag/vimtex',                  ft = { 'tex' } },
+  { 'KeitaNakamura/tex-conceal.vim',  ft = { 'tex' } },
+  { 'wannesm/wmgraphviz.vim',         ft = { 'dot' } },
   {
     'chrisbra/csv.vim',
     ft = { 'csv' },
@@ -224,12 +214,6 @@ return {
   {
     "OXY2DEV/markview.nvim",
     ft = { "markdown" },
-
-    -- For blink.cmp's completion
-    -- source
-    -- dependencies = {
-    --     "saghen/blink.cmp"
-    -- },
   },
   -- " }}}
   -- " }}}

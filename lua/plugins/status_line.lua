@@ -167,7 +167,7 @@ return {
           local fileinfo      = section_fileinfo({ trunc_width = 120 })
           local location      = MiniStatusline.section_location({ trunc_width = 75 })
           local search        = MiniStatusline.section_searchcount({ trunc_width = 75 })
-          local buffer_id     = string.format('%s', vim.api.nvim_get_current_buf())
+          local buffer_id     = '%n'
 
           return MiniStatusline.combine_groups({
             { hl = mode_hl,                 strings = { mode } },
@@ -180,10 +180,9 @@ return {
             { hl = 'MiniStatuslineFileinfo', strings = { buffer_id } },
           })
         end,
-        -- inactive = function() return '%#MiniStatuslineInactive#%t%=' end
         inactive = function()
           local filename    = section_filename({ trunc_width = 140, style = 2 })
-          local buffer_id   = string.format('%s', vim.api.nvim_get_current_buf())
+          local buffer_id   = '%n'
           local diff        = section_diff({ trunc_width = 40 })
           local diagnostics = MiniStatusline.section_diagnostics({ trunc_width = 75 })
           local lsp         = MiniStatusline.section_lsp({ trunc_width = 75 })

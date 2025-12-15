@@ -201,7 +201,7 @@ return {
   },
   {
     "folke/lazydev.nvim",
-    enabled = false,
+    enabled = true,
     ft = "lua",   -- only load on lua files
     opts = {
       library = { -- Or relative, which means they will be resolved from the plugin dir.
@@ -223,12 +223,10 @@ return {
         return not vim.uv.fs_stat(root_dir .. "/.luarc.json")
       end,
     },
-    dependencies = {
-      {
-        'DrKJeff16/wezterm-types',
-        lazy = true,
-        version = false, -- Get the latest version
-      },
-    },
+  },
+  {
+    'DrKJeff16/wezterm-types',
+    lazy = false,
+    version = false, -- Get the latest version
   },
 }
