@@ -35,7 +35,10 @@ return {
       },
       completion = {
         menu = {
-          auto_show = true,
+          auto_show = function(ctx, items)
+            return vim.bo.filetype ~= 'markdown'
+          end,
+          auto_show_delay_ms = 500,
           enabled = true,
           min_width = 30,
           max_height = 15,
@@ -112,9 +115,9 @@ return {
       },
       sources = {
         default = { 'lsp', 'path', 'snippets', 'buffer', 'calc' },
-        -- per_filetype = {
-        --   lua = { inherit_defaults = true, 'lazydev' }
-        -- },
+        per_filetype = {
+          markdown = { inherit_defaults = false, 'lsp', 'snippets' }
+        },
         providers = {
           snippets = {
             opts = {

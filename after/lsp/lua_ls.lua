@@ -10,7 +10,7 @@ local get_nvim_libraries = function()
         }):flatten():totable()))
 
   local config_dir = vim.fs.normalize(vim.fn.stdpath('config'))
-  nvim_libraries = vim.tbl_filter(function(path)
+  return vim.tbl_filter(function(path)
     return path ~= config_dir
   end, nvim_libraries)
 end
@@ -20,8 +20,7 @@ local get_wezterm_libraries = function()
 end
 
 local get_libraries = function(root_dir)
-  vim.print("Getting libraries for root dir: " .. root_dir)
-  if root_dir == vim.fn.stdpath('config') then
+  if root_dir == vim.fs.normalize(vim.fn.stdpath('config')) then
     return get_nvim_libraries()
   end
   if root_dir:find('wezterm') then
@@ -53,7 +52,7 @@ return {
       -- Make the server aware of Neovim runtime files
       workspace = {
         checkThirdParty = false,
-        library = get_libraries(client.workspace_folders[1].name),
+        library = get_libraries(vim.fs.normalize(client.workspace_folders[1].name)),
       }
     })
   end,
