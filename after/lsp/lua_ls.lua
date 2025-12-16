@@ -6,7 +6,7 @@ local get_nvim_libraries = function()
           -- vim.fn.expand('$VIMRUNTIME/lua/vim/lsp'),
           -- '${3rd}/luv/library',
           -- '${3rd}/busted/library',
-          vim.api.nvim_get_runtime_file("", true),
+          vim.api.nvim_get_runtime_file("lua", true),
         }):flatten():totable()))
 
   local config_dir = vim.fs.normalize(vim.fn.stdpath('config'))

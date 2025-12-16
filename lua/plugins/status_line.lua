@@ -37,9 +37,10 @@ local section_filename = function(args)
   if vim.bo.buftype == 'terminal' then
     return '%t'
   else
-    local file_dir = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.:h')
-    -- local file_dir = vim.fs.normalize(vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.:h'))
-    local file_name = vim.fn.fnamemodify(vim.fn.expand('%'), ':t')
+    local file_dir = vim.fn.expand('%:p:h')
+    local relative_file_dir = vim.fs.relpath(vim.uv.cwd() or "./", file_dir)
+    file_dir = relative_file_dir or file_dir
+    local file_name = vim.fn.expand('%:p:t')
     if vim.fn.hlexists('User' .. args.style) then
       return string.format("%s/%%%d*%s%%*%%m%%r", file_dir, args.style, file_name)
     else
