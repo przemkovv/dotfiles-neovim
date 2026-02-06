@@ -169,7 +169,7 @@ if vim.fn.has('win32') == 1 and vim.fn.hostname() == 'ARAGORN' then
   vim.opt.rtp:prepend(pythonpath)
 end
 
-require('vim._extui').enable({
+require('vim._core.ui2').enable({
   enable = true,
   msg = { target = 'cmd' }
 })

@@ -10,7 +10,7 @@ return {
     },
     -- build = "make tiktoken",
     opts = {
-      -- model = 'gpt-5',
+      model = 'gpt-5.2-codex',
       debug = false, -- Enable debugging
       -- prompts = prompts,
       mappings = {
