@@ -9,8 +9,8 @@ return {
       "joelazar/blink-calc"
     },
 
-    -- version = 'v0.*',
-    build = 'cargo +nightly build --release',
+    version = '1.*',
+    -- build = 'cargo +nightly build --release',
     event = 'InsertEnter',
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
