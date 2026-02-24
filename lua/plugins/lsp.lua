@@ -14,6 +14,10 @@ return {
             'prettierd',
             lsp_format = "never",
           },
+          typescriptreact = {
+            'prettierd',
+            lsp_format = "never",
+          },
           cmake = {
             "gersemi",
             lsp_format = "never",

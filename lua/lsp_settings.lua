@@ -28,6 +28,8 @@ M.enable_lsp_severs = {
   'eslint',
   'stylelint_lsp',
   'kulala_ls',
+  'yamlls',
+  -- 'azure_pipelines_ls'
 }
 
 vim.lsp.on_type_formatting.enable(true)
