@@ -3,7 +3,7 @@ return {
   {
     'stevearc/overseer.nvim',
     lazy = true,
-    cmd = "OverseerToggle",
+    cmd = {"OverseerToggle", "OverseerRun", "OverseerBuild"},
     opts = {
       templates = { "builtin", "command_runner", "run_ctest" },
       task_list = {
