@@ -175,6 +175,7 @@ return {
   {
     'chrisbra/csv.vim',
     ft = { 'csv' },
+    cmd = "CSVInit",
     config = function()
       vim.g.csv_autocmd_arrange = 1
     end
