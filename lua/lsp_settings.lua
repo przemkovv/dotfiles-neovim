@@ -14,7 +14,8 @@ M.enable_lsp_severs = {
   'vimls',
   'slangd',
   'lua_ls',
-  'roslyn_ls',
+  'roslyn_ls', -- works
+  -- 'roslyn', -- doesn't work go to the definition
   'lemminx',
   'powershell_es',
   'copilot',
@@ -297,7 +298,7 @@ vim.lsp.handlers['client/registerCapability'] = (function(overridden)
     if not client then
       return
     end
-    vim.print('Registering new capability for ' .. client.name)
+    vim.notify_once('Registering new capability for ' .. client.name)
 
     on_attach(client, vim.api.nvim_get_current_buf())
 

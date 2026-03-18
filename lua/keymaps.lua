@@ -156,3 +156,5 @@ vim.keymap.set('n', '<space>dd', vim.diagnostic.setqflist, { silent = true, desc
 vim.keymap.set('n', '<space>J', function()
   require('treesj').toggle({ split = { recursive = true, desc = "Join lines" } })
 end)
+
+vim.keymap.set("n", "<Space>cp", "<cmd>Fluoride<CR>", { desc = "Fluoride" })

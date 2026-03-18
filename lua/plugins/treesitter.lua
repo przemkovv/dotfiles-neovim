@@ -188,4 +188,10 @@ return {
       indent = { char = '▏' },
     }
   },
+  {
+    "Sang-it/fluoride",
+    config = function()
+      require("fluoride").setup()
+    end,
+  }
 }
