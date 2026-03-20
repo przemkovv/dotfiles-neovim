@@ -86,13 +86,17 @@ return {
   },
   {
     'numToStr/Comment.nvim',
-    enabled = true,
+    enabled = false,
     config = function()
       require('Comment').setup()
       local ft = require('Comment.ft')
       ft.hlsl = ft.get('cpp')
     end,
     lazy = false,
+  },
+  {
+    'nvim-mini/mini.comment',
+    version = false
   },
 
   {
