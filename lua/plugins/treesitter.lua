@@ -190,8 +190,13 @@ return {
   },
   {
     "Sang-it/fluoride",
-    config = function()
-      require("fluoride").setup()
+    opts = {
+      window = {
+        type = "float", -- "float", "vsplit", or "split"
+      }
+    },
+    config = function(opts)
+      require("fluoride").setup(opts)
     end,
   }
 }

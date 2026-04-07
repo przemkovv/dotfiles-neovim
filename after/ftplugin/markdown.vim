@@ -20,3 +20,4 @@ setlocal textwidth=0
 setlocal wrapmargin=79
 setlocal isfname+=32,&,(,)
 setlocal complete+=kspell
+setlocal conceallevel=2

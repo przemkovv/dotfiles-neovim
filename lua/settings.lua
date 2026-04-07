@@ -171,5 +171,5 @@ end
 
 require('vim._core.ui2').enable({
   enable = true,
-  msg = { target = 'cmd' }
+  msg = { targets = 'cmd' }
 })

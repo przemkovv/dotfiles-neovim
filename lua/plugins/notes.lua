@@ -9,6 +9,10 @@ return {
     cmd = { "Obsidian" },
     keys = {
       { "<localleader>oo", '<cmd>Obsidian<cr>',                 desc = "Obsidian commands" },
+      { "<localleader>ow", '<cmd>Obsidian workspace<cr>',       desc = "Obsidian workspace" },
+      { "<localleader>os", '<cmd>Obsidian search<cr>',          desc = "Obsidian search" },
+      { "<localleader>ot", '<cmd>Obsidian today<cr>',           desc = "Obsidian today" },
+      { "<localleader>od", '<cmd>Obsidian dailies<cr>',           desc = "Obsidian dailies" },
       { "<localleader>oc", '<cmd>Obsidian toggle_checkbox<cr>', desc = "Obsidian checkbox" },
     },
     -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:

@@ -104,7 +104,6 @@ return {
               label = {
                 text = function(ctx)
                   return require("colorful-menu").blink_components_text(ctx)
-
                 end,
                 highlight = function(ctx)
                   return require("colorful-menu").blink_components_highlight(ctx)
@@ -144,7 +143,11 @@ return {
       sources = {
         default = { 'lsp', 'path', 'snippets', 'buffer', 'calc' },
         per_filetype = {
-          markdown = { inherit_defaults = false, 'lsp', 'snippets' }
+          markdown = {
+            'lsp',
+            'snippets',
+            inherit_defaults = false,
+          }
         },
         providers = {
           snippets = {
