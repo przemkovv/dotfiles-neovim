@@ -19,6 +19,7 @@ return {
     },
     config = function(_, opts)
       require("kulala").setup(opts)
+      require("nvim-treesitter").install('kulala_http')
       vim.api.nvim_create_autocmd('FileType', {
         pattern = { 'http', 'rest' },
         group = vim.api.nvim_create_augroup('KulalaStartTreesitter', { clear = true }),

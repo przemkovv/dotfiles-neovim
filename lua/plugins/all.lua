@@ -151,7 +151,7 @@ return {
   },
   { 'vim-scripts/DoxygenToolkit.vim', cmd = { 'Dox', 'DoxAuthor', 'DoxBlock', 'DoxLic', 'DoxUndoc' } },
   {
-    'norcalli/nvim-colorizer.lua',
+    'catgoose/nvim-colorizer.lua',
     enabled = true,
     lazy = true,
     event = { "BufReadPre", "BufNewFile" },

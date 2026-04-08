@@ -204,7 +204,14 @@ local function on_dettach(client, bufnr)
 
 end
 
----@type table<number, {token:lsp.ProgressToken, msg:string, done:boolean, server_name: string}[]>
+
+---@class ProgressStatus
+---@field token lsp.ProgressToken
+---@field msg string
+---@field done boolean
+---@field server_name string
+
+---@type table<number, ProgressStatus[]>
 local progress = vim.defaulttable()
 vim.api.nvim_create_autocmd("LspProgress", {
   ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
@@ -216,7 +223,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
       return
     end
     local p = progress[client.id]
-    p.server_name = vim.lsp.get_client_by_id(ev.data.client_id).name
+    local server_name = vim.lsp.get_client_by_id(ev.data.client_id).name
 
     for i = 1, #p + 1 do
       if i == #p + 1 or p[i].token == ev.data.params.token then
@@ -224,15 +231,17 @@ vim.api.nvim_create_autocmd("LspProgress", {
           token = ev.data.params.token,
           msg = ("[%3d%%] %s %s%s"):format(
             value.kind == "end" and 100 or value.percentage or 100,
-            p.server_name,
+            server_name,
             value.title or "",
             value.message and (" **%s**"):format(value.message) or ""
           ),
           done = value.kind == "end",
+          server_name = server_name,
         }
         break
       end
     end
+
 
     local msg = {} ---@type string[]
     progress[client.id] = vim.tbl_filter(function(v)
@@ -250,7 +259,6 @@ vim.api.nvim_create_autocmd("LspProgress", {
     })
   end,
 })
---
 
 vim.api.nvim_create_autocmd('LspProgress', {
   callback = function(ev)

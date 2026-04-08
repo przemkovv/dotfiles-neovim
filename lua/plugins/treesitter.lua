@@ -38,8 +38,6 @@ return {
         'latex',
         'typst',
         'yaml',
-        'kulala_http'
-
       })
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
