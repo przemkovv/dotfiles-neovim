@@ -1,17 +1,17 @@
-vim.g.loaded = 1
+vim.g.loaded               = 1
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
-vim.g.mapleader      = "<Space>"
-vim.g.maplocalleader = "\\"
+vim.g.mapleader            = "<Space>"
+vim.g.maplocalleader       = "\\"
 
-vim.opt.showmatch    = true
-vim.opt.ignorecase   = true
-vim.opt.smartcase    = true
-vim.opt.inccommand   = "split"
-vim.opt.autowrite    = true
-vim.opt.mouse        = "a"
+vim.opt.showmatch          = true
+vim.opt.ignorecase         = true
+vim.opt.smartcase          = true
+vim.opt.inccommand         = "split"
+vim.opt.autowrite          = true
+vim.opt.mouse              = "a"
 vim.opt.sessionoptions:remove { "folds" }
 vim.opt.formatoptions = "jcroql/"
 vim.opt.virtualedit   = "block"
@@ -169,7 +169,50 @@ if vim.fn.has('win32') == 1 and vim.fn.hostname() == 'ARAGORN' then
   vim.opt.rtp:prepend(pythonpath)
 end
 
-require('vim._core.ui2').enable({
+
+require("vim._core.ui2").enable({
   enable = true,
-  msg = { targets = 'cmd' }
+  msg = {
+    targets = {
+      [""] = "msg",
+      empty = "cmd",
+      bufwrite = "msg",
+      confirm = "cmd",
+      emsg = "pager",
+      echo = "msg",
+      echomsg = "msg",
+      echoerr = "pager",
+      completion = "cmd",
+      list_cmd = "pager",
+      lua_error = "pager",
+      lua_print = "msg",
+      progress = "pager",
+      rpc_error = "pager",
+      quickfix = "msg",
+      search_cmd = "cmd",
+      search_count = "cmd",
+      shell_cmd = "pager",
+      shell_err = "pager",
+      shell_out = "pager",
+      shell_ret = "msg",
+      undo = "msg",
+      verbose = "pager",
+      wildlist = "cmd",
+      wmsg = "msg",
+      typed_cmd = "cmd",
+    },
+    cmd = {
+      height = 0.5,
+    },
+    dialog = {
+      height = 0.5,
+    },
+    msg = {
+      height = 0.05,
+      timeout = 5000,
+    },
+    pager = {
+      height = 0.5,
+    },
+  },
 })
