@@ -235,4 +235,100 @@ return {
     lazy = false,
     version = false, -- Get the latest version
   },
+  {
+    "rachartier/tiny-code-action.nvim",
+    event = "LspAttach",
+    opts = {
+      backend = "vim",
+      picker = {
+        "snacks",
+        opts = {
+          layout = {
+            layout = {
+              backdrop = false,
+              width = 0.4,
+              min_width = 80,
+              height = 0.8,
+              border = "none",
+              box = "vertical",
+              {
+                box = "vertical",
+                border = true,
+                title = "{title} {live} {flags}",
+                { win = "input",   height = 1,          border = "bottom" },
+                { win = "list",    height = 0.2,        border = "none" },
+                { win = "preview", title = "{preview}", border = true, },
+              },
+            }
+          }
+        }
+      },
+      backend_opts = {
+        delta = {
+          -- Header from delta can be quite large.
+          -- You can remove them by setting this to the number of lines to remove
+          -- header_lines_to_remove = 4,
+
+          -- The arguments to pass to delta
+          -- If you have a custom configuration file, you can set the path to it like so:
+          -- args = {
+          --     "--config" .. os.getenv("HOME") .. "/.config/delta/config.yml",
+          -- }
+          args = {
+            -- "--line-numbers",
+          },
+        },
+        difftastic = {
+          -- header_lines_to_remove = 1,
+
+          -- The arguments to pass to difftastic
+          args = {
+            "--color=always",
+            "--display=inline",
+            "--syntax-highlight=on",
+          },
+        },
+      },
+      format_title = function(action, _)
+        if action.kind then
+          return string.format("%s (%s)", action.title, action.kind)
+        end
+        return action.title
+      end,
+      signs = {
+        quickfix = { "", { link = "DiagnosticWarning" } },
+        others = { "", { link = "DiagnosticWarning" } },
+        refactor = { "", { link = "DiagnosticInfo" } },
+        ["refactor.move"] = { "󰪹", { link = "DiagnosticInfo" } },
+        ["refactor.extract"] = { "", { link = "DiagnosticError" } },
+        ["source.organizeImports"] = { "", { link = "DiagnosticWarning" } },
+        ["source.fixAll"] = { "󰃢", { link = "DiagnosticError" } },
+        ["source"] = { "", { link = "DiagnosticError" } },
+        ["rename"] = { "󰑕", { link = "DiagnosticWarning" } },
+        ["codeAction"] = { "", { link = "DiagnosticWarning" } },
+      },
+
+    },
+  },
+  {
+    "rachartier/tiny-inline-diagnostic.nvim",
+    event = "VeryLazy",
+    priority = 1000,
+    config = function()
+      require("tiny-inline-diagnostic").setup(
+        {
+          options = {
+            multilines = {
+              enabled = true,
+              always_show = true,
+            },
+            show_related = {
+              enabled = true,
+              max_count = 5,
+            }
+          }
+        })
+      vim.diagnostic.config({ virtual_text = false }) -- Disable Neovim's default virtual text diagnostics
+    end,
+  }
 }

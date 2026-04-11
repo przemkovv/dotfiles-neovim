@@ -158,3 +158,7 @@ vim.keymap.set('n', '<space>J', function()
 end)
 
 vim.keymap.set("n", "<Space>cp", "<cmd>Fluoride vsplit<CR>", { desc = "Fluoride" })
+
+vim.keymap.set({ "n", "x" }, "gra", function()
+  require("tiny-code-action").code_action({})
+end, { noremap = true, silent = true })
