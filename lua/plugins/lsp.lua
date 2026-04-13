@@ -65,6 +65,7 @@ return {
       },
       lightbulb = {
         sign = false,
+        debounce = 300,
       },
       outline = {
         layout = "float",
@@ -200,7 +201,7 @@ return {
     branch = 'release/2.x', -- or: branch = 'release/2.x' for latest non-breaking updates
     enabled = true,
     -- event = 'LspAttach',
-    cmd = { 'LenslineEnable', 'LenslineShow', 'LenslineToggle' },
+    cmd = { 'LenslineEnable', 'LenslineShow', 'LenslineToggleView' },
     config = function()
       require("lensline").setup()
     end,
