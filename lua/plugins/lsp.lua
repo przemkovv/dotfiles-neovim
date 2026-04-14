@@ -240,7 +240,7 @@ return {
     "rachartier/tiny-code-action.nvim",
     event = "LspAttach",
     opts = {
-      backend = "vim",
+      backend = "delta",
       picker = {
         "snacks",
         opts = {
@@ -325,7 +325,7 @@ return {
             },
             show_related = {
               enabled = true,
-              max_count = 5,
+              max_count = 3,
             }
           }
         })
