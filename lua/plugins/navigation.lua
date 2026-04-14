@@ -83,6 +83,11 @@ return {
         desc = "Buffer Local Keymaps (which-key)",
       },
     },
+  },
+  {
+    "hong4rc/copy-path.nvim",
+    event = "VeryLazy",
+    opts = {},
   }
 
 }
