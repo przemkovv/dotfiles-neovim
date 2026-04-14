@@ -2,16 +2,37 @@ local M = {}
 
 function M.on_publish_diagnostics_with_related(previous_handler)
   return function(_, result, ctx, config)
+    local seen = {}
+    local current_uri = vim.uri_from_bufnr(0)
+
+    local function make_key(uri, range, message)
+      return string.format(
+        "%s:%d:%d:%d:%d:%s",
+        uri or "",
+        range.start.line,
+        range.start.character,
+        range["end"].line,
+        range["end"].character,
+        message or ""
+      )
+    end
+    for _, d in ipairs(result.diagnostics) do
+      if d.range then
+        seen[make_key(current_uri, d.range, d.message)] = true
+      end
+    end
+
     vim.tbl_map(function(item)
       if item.relatedInformation and #item.relatedInformation > 0 then
         vim.tbl_map(function(k)
           if k.location then
-            local tail = vim.fn.fnamemodify(vim.uri_to_fname(k.location.uri), ':t')
-            k.message = tail ..
-                '(' .. (k.location.range.start.line + 1) .. ', ' .. (k.location.range.start.character + 1) ..
-                '): ' .. k.message
+            local key = make_key(k.location.uri, k.location.range, k.message)
+            if seen[key] then
+              return
+            end
+            seen[key] = true
 
-            if k.location.uri == vim.uri_from_bufnr(0) then
+            if k.location.uri == current_uri then
               table.insert(result.diagnostics, {
                 code = item.code,
                 message = k.message,
@@ -22,7 +43,7 @@ function M.on_publish_diagnostics_with_related(previous_handler)
               })
             end
           end
-          item.message = item.message .. '\n' .. k.message
+          -- item.message = item.message .. '\n' .. k.message
         end, item.relatedInformation)
       end
     end, result.diagnostics)
