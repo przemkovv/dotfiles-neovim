@@ -4,7 +4,7 @@ local M = {}
 vim.g.inlay_hints = false
 
 
-M.enable_lsp_severs = {
+M.enable_lsp_servers = {
   'marksman',
   'glslls',
   'clangd',
@@ -37,6 +37,7 @@ vim.lsp.on_type_formatting.enable(true)
 vim.lsp.semantic_tokens.enable(true)
 vim.lsp.inline_completion.enable(true)
 
+local attached_buffers = {} -- [client_id][bufnr] = true
 
 --- Sets up LSP keymaps and autocommands for the given buffer.
 ---@param client vim.lsp.Client
@@ -53,6 +54,12 @@ local function on_attach(client, bufnr)
     opts.buffer = bufnr
     vim.keymap.set(mode, lhs, rhs, opts)
   end
+
+  if attached_buffers[client.id] and attached_buffers[client.id][bufnr] then
+    return
+  end
+  attached_buffers[client.id] = attached_buffers[client.id] or {}
+  attached_buffers[client.id][bufnr] = true
 
   if client.server_capabilities.completionProvider then
     vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = false })
@@ -201,7 +208,9 @@ end
 ---@param bufnr integer
 ---@diagnostic disable-next-line: unused-local
 local function on_dettach(client, bufnr)
-
+  if attached_buffers[client.id] then
+    attached_buffers[client.id][bufnr] = nil
+  end
 end
 
 
@@ -379,15 +388,22 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
       root_markers = { '.git' },
     })
 
-    vim.lsp.enable(M.enable_lsp_severs)
+    vim.lsp.enable(M.enable_lsp_servers)
   end,
 })
 
 -- HACK: Override buf_request to ignore notifications from LSP servers that don't implement a method.
 local buf_request = vim.lsp.buf_request
 ---@diagnostic disable-next-line: duplicate-set-field
-vim.lsp.buf_request = function(bufnr, method, params, handler)
-  return buf_request(bufnr, method, params, handler, function() end)
-end
+-- vim.lsp.buf_request = function(bufnr, method, params, handler)
+--   return buf_request(bufnr, method, params, handler, function() end)
+-- end
 
+vim.lsp.buf_request = function(bufnr, method, params, handler)
+  return buf_request(bufnr, method, params, handler, function(err)
+    if err and err.code ~= -32601 then -- -32601 = MethodNotFound
+      vim.notify(vim.inspect(err), vim.log.levels.ERROR)
+    end
+  end)
+end
 return M

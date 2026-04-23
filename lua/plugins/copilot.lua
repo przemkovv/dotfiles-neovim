@@ -34,7 +34,7 @@ return {
       },
 
       separator = '━━',
-      auto_fold = false, -- Automatically folds non-assistant messages
+      auto_fold = true, -- Automatically folds non-assistant messages
     },
     config = function(_, opts)
       local chat = require("CopilotChat")

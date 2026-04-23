@@ -62,7 +62,9 @@ vim.keymap.set('c', '<c-@>', '<c-f>')
 vim.keymap.set('c', '<c-j>', '<down>')
 vim.keymap.set('c', '<c-k>', '<up>')
 
-vim.keymap.set('c', 'w!!', 'w !sudo tee % >/dev/null')
+if vim.fn.has('win32') == 0 then
+  vim.keymap.set('c', 'w!!', 'w !sudo tee % >/dev/null')
+end
 
 -- }}}
 
