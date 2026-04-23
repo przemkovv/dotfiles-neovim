@@ -3,13 +3,12 @@ vim.keymap.set('n', '<space>cd', ':cd %:p:h<CR>:pwd<CR>', { desc = "Change worki
 vim.keymap.set('n', '<space>ss', require('utils').save_session, { desc = "Save Current Session" })
 vim.keymap.set('n', '<space>sl', require('utils').load_session, { desc = "Load Session" })
 
-vim.keymap.set('n', '\\q',
+vim.keymap.set('n', 'Zr',
   function()
     require('utils').save_session()
     vim.cmd.restart({ args = { "lua", "require('utils').load_session()" } })
   end, { desc = 'Restart Neovim with session' })
 
-vim.keymap.set('n', '\\Q', function() vim.cmd.restart() end, { desc = 'Restart Neovim without session' })
 
 vim.keymap.set('n', '<C-L>', ':nohlsearch<cr>:diffupdate<cr>:syntax sync fromstart<cr>:sign unplace *<cr><c-l>',
   { silent = true })
