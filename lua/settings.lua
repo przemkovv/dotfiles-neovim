@@ -62,7 +62,7 @@ vim.opt.breakindent = true
 vim.opt.breakindentopt:append { "sbr" }
 
 vim.opt.tags:append { "tags", "./tags", "~/.vimtags" }
-vim.opt.completeopt = { "menu", "preview", "noselect", "menuone" }
+vim.opt.completeopt = { "menu", "preview", "noselect", "menuone", "popup" }
 
 vim.g.sidekick_nes = false
 

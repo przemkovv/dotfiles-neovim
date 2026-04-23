@@ -1,4 +1,3 @@
-
 return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
@@ -10,14 +9,17 @@ return {
     },
     -- build = "make tiktoken",
     opts = {
-      model = 'gpt-5.2-codex',
+      -- model = 'gpt-5.4-codex',
+      model = 'claude-sonnet-4.6',
+      trusted_tools = { 'file', 'glob', 'grep', 'buffer' },
+      chat_autocomplete = true,
       debug = false, -- Enable debugging
-      -- prompts = prompts,
       mappings = {
         submit_prompt = {
           normal = '<CR>',
           insert = '<C-CR>'
         },
+        reset = false,
       },
       window = {
         border = 'rounded', -- 'single', 'double', 'rounded', 'solid'
@@ -32,7 +34,7 @@ return {
       },
 
       separator = '━━',
-      auto_fold = true, -- Automatically folds non-assistant messages
+      auto_fold = false, -- Automatically folds non-assistant messages
     },
     config = function(_, opts)
       local chat = require("CopilotChat")
